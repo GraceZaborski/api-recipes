@@ -55,7 +55,7 @@ jobs:
       - name: Deploy details - ReleaseBot
         run: |
           echo ""
-          echo "##@releasebot create ifr campaigns@:version from campaigns@:version"
+          echo "##@rel1easebot create ifr campaigns@:version from campaigns@:version"
           echo "##@releasebot set ifr version of api api-campaigns with image api-campaigns to $BRANCH-$HASH in campaigns@:version"
           echo "##@releasebot deploy ifr campaigns@:version to <env>"
           echo ""
