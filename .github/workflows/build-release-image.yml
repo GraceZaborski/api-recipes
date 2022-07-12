@@ -1,0 +1,57 @@
+name: 'Build release image'
+
+on:
+  push:
+    tags:
+      - '**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - uses: actions/checkout@v2
+        with:
+          repository: BeameryHQ/actions
+          path: .github/BeameryHQ/actions
+          token: ${{ secrets.HAL_9000B_TOKEN }}
+
+      - name: Workflow Context
+        id: beamery
+        uses: ./.github/BeameryHQ/actions/js/workflow-context
+        with:
+          verdaccio-token: ${{ secrets.VERDACCIO_SUPPORT_TOKEN }}
+          atlassian-url: ${{ secrets.ATLASSIAN_BASE_URL }}
+
+      - name: Configuring Google Cloud Platform
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          project_id: 'beamery-global'
+          service_account_key: ${{ secrets.GCLOUD_SERVICE_ACCOUNT }}
+          export_default_credentials: true
+
+      - name: Authenticating Docker Registry
+        run: gcloud auth configure-docker
+
+      - name: Set build variables
+        run: |
+          echo "TAG=${GITHUB_REF#refs/tags/}" | sed -e 's/\//-/g' >> $GITHUB_ENV
+          echo "HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "IMAGE=us.gcr.io/beamery-global/api-campaigns" >> $GITHUB_ENV
+
+      - name: Build Docker image
+        run: |
+          export DOCKER_TAG=${{ env.IMAGE }}:${{ env.TAG }}
+          docker build -t ${DOCKER_TAG} .
+          docker tag ${DOCKER_TAG} ${DOCKER_TAG}-${{ env.HASH }}
+
+      - name: Publish artefacts
+        run: |
+          export DOCKER_TAG=${{ env.IMAGE }}:${{ env.TAG }}
+          docker push ${DOCKER_TAG}
+          docker push ${DOCKER_TAG}-${{ env.HASH }}

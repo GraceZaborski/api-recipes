@@ -1,0 +1,90 @@
+name: 'Lint'
+
+on: [push]
+
+jobs:
+  prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - uses: actions/checkout@v2
+        with:
+          repository: BeameryHQ/actions
+          path: .github/BeameryHQ/actions
+          token: ${{ secrets.HAL_9000B_TOKEN }}
+
+      - name: Workflow Context
+        id: beamery
+        uses: ./.github/BeameryHQ/actions/js/workflow-context
+        with:
+          verdaccio-token: ${{ secrets.VERDACCIO_SUPPORT_TOKEN }}
+          atlassian-url: ${{ secrets.ATLASSIAN_BASE_URL }}
+
+      - uses: actions/cache@v2
+        id: yarn
+        with:
+          path: '**/node_modules'
+          key: ${{ steps.beamery.outputs.cacheKey }}
+
+      - name: Installing Dependencies
+        run: yarn install --frozen-lockfile --silent --prefer-offline
+
+      - name: Prettier
+        run: yarn prettier "src/**/*.ts" "test/**/*.ts" --check
+
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - uses: actions/checkout@v2
+        with:
+          repository: BeameryHQ/actions
+          path: .github/BeameryHQ/actions
+          token: ${{ secrets.HAL_9000B_TOKEN }}
+
+      - name: Workflow Context
+        id: beamery
+        uses: ./.github/BeameryHQ/actions/js/workflow-context
+        with:
+          verdaccio-token: ${{ secrets.VERDACCIO_SUPPORT_TOKEN }}
+          atlassian-url: ${{ secrets.ATLASSIAN_BASE_URL }}
+
+      - uses: actions/cache@v2
+        id: yarn
+        with:
+          path: '**/node_modules'
+          key: ${{ steps.beamery.outputs.cacheKey }}
+
+      - name: Installing Dependencies
+        run: yarn install --frozen-lockfile --silent --prefer-offline
+
+      - name: ES Lint
+        run: yarn eslint . --max-warnings 0
+
+  commitlint:
+    runs-on: ubuntu-latest
+    if: ${{ !startsWith(github.ref, 'refs/heads/dependabot') }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Linting Commits
+        uses: wagoid/commitlint-github-action@v2
+        with:
+          firstParent: true
+          failOnWarnings: true
