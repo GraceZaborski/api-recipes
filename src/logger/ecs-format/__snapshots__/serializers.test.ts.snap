@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`http.request should fallback to id 1`] = `
+Object {
+  "headers": Object {},
+  "id": "mock-id",
+  "url": undefined,
+}
+`;
+
+exports[`http.request should redact sensitive headers 1`] = `
+Object {
+  "headers": Object {
+    "authorization": "[REDACTED]",
+    "proxy-authenticate": "[REDACTED]",
+    "proxy-authorization": "[REDACTED]",
+    "www-authenticate": "[REDACTED]",
+    "x-beamery-user-id": "mock-user",
+    "x-token-payload": "[REDACTED]",
+  },
+  "id": "mock-id",
+  "url": undefined,
+}
+`;
+
+exports[`http.request should replace id with \`cf-request-id\` 1`] = `
+Object {
+  "headers": Object {
+    "cf-request-id": "mock-id-cf",
+  },
+  "id": "mock-id-cf",
+  "url": undefined,
+}
+`;
+
+exports[`http.request should replace id with \`x-request-id\` 1`] = `
+Object {
+  "headers": Object {
+    "x-request-id": "mock-id-x",
+  },
+  "id": "mock-id-x",
+  "url": undefined,
+}
+`;
+
+exports[`http.response should transform statusCode to status_code 1`] = `
+Object {
+  "headers": Object {
+    "content-type": "application/json",
+  },
+  "status_code": 200,
+}
+`;

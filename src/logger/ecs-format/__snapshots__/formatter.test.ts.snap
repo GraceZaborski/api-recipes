@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`bindings should format bindings 1`] = `
+Object {
+  "host": Object {
+    "hostname": "mock-hostname",
+  },
+  "process": Object {
+    "pid": "mock-pid",
+  },
+}
+`;
+
+exports[`log should format error 1`] = `
+Object {
+  "ecs": Object {
+    "version": "1.6.0",
+  },
+  "error": Object {
+    "message": "mock-error",
+    "stack_trace": "mock-stack-trace",
+    "type": "Error",
+  },
+  "key": "mock-key",
+}
+`;
+
+exports[`log should format the event.duration to nanoseconds 1`] = `
+Object {
+  "ecs": Object {
+    "version": "1.6.0",
+  },
+  "err": Object {
+    "foo": "bar",
+  },
+  "event.duration": 192000000,
+  "key": "mock-key",
+}
+`;
+
+exports[`log should identify type error 1`] = `
+Object {
+  "ecs": Object {
+    "version": "1.6.0",
+  },
+  "error": Object {
+    "message": "mock-error",
+    "stack_trace": "mock-stack-trace",
+    "type": "TypeError",
+  },
+  "key": "mock-key",
+}
+`;
+
+exports[`log should pass through error object unchanged 1`] = `
+Object {
+  "ecs": Object {
+    "version": "1.6.0",
+  },
+  "err": Object {
+    "foo": "bar",
+  },
+  "key": "mock-key",
+}
+`;

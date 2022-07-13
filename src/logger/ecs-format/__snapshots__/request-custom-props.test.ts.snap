@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`reqCustomProps should map headers to respective fields 1`] = `
+Object {
+  "beamery.company.id": "mock-company-id",
+  "span.id": "mock-span-id",
+  "trace.id": "mock-trace-id",
+  "url": Object {
+    "path": "/mock-url",
+  },
+  "user.id": "mock-user-id",
+}
+`;
