@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from '@cerbero/mod-auth';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -15,6 +16,13 @@ import configuration from './config/configuration';
     }),
     LoggerModule,
     AuthModule.forRoot(),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.get('mongoUri'),
+      }),
+      inject: [ConfigService],
+    }),
   ],
   controllers: [AppController, HeartbeatController],
   providers: [AppService],
