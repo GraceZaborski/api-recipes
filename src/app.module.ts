@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HeartbeatController } from './heartbeat/heartbeat.controller';
 import { LoggerModule } from './logger';
+import { TemplatesModule } from './templates/templates.module';
 
 import configuration from './config/configuration';
 @Module({
@@ -23,6 +24,7 @@ import configuration from './config/configuration';
       }),
       inject: [ConfigService],
     }),
+    TemplatesModule,
   ],
   controllers: [AppController, HeartbeatController],
   providers: [AppService],
