@@ -13,7 +13,7 @@ async function bootstrap() {
     new FastifyAdapter(),
   );
 
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   const PORT = app.get(ConfigService).get('port');
   const BIND_ADDRESS = app.get(ConfigService).get('bindAddress');

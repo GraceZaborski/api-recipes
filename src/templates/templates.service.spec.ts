@@ -3,7 +3,7 @@ import { TemplatesService } from './templates.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Chance } from 'chance';
-import { CreateTemplateDto } from './dto/createTemplate.dto';
+import { TemplateDto } from './dto/createTemplate.dto';
 import { TemplateDocument } from './schemas/template.schema';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 
@@ -47,7 +47,7 @@ describe('TemplatesService', () => {
             findByIdAndRemove: jest.fn(),
             new: jest.fn().mockResolvedValue(mockTemplate),
             constructor: jest.fn().mockResolvedValue(mockTemplate),
-            create: jest.fn().mockResolvedValue(CreateTemplateDto),
+            create: jest.fn().mockResolvedValue(TemplateDto),
             findAll: jest.fn(),
             findOne: jest.fn(),
             update: jest.fn(),
