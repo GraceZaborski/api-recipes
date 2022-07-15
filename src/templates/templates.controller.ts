@@ -44,7 +44,6 @@ export class TemplatesController {
       const template = await this.templatesService.create(payload);
       return template;
     } catch (error) {
-      console.log(error);
       return new BadRequestException('Template creation failed');
     }
   }

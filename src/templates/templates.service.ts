@@ -23,7 +23,6 @@ export class TemplatesService {
   }
 
   public async create(templateDto: Omit<TemplateDto, 'id'>): Promise<Template> {
-    console.log(templateDto);
     return this.templateModel.create(templateDto);
   }
 }

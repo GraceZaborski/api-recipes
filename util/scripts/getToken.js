@@ -66,7 +66,12 @@ const main = async () => {
   });
 
   if (loginRes.status === 200) {
-    const { id: userid, companyid, email: username } = await loginRes.json();
+    const {
+      id: userid,
+      companyid,
+      email: username,
+      roles,
+    } = await loginRes.json();
     console.info(`Logged in as ${username}`);
 
     const authContext = {
@@ -76,7 +81,7 @@ const main = async () => {
       iat: 1611581901,
       iss: 'Beamery',
       nbf: 1611581901,
-      roles: 'super_admin',
+      roles,
       sub: 'dacc33fc2e2b086f5ac2',
       userid,
       username,
