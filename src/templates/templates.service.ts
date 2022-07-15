@@ -15,7 +15,11 @@ export class TemplatesService {
     paginationQuery: PaginationQueryDto,
   ): Promise<Template[]> {
     const { limit, offset } = paginationQuery;
-    return this.templateModel.find().skip(offset).limit(limit).exec();
+    return this.templateModel
+      .find()
+      .skip(offset)
+      .limit(limit || 100)
+      .exec();
   }
 
   public async create(templateDto: Omit<TemplateDto, 'id'>): Promise<Template> {

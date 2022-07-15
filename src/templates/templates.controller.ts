@@ -7,6 +7,7 @@ import {
   BadRequestException,
   UseInterceptors,
 } from '@nestjs/common';
+import { ACL, AuthContext } from '@cerbero/mod-auth';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { TemplateDto, CreateTemplateDto } from './dto';
 import { TemplatesService } from './templates.service';
@@ -17,6 +18,7 @@ export class TemplatesController {
 
   @Get()
   @UseInterceptors(new TransformInterceptor(TemplateDto))
+  @ACL('templates/template:view')
   public async getAllTemplates(@Query() paginationQuery: PaginationQueryDto) {
     const templates = await this.templatesService.findAll(paginationQuery);
     return templates;
@@ -24,13 +26,15 @@ export class TemplatesController {
 
   @Post()
   @UseInterceptors(new TransformInterceptor(TemplateDto))
+  @ACL('templates/template:create')
   public async createTemplate(
     @Body() templateDto: CreateTemplateDto,
+    @AuthContext() { userId: createdBy, companyId },
   ): Promise<TemplateDto | Error> {
     const payload = {
       ...templateDto,
-      companyId: 'companyId',
-      createdBy: 'userId',
+      companyId,
+      createdBy,
       createdAt: new Date(),
       updatedBy: null,
       updatedAt: null,
