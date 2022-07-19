@@ -81,7 +81,7 @@ const main = async () => {
       iat: 1611581901,
       iss: 'Beamery',
       nbf: 1611581901,
-      roles,
+      roles: roles.join(','),
       sub: 'dacc33fc2e2b086f5ac2',
       userid,
       username,
