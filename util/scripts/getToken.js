@@ -68,7 +68,7 @@ const main = async () => {
   if (loginRes.status === 200) {
     const {
       id: userid,
-      companyid,
+      companyId: companyid,
       email: username,
       roles,
     } = await loginRes.json();
