@@ -68,7 +68,7 @@ const main = async () => {
   if (loginRes.status === 200) {
     const {
       id: userid,
-      companyid,
+      companyId: companyid,
       email: username,
       roles,
     } = await loginRes.json();
@@ -81,7 +81,7 @@ const main = async () => {
       iat: 1611581901,
       iss: 'Beamery',
       nbf: 1611581901,
-      roles,
+      roles: roles.join(','),
       sub: 'dacc33fc2e2b086f5ac2',
       userid,
       username,
