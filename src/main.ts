@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
+import { ValidationPipe } from '@nestjs/common';
 import {
   FastifyAdapter,
   NestFastifyApplication,
@@ -11,6 +12,9 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter(),
   );
+
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+
   const PORT = app.get(ConfigService).get('port');
   const BIND_ADDRESS = app.get(ConfigService).get('bindAddress');
   await app.listen(PORT, BIND_ADDRESS);
