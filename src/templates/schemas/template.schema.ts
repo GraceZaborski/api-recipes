@@ -59,3 +59,5 @@ export class Template {
 export type TemplateDocument = Template & Document;
 
 export const TemplateSchema = SchemaFactory.createForClass(Template);
+
+TemplateSchema.index({ title: 'text', subject: 'text' });

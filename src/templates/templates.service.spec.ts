@@ -3,9 +3,8 @@ import { TemplatesService } from './templates.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Chance } from 'chance';
-import { TemplateDto } from './dto';
+import { FilterQueryDto, TemplateDto } from './dto';
 import { TemplateDocument } from './schemas/template.schema';
-import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 
 const chance = new Chance();
 
@@ -29,9 +28,10 @@ describe('TemplatesService', () => {
   let service: TemplatesService;
   let model: Model<TemplateDocument>;
 
-  const paginationQueryDto: PaginationQueryDto = {
+  const filterQueryDto: FilterQueryDto = {
     limit: 10,
     offset: 1,
+    search: '',
   };
 
   beforeEach(async () => {
@@ -78,7 +78,7 @@ describe('TemplatesService', () => {
         populate: jest.fn().mockReturnThis(),
       } as any);
 
-      const templates = await service.findAll(paginationQueryDto);
+      const templates = await service.findAll(filterQueryDto);
       expect(templates).toEqual(mockTemplateCollection);
     });
   });
