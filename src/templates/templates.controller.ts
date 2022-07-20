@@ -8,8 +8,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ACL, AuthContext } from '@cerbero/mod-auth';
-import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
-import { TemplateDto, CreateTemplateDto } from './dto';
+import { TemplateDto, CreateTemplateDto, FilterQueryDto } from './dto';
 import { TemplatesService } from './templates.service';
 import { TransformInterceptor } from '../interceptors/classTransformer.interceptor';
 @Controller('templates')
@@ -19,8 +18,8 @@ export class TemplatesController {
   @Get()
   @UseInterceptors(new TransformInterceptor(TemplateDto))
   @ACL('templates/template:view')
-  public async getAllTemplates(@Query() paginationQuery: PaginationQueryDto) {
-    const templates = await this.templatesService.findAll(paginationQuery);
+  public async getAllTemplates(@Query() filterQuery: FilterQueryDto) {
+    const templates = await this.templatesService.findAll(filterQuery);
     return templates;
   }
 
