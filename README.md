@@ -13,10 +13,6 @@ This is the new Campaigns API IFR
 
 ### To run the app:
 
-```
-yarn start
-```
-
 To start dependencies (mongo):
 
 ```
@@ -30,8 +26,14 @@ kube_cloudflare.sh beamery-staging kubectl port-forward -n aether svc/auth 50050
 ```
 
 ```
-export CHIMERA_AUTH_SERVICE_LOADBALANCER=localhost
+export CHIMERA_AUTH_SERVICE_LOADBALANCER=localhost &&\
 export CHIMERA_AUTH_PORT=50050
+
+```
+
+```
+yarn start
+
 ```
 
 ### Interacting with the API
