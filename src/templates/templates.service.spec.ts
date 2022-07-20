@@ -8,7 +8,7 @@ import { TemplateDocument } from './schemas/template.schema';
 
 const chance = new Chance();
 
-const generateTemplate = (): any => ({
+export const generateTemplate = (): any => ({
   title: chance.sentence(),
   unlayer: {
     json: {},
