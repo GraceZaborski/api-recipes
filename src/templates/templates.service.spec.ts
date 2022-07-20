@@ -21,8 +21,10 @@ export const generateTemplate = (): any => ({
   updatedAt: null,
 });
 
-const mockTemplate = generateTemplate();
-const mockTemplateCollection = [...Array(10).keys()].map(generateTemplate);
+export const mockTemplate = generateTemplate();
+export const mockTemplateCollection = [...Array(10).keys()].map(
+  generateTemplate,
+);
 
 describe('TemplatesService', () => {
   let service: TemplatesService;
