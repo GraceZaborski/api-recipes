@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
-
+import * as mongooseUniqueValidator from 'mongoose-unique-validator';
 @Schema()
 export class UnlayerDesign {
   @Prop({ type: Object })
@@ -28,7 +28,7 @@ export class Template {
   @Prop({ type: String, unique: true, default: uuidv4 })
   id: string;
 
-  @Prop()
+  @Prop({ type: String, unique: true, required: true })
   title: string;
 
   @Prop()
@@ -61,3 +61,5 @@ export type TemplateDocument = Template & Document;
 export const TemplateSchema = SchemaFactory.createForClass(Template);
 
 TemplateSchema.index({ title: 'text', subject: 'text' });
+
+TemplateSchema.plugin(mongooseUniqueValidator, { message: 'unique' });

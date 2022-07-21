@@ -20,6 +20,7 @@ import {
 } from './utils/authUtils';
 
 import { proto } from '@beamery/chimera-auth-client';
+import { setupGlobals } from '../src/globals';
 
 const chance = new Chance();
 
@@ -46,8 +47,6 @@ describe('TemplatesController (e2e)', () => {
   let headersWithToken;
 
   beforeAll(async () => {
-    jest.setTimeout(50000);
-
     headersWithToken = {
       'x-token-payload': buildXTokenPayload({ companyId, userId, roles }),
     };
@@ -69,6 +68,9 @@ describe('TemplatesController (e2e)', () => {
     app = moduleFixture.createNestApplication<NestFastifyApplication>(
       new FastifyAdapter(),
     );
+
+    setupGlobals(app);
+
     await app.init();
     await app.getHttpAdapter().getInstance().ready();
   });
@@ -191,5 +193,32 @@ describe('TemplatesController (e2e)', () => {
     expect(searchSubject.json().length).toEqual(1);
     expect(searchSubjectTemplate.id).toEqual(searchTemplateId);
     expect(searchSubjectTemplate.subject).toEqual(searchTemplate.subject);
+  });
+
+  it('should return 409 if a template is created with a duplicate title', async () => {
+    stubAuthUserResponse({ abilities: [ABILITIES.TEMPLATE_CREATE] });
+
+    const template = {
+      ...newTemplate,
+      title: chance.word(),
+    };
+
+    const response = await app.inject({
+      method: 'POST',
+      url: '/templates',
+      headers: headersWithToken,
+      payload: template,
+    });
+
+    expect(response.statusCode).toEqual(201);
+
+    const duplicateResponse = await app.inject({
+      method: 'POST',
+      url: '/templates',
+      headers: headersWithToken,
+      payload: template,
+    });
+
+    expect(duplicateResponse.statusCode).toEqual(409);
   });
 });
