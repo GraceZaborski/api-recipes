@@ -7,10 +7,9 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ACL, AuthContext } from '@cerbero/mod-auth';
-import { TemplateDto, CreateTemplateDto, FilterQueryDto } from './dto';
+import { TemplateDto, FilterQueryDto, CreateTemplateDto } from './dto';
 import { TemplatesService } from './templates.service';
 import { TransformInterceptor } from '../interceptors/classTransformer.interceptor';
-import { ValidationError } from 'mongoose/lib/error/validation';
 @Controller('templates')
 @UseInterceptors(new TransformInterceptor(TemplateDto))
 export class TemplatesController {
@@ -32,7 +31,7 @@ export class TemplatesController {
   @Post()
   @ACL('templates/template:create')
   public async createTemplate(
-    @Body() templateDto: any, //CreateTemplateDto,
+    @Body() templateDto: CreateTemplateDto,
     @AuthContext() { userId: createdBy, companyId },
   ): Promise<TemplateDto | Error> {
     const payload = {
@@ -44,6 +43,6 @@ export class TemplatesController {
       updatedAt: null,
     };
 
-    return await this.templatesService.create(payload);
+    return this.templatesService.create(payload);
   }
 }
