@@ -62,4 +62,6 @@ export const TemplateSchema = SchemaFactory.createForClass(Template);
 
 TemplateSchema.index({ title: 'text', subject: 'text' });
 
-TemplateSchema.plugin(mongooseUniqueValidator, { message: 'unique' });
+TemplateSchema.plugin(mongooseUniqueValidator, {
+  message: 'must be unique',
+});
