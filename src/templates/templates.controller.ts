@@ -4,9 +4,7 @@ import {
   Query,
   Post,
   Body,
-  BadRequestException,
   UseInterceptors,
-  ConflictException,
 } from '@nestjs/common';
 import { ACL, AuthContext } from '@cerbero/mod-auth';
 import { TemplateDto, CreateTemplateDto, FilterQueryDto } from './dto';
@@ -20,8 +18,14 @@ export class TemplatesController {
 
   @Get()
   @ACL('templates/template:view')
-  public async getAllTemplates(@Query() filterQuery: FilterQueryDto) {
-    const templates = await this.templatesService.findAll(filterQuery);
+  public async getAllTemplates(
+    @Query() filterQuery: FilterQueryDto,
+    @AuthContext() { companyId },
+  ) {
+    const templates = await this.templatesService.findAll({
+      ...filterQuery,
+      companyId,
+    });
     return templates;
   }
 
