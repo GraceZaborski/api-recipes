@@ -41,9 +41,16 @@ describe('TemplatesController', () => {
       search: null,
     };
 
-    await templatesController.getAllTemplates(filterQuery);
+    const companyId = chance.guid();
 
-    expect(templatesService.findAll).toHaveBeenCalledWith(filterQuery);
+    await templatesController.getAllTemplates(filterQuery, {
+      companyId,
+    });
+
+    expect(templatesService.findAll).toHaveBeenCalledWith({
+      ...filterQuery,
+      companyId,
+    });
   });
 
   it('should add the correct data when creating a template', async () => {

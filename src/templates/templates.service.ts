@@ -12,7 +12,7 @@ export class TemplatesService {
   ) {}
 
   public async findAll(
-    filterQuery: FilterQueryDto & { companyId: string },
+    filterQuery: FilterQueryDto & { companyId?: string },
   ): Promise<Template[]> {
     const { limit, offset, search, companyId } = filterQuery;
     const findQuery = { companyId };
