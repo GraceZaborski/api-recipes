@@ -11,9 +11,11 @@ export class TemplatesService {
     @InjectModel(Template.name) private readonly templateModel: Model<Template>,
   ) {}
 
-  public async findAll(filterQuery: FilterQueryDto): Promise<Template[]> {
-    const { limit, offset, search } = filterQuery;
-    const findQuery = {};
+  public async findAll(
+    filterQuery: FilterQueryDto & { companyId: string },
+  ): Promise<Template[]> {
+    const { limit, offset, search, companyId } = filterQuery;
+    const findQuery = { companyId };
     if (search) {
       findQuery['$text'] = { $search: search };
     }

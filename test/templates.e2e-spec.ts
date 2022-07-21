@@ -221,4 +221,59 @@ describe('TemplatesController (e2e)', () => {
 
     expect(duplicateResponse.statusCode).toEqual(409);
   });
+
+  it('should only show templates from the users companyId', async () => {
+    stubAuthUserResponse({
+      abilities: [ABILITIES.TEMPLATE_CREATE, ABILITIES.TEMPLATE_VIEW],
+    });
+
+    const template = {
+      ...newTemplate,
+      title: chance.word(),
+    };
+
+    const companyId2 = `${companyId}2`;
+
+    const company2Headers = {
+      'x-token-payload': buildXTokenPayload({
+        companyId: companyId2,
+        userId,
+        roles,
+      }),
+    };
+
+    const response = await app.inject({
+      method: 'POST',
+      url: '/templates',
+      headers: company2Headers,
+      payload: template,
+    });
+
+    expect(response.statusCode).toEqual(201);
+
+    const company2Templates = await app.inject({
+      method: 'GET',
+      url: '/templates',
+      headers: company2Headers,
+    });
+
+    expect(company2Templates.statusCode).toEqual(200);
+    expect(company2Templates.json().length).toEqual(1);
+    const [company2Template] = company2Templates.json();
+    expect(company2Template.companyId).toEqual(companyId2);
+
+    const company1Templates = await app.inject({
+      method: 'GET',
+      url: '/templates',
+      headers: headersWithToken,
+    });
+
+    expect(company1Templates.statusCode).toEqual(200);
+
+    const companyIds = company1Templates
+      .json()
+      .map((template) => template.companyId)
+      .filter((id) => id === companyId);
+    expect(companyIds.length).toEqual(company1Templates.json().length);
+  });
 });
