@@ -20,17 +20,18 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ErrorResponseDto } from '../common/dto/errorResponse.dto';
+import { PaginatedTemplates } from './dto/paginatedTemplates.dto';
 
 @ApiTags('templates')
 @ApiSecurity('api_key')
 @Controller('templates')
-@UseInterceptors(new TransformInterceptor(TemplateDto))
 export class TemplatesController {
   constructor(private templatesService: TemplatesService) {}
 
   @Get()
   @ACL('templates/template:view')
-  @ApiOkResponse({ type: [TemplateDto] })
+  @UseInterceptors(new TransformInterceptor(PaginatedTemplates))
+  @ApiOkResponse({ type: PaginatedTemplates })
   @ApiForbiddenResponse({ type: ErrorResponseDto })
   public async getAllTemplates(
     @Query() filterQuery: FilterQueryDto,
@@ -45,6 +46,7 @@ export class TemplatesController {
 
   @Post()
   @ACL('templates/template:create')
+  @UseInterceptors(new TransformInterceptor(TemplateDto))
   @ApiCreatedResponse({ type: TemplateDto })
   @ApiForbiddenResponse({ type: ErrorResponseDto })
   @ApiConflictResponse({ type: ErrorResponseDto })

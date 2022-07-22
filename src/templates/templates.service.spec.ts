@@ -44,6 +44,7 @@ describe('TemplatesService', () => {
           provide: getModelToken('Template'),
           useValue: {
             find: jest.fn().mockReturnValue(mockTemplateCollection),
+            count: jest.fn().mockReturnValue(mockTemplateCollection.length),
             findById: jest.fn(),
             findByIdAndUpdate: jest.fn(),
             findByIdAndRemove: jest.fn(),
@@ -75,13 +76,20 @@ describe('TemplatesService', () => {
     it('should return all templates', async () => {
       jest.spyOn(model, 'find').mockReturnValue({
         exec: jest.fn().mockResolvedValueOnce(mockTemplateCollection),
+        count: jest.fn().mockReturnValue(mockTemplateCollection.length),
         skip: jest.fn().mockReturnThis(),
         limit: jest.fn().mockReturnThis(),
         populate: jest.fn().mockReturnThis(),
       } as any);
 
       const templates = await service.findAll(filterQueryDto);
-      expect(templates).toEqual(mockTemplateCollection);
+
+      expect(templates).toEqual({
+        results: mockTemplateCollection,
+        count: mockTemplateCollection.length,
+        offset: filterQueryDto.offset,
+        limit: filterQueryDto.limit,
+      });
     });
   });
 });
