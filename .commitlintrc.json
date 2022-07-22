@@ -1,0 +1,3 @@
+{
+  "extends": ["@beamery/commitlint-config"]
+}
