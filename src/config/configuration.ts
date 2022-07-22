@@ -16,6 +16,7 @@ const {
   DAL_MONGODB_CAMPAIGNS_nodes,
   DAL_MONGODB_CAMPAIGNS_readPreference,
   SVC_NAME = 'api-campaigns',
+  ENABLE_SWAGGER = 'true',
 } = process.env;
 
 export const isLocal = !NAMESPACE;
@@ -39,11 +40,12 @@ if (DAL_MONGODB_CAMPAIGNS_username && DAL_MONGODB_CAMPAIGNS_password) {
 
 const dalUrl = `mongodb://${mongoAuth}${DAL_MONGODB_CAMPAIGNS_username}${DAL_MONGODB_CAMPAIGNS_nodes}/${DAL_MONGODB_CAMPAIGNS_database}`;
 
-const CONFIG = {
+export const config = {
   port: PORT,
   bindAddress: BIND_ADDRESS,
   isLocal,
   logLevel: LOG_LEVEL,
+  enableSwagger: ENABLE_SWAGGER === 'true',
   mongo: {
     uri: isLocal ? MONGO_URI : dalUrl,
     ...(isLocal ? {} : mongoOptions),
@@ -51,4 +53,4 @@ const CONFIG = {
   },
 };
 
-export default () => CONFIG;
+export default () => config;
