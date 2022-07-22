@@ -18,7 +18,7 @@ const {
   SVC_NAME = 'api-campaigns',
 } = process.env;
 
-const isLocal = !NAMESPACE;
+export const isLocal = !NAMESPACE;
 
 const mongoOptions: MongooseModuleOptions = {
   appName: SVC_NAME,

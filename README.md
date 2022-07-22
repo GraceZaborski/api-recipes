@@ -2,6 +2,10 @@
 
 This is the new Campaigns API IFR
 
+## API Docs
+
+Available on any deployed instance of the api: https://frontier.aether.staging.beamery.engineer/api-campaigns/docs/swagger
+
 ## Local dev
 
 ### Dependencies:
