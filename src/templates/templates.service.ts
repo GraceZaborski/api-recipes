@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { FilterQueryDto } from './dto';
+import { PaginatedTemplates } from './dto/paginatedTemplates.dto';
 import { TemplateDto } from './dto/template.dto';
 import { Template } from './schemas/template.schema';
 
@@ -13,17 +14,21 @@ export class TemplatesService {
 
   public async findAll(
     filterQuery: FilterQueryDto & { companyId?: string },
-  ): Promise<Template[]> {
-    const { limit, offset, search, companyId } = filterQuery;
+  ): Promise<PaginatedTemplates> {
+    const { limit = 20, offset = 0, search, companyId } = filterQuery;
     const findQuery = { companyId };
     if (search) {
       findQuery['$text'] = { $search: search };
     }
-    return this.templateModel
+    const results = await this.templateModel
       .find(findQuery)
       .skip(offset)
-      .limit(limit || 100)
+      .limit(limit)
       .exec();
+
+    const count = await this.templateModel.count();
+
+    return { results, count, limit, offset };
   }
 
   public async create(templateDto: Omit<TemplateDto, 'id'>): Promise<Template> {

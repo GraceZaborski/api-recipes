@@ -42,6 +42,13 @@ const newTemplate = {
   },
 };
 
+const allTemplatesResponse = {
+  results: [],
+  count: 0,
+  limit: 20,
+  offset: 0,
+};
+
 describe('TemplatesController (e2e)', () => {
   let app: NestFastifyApplication;
   let headersWithToken;
@@ -111,7 +118,7 @@ describe('TemplatesController (e2e)', () => {
     });
 
     expect(response.statusCode).toEqual(200);
-    expect(response.json()).toEqual([]);
+    expect(response.json()).toEqual(allTemplatesResponse);
   });
 
   it('should be able to create a template', async () => {
@@ -136,13 +143,26 @@ describe('TemplatesController (e2e)', () => {
     });
 
     expect(response.statusCode).toEqual(200);
-    expect(response.json()[0]).toEqual(
+    expect(response.json().results[0]).toEqual(
       expect.objectContaining({
         ...newTemplate,
         companyId,
         createdBy: userId,
       }),
     );
+
+    expect(Object.keys(response.json().results[0])).toEqual([
+      'id',
+      'title',
+      'subject',
+      'unlayer',
+      'recipientVariables',
+      'companyId',
+      'createdBy',
+      'createdAt',
+      'updatedBy',
+      'updatedAt',
+    ]);
   });
 
   it('should be able to search title and subject', async () => {
@@ -175,9 +195,9 @@ describe('TemplatesController (e2e)', () => {
       headers: headersWithToken,
     });
 
-    const [searchTitleTemplate] = searchTitle.json();
+    const [searchTitleTemplate] = searchTitle.json().results;
     expect(searchTitle.statusCode).toEqual(200);
-    expect(searchTitle.json().length).toEqual(1);
+    expect(searchTitle.json().results.length).toEqual(1);
     expect(searchTitleTemplate.id).toEqual(searchTemplateId);
     expect(searchTitleTemplate.title).toEqual(searchTemplate.title);
 
@@ -188,9 +208,9 @@ describe('TemplatesController (e2e)', () => {
       headers: headersWithToken,
     });
 
-    const [searchSubjectTemplate] = searchSubject.json();
+    const [searchSubjectTemplate] = searchSubject.json().results;
     expect(searchSubject.statusCode).toEqual(200);
-    expect(searchSubject.json().length).toEqual(1);
+    expect(searchSubject.json().results.length).toEqual(1);
     expect(searchSubjectTemplate.id).toEqual(searchTemplateId);
     expect(searchSubjectTemplate.subject).toEqual(searchTemplate.subject);
   });
@@ -258,8 +278,8 @@ describe('TemplatesController (e2e)', () => {
     });
 
     expect(company2Templates.statusCode).toEqual(200);
-    expect(company2Templates.json().length).toEqual(1);
-    const [company2Template] = company2Templates.json();
+    expect(company2Templates.json().results.length).toEqual(1);
+    const [company2Template] = company2Templates.json().results;
     expect(company2Template.companyId).toEqual(companyId2);
 
     const company1Templates = await app.inject({
@@ -272,8 +292,72 @@ describe('TemplatesController (e2e)', () => {
 
     const companyIds = company1Templates
       .json()
-      .map((template) => template.companyId)
+      .results.map((template) => template.companyId)
       .filter((id) => id === companyId);
-    expect(companyIds.length).toEqual(company1Templates.json().length);
+    expect(companyIds.length).toEqual(company1Templates.json().results.length);
+  });
+
+  it('should be able to paginate results', async () => {
+    stubAuthUserResponse({
+      abilities: [ABILITIES.TEMPLATE_VIEW, ABILITIES.TEMPLATE_CREATE],
+    });
+
+    const NEW_TEMPLATES_COUNT = 10;
+
+    // Lets create a few more templates
+    await Promise.all(
+      Array(NEW_TEMPLATES_COUNT)
+        .fill(0)
+        .map(() =>
+          app.inject({
+            method: 'POST',
+            url: '/templates',
+            headers: headersWithToken,
+            payload: {
+              ...newTemplate,
+              title: chance.word(),
+            },
+          }),
+        ),
+    );
+
+    const allTemplates = await app.inject({
+      method: 'GET',
+      url: '/templates',
+      query: { offset: '0', limit: '100' },
+      headers: headersWithToken,
+    });
+
+    expect(allTemplates.statusCode).toEqual(200);
+    const ids = allTemplates.json().results.map((template) => template.id);
+    expect(ids.length).toBeGreaterThan(NEW_TEMPLATES_COUNT);
+
+    const limit = Math.round(ids.length / 2);
+
+    const firstPage = await app.inject({
+      method: 'GET',
+      url: '/templates',
+      query: { offset: '0', limit: `${limit}` },
+      headers: headersWithToken,
+    });
+
+    expect(firstPage.statusCode).toEqual(200);
+    expect(firstPage.json().results.length).toEqual(limit);
+    expect(firstPage.json().results.map((template) => template.id)).toEqual(
+      ids.slice(0, limit),
+    );
+
+    const secondPage = await app.inject({
+      method: 'GET',
+      url: '/templates',
+      query: { offset: `${limit}`, limit: `${limit}` },
+      headers: headersWithToken,
+    });
+
+    expect(secondPage.statusCode).toEqual(200);
+    expect(secondPage.json().results.length).toBeLessThanOrEqual(limit);
+    expect(secondPage.json().results.map((template) => template.id)).toEqual(
+      ids.slice(limit),
+    );
   });
 });
