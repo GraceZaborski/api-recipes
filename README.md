@@ -14,6 +14,7 @@ Available on any deployed instance of the api: https://frontier.aether.staging.b
 - docker
 - docker-compose`
 - [beamery-platform-tooling](https://beameryhq.atlassian.net/wiki/spaces/EN/pages/696058077/Beamery+Cluster+Toolbox#Setup)
+- [gitleaks](https://github.com/zricethezav/gitleaks)
 
 ### To run the app:
 
