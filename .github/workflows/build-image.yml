@@ -47,6 +47,16 @@ jobs:
           docker build -t ${DOCKER_TAG} .
           docker tag ${DOCKER_TAG} ${DOCKER_TAG}-${{ env.HASH }}
 
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.IMAGE }}:${{ env.BRANCH }}-${{ env.HASH }}'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
       - name: Publish artefacts
         run: |
           export DOCKER_TAG=${{ env.IMAGE }}:${{ env.BRANCH }}
