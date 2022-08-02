@@ -6,6 +6,7 @@ import { PaginatedTemplates } from './dto/paginatedTemplates.dto';
 import { TemplateDto } from './dto/template.dto';
 import { Template } from './schemas/template.schema';
 
+type FilterWithCompany = FilterQueryDto & { companyId?: string };
 @Injectable()
 export class TemplatesService {
   constructor(
@@ -13,13 +14,25 @@ export class TemplatesService {
   ) {}
 
   public async findAll(
-    filterQuery: FilterQueryDto & { companyId?: string },
+    filterQuery: FilterWithCompany,
   ): Promise<PaginatedTemplates> {
-    const { limit = 20, offset = 0, search, companyId } = filterQuery;
-    const findQuery = { companyId };
+    const {
+      limit = 20,
+      offset = 0,
+      search,
+      companyId,
+      createdBy = undefined,
+    } = filterQuery;
+    const findQuery: Partial<FilterWithCompany> = { companyId };
+
     if (search) {
       findQuery['$text'] = { $search: search };
     }
+
+    if (createdBy) {
+      findQuery.createdBy = createdBy;
+    }
+
     const results = await this.templateModel
       .find(findQuery)
       .skip(offset)
