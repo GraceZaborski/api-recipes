@@ -17,6 +17,10 @@ const {
   DAL_MONGODB_CAMPAIGNS_readPreference,
   SVC_NAME = 'api-campaigns',
   ENABLE_SWAGGER = 'true',
+  UNLAYER_ONPREM_API_KEY,
+  DOMAIN = 'aether.staging.beamery.engineer',
+  CAMPAIGN_V2_PUBLIC_BUCKET = 'name',
+  CAMPAIGN_V2_PUBLIC_HOSTNAME,
 } = process.env;
 
 export const isLocal = !NAMESPACE;
@@ -50,6 +54,21 @@ export const config = {
     uri: isLocal ? MONGO_URI : dalUrl,
     ...(isLocal ? {} : mongoOptions),
     loggerLevel: 'debug',
+  },
+  unlayer: {
+    apiKey: UNLAYER_ONPREM_API_KEY,
+    apiUrl: `https://frontier.${DOMAIN}/unlayer-export-api/v1`,
+    previewImage: {
+      displayMode: 'email',
+      width: 422,
+      height: 355,
+    },
+  },
+  gcp: {
+    storage: {
+      bucket: CAMPAIGN_V2_PUBLIC_BUCKET,
+      hostname: CAMPAIGN_V2_PUBLIC_HOSTNAME,
+    },
   },
 };
 
