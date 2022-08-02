@@ -438,4 +438,46 @@ describe('TemplatesController (e2e)', () => {
 
     expect(asc.reverse()).toEqual(desc);
   });
+
+  it('should be able to fetch a single template', async () => {
+    stubAuthUserResponse({
+      abilities: [ABILITIES.TEMPLATE_CREATE, ABILITIES.TEMPLATE_VIEW],
+    });
+
+    const template = {
+      ...newTemplate,
+      title: chance.word(),
+    };
+
+    const response = await app.inject({
+      method: 'POST',
+      url: '/templates',
+      headers: headersWithToken,
+      payload: template,
+    });
+
+    expect(response.statusCode).toEqual(201);
+
+    const createdTemplate = response.json();
+
+    const getTemplate = await app.inject({
+      method: 'GET',
+      url: `/templates/${createdTemplate.id}`,
+      headers: headersWithToken,
+    });
+
+    expect(getTemplate.statusCode).toEqual(200);
+    expect(getTemplate.json()).toEqual(createdTemplate);
+  });
+
+  it('should return 404 for non-existent template', async () => {
+    const template = await app.inject({
+      method: 'GET',
+      url: `/templates/${chance.guid()}`,
+      headers: headersWithToken,
+    });
+
+    expect(template.statusCode).toEqual(404);
+    expect(template.json()).toEqual({ statusCode: 404, message: 'Not Found' });
+  });
 });

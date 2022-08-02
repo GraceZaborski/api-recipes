@@ -13,6 +13,10 @@ export class TemplatesService {
     @InjectModel(Template.name) private readonly templateModel: Model<Template>,
   ) {}
 
+  public async findOne(id: string, companyId: string): Promise<TemplateDto> {
+    return this.templateModel.findOne({ id, companyId }).exec();
+  }
+
   public async findAll(
     filterQuery: FilterWithCompany,
   ): Promise<PaginatedTemplates> {
