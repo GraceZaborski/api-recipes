@@ -18,7 +18,7 @@ describe('TemplatesController', () => {
           useValue: {
             create: jest.fn(() => []),
             findAll: jest.fn(() => []),
-            findOne: jest.fn(),
+            findOne: jest.fn(() => []),
             update: jest.fn(),
             remove: jest.fn(),
           },
@@ -32,6 +32,25 @@ describe('TemplatesController', () => {
 
   it('should be defined', () => {
     expect(templatesController).toBeDefined();
+  });
+
+  it('should be able to get a single template', async () => {
+    const templateId = chance.guid();
+    const companyId = chance.guid();
+    await templatesController.getTemplate(templateId, { companyId });
+    expect(templatesService.findOne).toHaveBeenCalledWith(
+      templateId,
+      companyId,
+    );
+  });
+
+  it('should throw if the template does not exist', async () => {
+    const templateId = chance.guid();
+    const companyId = chance.guid();
+    jest.spyOn(templatesService, 'findOne').mockReturnValueOnce(null);
+    await expect(
+      templatesController.getTemplate(templateId, { companyId }),
+    ).rejects.toThrow('Not Found');
   });
 
   it('should be able to get all templates', async () => {

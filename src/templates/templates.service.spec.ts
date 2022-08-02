@@ -96,4 +96,16 @@ describe('TemplatesService', () => {
       });
     });
   });
+
+  describe('findOne()', () => {
+    it('should return a single template', async () => {
+      jest.spyOn(model, 'findOne').mockReturnValue({
+        exec: jest.fn().mockResolvedValueOnce(mockTemplate),
+        limit: jest.fn().mockReturnThis(),
+      } as any);
+
+      const template = await service.findOne(chance.guid(), chance.guid());
+      expect(template).toEqual(template);
+    });
+  });
 });

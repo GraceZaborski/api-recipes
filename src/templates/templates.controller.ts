@@ -5,6 +5,8 @@ import {
   Post,
   Body,
   UseInterceptors,
+  Param,
+  NotFoundException,
 } from '@nestjs/common';
 import { ACL, AuthContext } from '@cerbero/mod-auth';
 import { TemplateDto, FilterQueryDto, CreateTemplateDto } from './dto';
@@ -15,6 +17,7 @@ import {
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
@@ -37,11 +40,29 @@ export class TemplatesController {
     @Query() filterQuery: FilterQueryDto,
     @AuthContext() { companyId },
   ) {
-    const templates = await this.templatesService.findAll({
+    return this.templatesService.findAll({
       ...filterQuery,
       companyId,
     });
-    return templates;
+  }
+
+  @Get('/:id')
+  @ACL('templates/template:view')
+  @ApiOkResponse({ type: TemplateDto })
+  @ApiForbiddenResponse({ type: ErrorResponseDto })
+  @ApiNotFoundResponse({ type: ErrorResponseDto })
+  @UseInterceptors(new TransformInterceptor(TemplateDto))
+  public async getTemplate(
+    @Param('id') id: string,
+    @AuthContext() { companyId },
+  ) {
+    const template = await this.templatesService.findOne(id, companyId);
+
+    if (!template) {
+      throw new NotFoundException();
+    }
+
+    return template;
   }
 
   @Post()
