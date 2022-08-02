@@ -414,4 +414,28 @@ describe('TemplatesController (e2e)', () => {
 
     expect(userIds.length).toEqual(templates.json().results.length);
   });
+
+  it('should be able to sort by createdAt', async () => {
+    const templatesAsc = await app.inject({
+      method: 'GET',
+      url: '/templates',
+      headers: headersWithToken,
+      query: { sortBy: 'createdAt', sortOrder: 'asc' },
+    });
+
+    expect(templatesAsc.statusCode).toEqual(200);
+    const asc = templatesAsc.json().results;
+
+    const templatesDesc = await app.inject({
+      method: 'GET',
+      url: '/templates',
+      headers: headersWithToken,
+      query: { sortBy: 'createdAt', sortOrder: 'desc' },
+    });
+
+    expect(templatesDesc.statusCode).toEqual(200);
+    const desc = templatesDesc.json().results;
+
+    expect(asc.reverse()).toEqual(desc);
+  });
 });
