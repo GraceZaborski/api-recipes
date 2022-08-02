@@ -39,6 +39,9 @@ describe('TemplatesController', () => {
       limit: null,
       offset: null,
       search: null,
+      createdBy: undefined,
+      sortBy: 'createdAt',
+      sortOrder: 'desc',
     };
 
     const companyId = chance.guid();

@@ -22,6 +22,8 @@ export class TemplatesService {
       search,
       companyId,
       createdBy = undefined,
+      sortBy = 'createdAt',
+      sortOrder = 'desc',
     } = filterQuery;
     const findQuery: Partial<FilterWithCompany> = { companyId };
 
@@ -35,6 +37,7 @@ export class TemplatesService {
 
     const results = await this.templateModel
       .find(findQuery)
+      .sort({ [sortBy]: sortOrder === 'asc' ? 1 : -1 })
       .skip(offset)
       .limit(limit)
       .exec();

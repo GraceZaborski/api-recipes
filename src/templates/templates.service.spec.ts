@@ -34,6 +34,9 @@ describe('TemplatesService', () => {
     limit: 10,
     offset: 1,
     search: '',
+    createdBy: undefined,
+    sortBy: 'createdAt',
+    sortOrder: 'desc',
   };
 
   beforeEach(async () => {
@@ -80,6 +83,7 @@ describe('TemplatesService', () => {
         skip: jest.fn().mockReturnThis(),
         limit: jest.fn().mockReturnThis(),
         populate: jest.fn().mockReturnThis(),
+        sort: jest.fn().mockReturnThis(),
       } as any);
 
       const templates = await service.findAll(filterQueryDto);
