@@ -7,4 +7,9 @@ export class FilterQueryDto extends PaginationQueryDto {
   @IsString()
   @ApiPropertyOptional()
   search: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  createdBy: string;
 }

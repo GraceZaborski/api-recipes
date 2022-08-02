@@ -360,4 +360,58 @@ describe('TemplatesController (e2e)', () => {
       ids.slice(limit),
     );
   });
+
+  it('should be able to filter by createdBy', async () => {
+    stubAuthUserResponse({
+      abilities: [ABILITIES.TEMPLATE_CREATE, ABILITIES.TEMPLATE_VIEW],
+    });
+
+    const template = {
+      ...newTemplate,
+      title: chance.word(),
+    };
+
+    const userId2 = chance.guid();
+
+    const headers = {
+      'x-token-payload': buildXTokenPayload({
+        companyId,
+        userId: userId2,
+        roles,
+      }),
+    };
+
+    const response = await app.inject({
+      method: 'POST',
+      url: '/templates',
+      headers,
+      payload: template,
+    });
+
+    expect(response.statusCode).toEqual(201);
+
+    const userId2Templates = await app.inject({
+      method: 'GET',
+      url: '/templates',
+      headers,
+      query: { createdBy: userId2 },
+    });
+
+    expect(userId2Templates.statusCode).toEqual(200);
+    expect(userId2Templates.json().results.length).toEqual(1);
+
+    const templates = await app.inject({
+      method: 'GET',
+      url: '/templates',
+      headers,
+      query: { createdBy: userId },
+    });
+
+    const userIds = templates
+      .json()
+      .results.map((template) => template.createdBy)
+      .filter((id) => id === userId);
+
+    expect(userIds.length).toEqual(templates.json().results.length);
+  });
 });
