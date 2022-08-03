@@ -19,8 +19,8 @@ describe('TemplatesController', () => {
             create: jest.fn(() => []),
             findAll: jest.fn(() => []),
             findOne: jest.fn(() => []),
+            delete: jest.fn(() => []),
             update: jest.fn(),
-            remove: jest.fn(),
           },
         },
       ],
@@ -108,5 +108,21 @@ describe('TemplatesController', () => {
     });
 
     spy.mockRestore();
+  });
+
+  it('should use the correct ids when deleting a template', async () => {
+    const templateId = chance.guid();
+    const companyId = chance.guid();
+    await templatesController.deleteTemplate(templateId, { companyId });
+    expect(templatesService.delete).toHaveBeenCalledWith(templateId, companyId);
+  });
+
+  it('should throw if deleting a non-existent template', async () => {
+    const templateId = chance.guid();
+    const companyId = chance.guid();
+    jest.spyOn(templatesService, 'delete').mockReturnValueOnce(null);
+    await expect(
+      templatesController.deleteTemplate(templateId, { companyId }),
+    ).rejects.toThrow('Not Found');
   });
 });

@@ -50,7 +50,7 @@ describe('TemplatesService', () => {
             count: jest.fn().mockReturnValue(mockTemplateCollection.length),
             findById: jest.fn(),
             findByIdAndUpdate: jest.fn(),
-            findByIdAndRemove: jest.fn(),
+            findOneAndDelete: jest.fn(),
             new: jest.fn().mockResolvedValue(mockTemplate),
             constructor: jest.fn().mockResolvedValue(mockTemplate),
             create: jest.fn().mockResolvedValue(TemplateDto),
@@ -105,6 +105,17 @@ describe('TemplatesService', () => {
       } as any);
 
       const template = await service.findOne(chance.guid(), chance.guid());
+      expect(template).toEqual(template);
+    });
+  });
+
+  describe('delete()', () => {
+    it('should return the deleted template', async () => {
+      jest.spyOn(model, 'findOneAndDelete').mockReturnValue({
+        exec: jest.fn().mockResolvedValueOnce(mockTemplate),
+      } as any);
+
+      const template = await service.delete(chance.guid(), chance.guid());
       expect(template).toEqual(template);
     });
   });

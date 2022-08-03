@@ -30,6 +30,7 @@ const roles = ['super_admin'];
 const ABILITIES = {
   TEMPLATE_CREATE: 'templates/template:create',
   TEMPLATE_VIEW: 'templates/template:view',
+  TEMPLATE_DELETE: 'templates/template:remove',
 };
 
 const newTemplate = {
@@ -471,8 +472,53 @@ describe('TemplatesController (e2e)', () => {
   });
 
   it('should return 404 for non-existent template', async () => {
+    stubAuthUserResponse({ abilities: [ABILITIES.TEMPLATE_VIEW] });
+
     const template = await app.inject({
       method: 'GET',
+      url: `/templates/${chance.guid()}`,
+      headers: headersWithToken,
+    });
+
+    expect(template.statusCode).toEqual(404);
+    expect(template.json()).toEqual({ statusCode: 404, message: 'Not Found' });
+  });
+
+  it('should be able to delete a template', async () => {
+    stubAuthUserResponse({
+      abilities: [ABILITIES.TEMPLATE_CREATE, ABILITIES.TEMPLATE_DELETE],
+    });
+
+    const template = {
+      ...newTemplate,
+      title: chance.word(),
+    };
+
+    const response = await app.inject({
+      method: 'POST',
+      url: '/templates',
+      headers: headersWithToken,
+      payload: template,
+    });
+
+    expect(response.statusCode).toEqual(201);
+
+    const responseTemplateId = JSON.parse(response.body).id;
+
+    const deletedTemplate = await app.inject({
+      method: 'DELETE',
+      url: `/templates/${responseTemplateId}`,
+      headers: headersWithToken,
+    });
+
+    expect(deletedTemplate.statusCode).toEqual(204);
+  });
+
+  it('should return 404 when deleting a non-existent template', async () => {
+    stubAuthUserResponse({ abilities: [ABILITIES.TEMPLATE_DELETE] });
+
+    const template = await app.inject({
+      method: 'DELETE',
       url: `/templates/${chance.guid()}`,
       headers: headersWithToken,
     });

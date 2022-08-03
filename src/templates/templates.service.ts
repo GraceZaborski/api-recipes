@@ -54,4 +54,8 @@ export class TemplatesService {
   public async create(templateDto: Omit<TemplateDto, 'id'>): Promise<Template> {
     return this.templateModel.create(templateDto);
   }
+
+  public async delete(id: string, companyId: string): Promise<TemplateDto> {
+    return this.templateModel.findOneAndDelete({ id, companyId }).exec();
+  }
 }

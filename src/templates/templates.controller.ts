@@ -5,8 +5,10 @@ import {
   Post,
   Body,
   UseInterceptors,
-  Param,
   NotFoundException,
+  Delete,
+  Param,
+  HttpCode,
 } from '@nestjs/common';
 import { ACL, AuthContext } from '@cerbero/mod-auth';
 import { TemplateDto, FilterQueryDto, CreateTemplateDto } from './dto';
@@ -17,10 +19,11 @@ import {
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
-  ApiNotFoundResponse,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
+  ApiNotFoundResponse,
+  ApiNoContentResponse,
 } from '@nestjs/swagger';
 import { ErrorResponseDto } from '../common/dto/errorResponse.dto';
 import { PaginatedTemplates } from './dto/paginatedTemplates.dto';
@@ -86,5 +89,20 @@ export class TemplatesController {
     };
 
     return this.templatesService.create(payload);
+  }
+
+  @Delete('/:id')
+  @ACL('templates/template:remove')
+  @HttpCode(204)
+  @ApiNoContentResponse()
+  @ApiNotFoundResponse({ type: ErrorResponseDto })
+  @ApiForbiddenResponse({ type: ErrorResponseDto })
+  public async deleteTemplate(
+    @Param('id') id: string,
+    @AuthContext() { companyId },
+  ) {
+    const template = await this.templatesService.delete(id, companyId);
+
+    if (!template) throw new NotFoundException();
   }
 }
