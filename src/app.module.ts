@@ -8,6 +8,7 @@ import { TemplatesModule } from './templates/templates.module';
 import { UnlayerModule } from './unlayer/unlayer.module';
 import { GcpStorageModule } from './gcp-storage/gcp-storage.module';
 import configuration from './config/configuration';
+import { HeaderstestController } from './headerstest/headerstest.controller';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -25,7 +26,7 @@ import configuration from './config/configuration';
     UnlayerModule,
     GcpStorageModule,
   ],
-  controllers: [HeartbeatController],
+  controllers: [HeartbeatController, HeaderstestController],
   providers: [],
 })
 export class AppModule {}
