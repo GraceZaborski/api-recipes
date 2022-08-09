@@ -27,7 +27,7 @@ export class Template {
   @Prop({ type: String, unique: true, default: uuidv4 })
   id: string;
 
-  @Prop({ type: String, unique: true, required: true })
+  @Prop({ type: String, required: true })
   title: string;
 
   @Prop()
@@ -63,9 +63,5 @@ TemplateSchema.index({ title: 'text', subject: 'text' });
 TemplateSchema.index({ companyId: 1, createdBy: -1 });
 TemplateSchema.index({ companyId: 1, createdAt: -1 });
 TemplateSchema.index({ companyId: 1, updatedAt: -1 });
-TemplateSchema.index({ companyId: 1, title: 1 });
+TemplateSchema.index({ companyId: 1, title: 1 }, { unique: true });
 TemplateSchema.index({ companyId: 1, subject: 1 });
-
-// TemplateSchema.plugin(mongooseUniqueValidator, {
-//   message: 'must be unique',
-// });
