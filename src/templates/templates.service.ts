@@ -14,7 +14,7 @@ export class TemplatesService {
   ) {}
 
   public async findOne(id: string, companyId: string): Promise<TemplateDto> {
-    return this.templateModel.findOne({ id, companyId }).exec();
+    return this.templateModel.findOne({ id, companyId }).lean();
   }
 
   public async findAll(
@@ -44,7 +44,7 @@ export class TemplatesService {
       .sort({ [sortBy]: sortOrder === 'asc' ? 1 : -1 })
       .skip(offset)
       .limit(limit)
-      .exec();
+      .lean();
 
     const count = await this.templateModel.count();
 
@@ -57,5 +57,15 @@ export class TemplatesService {
 
   public async delete(id: string, companyId: string): Promise<TemplateDto> {
     return this.templateModel.findOneAndDelete({ id, companyId }).exec();
+  }
+
+  public async updateOne(
+    id,
+    companyId,
+    templateDto: Omit<TemplateDto, 'id'>,
+  ): Promise<Template> {
+    return this.templateModel.findOneAndUpdate({ id, companyId }, templateDto, {
+      returnDocument: 'after',
+    });
   }
 }

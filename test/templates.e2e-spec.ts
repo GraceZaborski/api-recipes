@@ -31,6 +31,7 @@ const ABILITIES = {
   TEMPLATE_CREATE: 'templates/template:create',
   TEMPLATE_VIEW: 'templates/template:view',
   TEMPLATE_DELETE: 'templates/template:remove',
+  TEMPLATE_EDIT: 'templates/template:edit',
 };
 
 const newTemplate = {
@@ -243,6 +244,53 @@ describe('TemplatesController (e2e)', () => {
     expect(duplicateResponse.statusCode).toEqual(409);
   });
 
+  it('should allow duplicate titles with different companyIds', async () => {
+    stubAuthUserResponse({ abilities: [ABILITIES.TEMPLATE_CREATE] });
+
+    const companyId1 = chance.guid();
+
+    const company1Headers = {
+      'x-token-payload': buildXTokenPayload({
+        companyId: companyId1,
+        userId,
+        roles,
+      }),
+    };
+
+    const companyId2 = chance.guid();
+
+    const company2Headers = {
+      'x-token-payload': buildXTokenPayload({
+        companyId: companyId2,
+        userId,
+        roles,
+      }),
+    };
+
+    const template = {
+      ...newTemplate,
+      title: chance.word(),
+    };
+
+    const response = await app.inject({
+      method: 'POST',
+      url: '/templates',
+      headers: company1Headers,
+      payload: template,
+    });
+
+    expect(response.statusCode).toEqual(201);
+
+    const duplicateResponse = await app.inject({
+      method: 'POST',
+      url: '/templates',
+      headers: company2Headers,
+      payload: template,
+    });
+
+    expect(duplicateResponse.statusCode).toEqual(201);
+  });
+
   it('should only show templates from the users companyId', async () => {
     stubAuthUserResponse({
       abilities: [ABILITIES.TEMPLATE_CREATE, ABILITIES.TEMPLATE_VIEW],
@@ -253,7 +301,7 @@ describe('TemplatesController (e2e)', () => {
       title: chance.word(),
     };
 
-    const companyId2 = `${companyId}2`;
+    const companyId2 = chance.guid();
 
     const company2Headers = {
       'x-token-payload': buildXTokenPayload({
@@ -525,5 +573,144 @@ describe('TemplatesController (e2e)', () => {
 
     expect(template.statusCode).toEqual(404);
     expect(template.json()).toEqual({ statusCode: 404, message: 'Not Found' });
+  });
+
+  it('should be able to update a template', async () => {
+    stubAuthUserResponse({
+      abilities: [
+        ABILITIES.TEMPLATE_CREATE,
+        ABILITIES.TEMPLATE_VIEW,
+        ABILITIES.TEMPLATE_EDIT,
+      ],
+    });
+
+    const template = {
+      ...newTemplate,
+      title: chance.word(),
+    };
+
+    const response = await app.inject({
+      method: 'POST',
+      url: '/templates',
+      headers: headersWithToken,
+      payload: template,
+    });
+
+    const createdTemplate = response.json();
+
+    const updatedPayload = {
+      title: chance.word(),
+      subject: chance.word(),
+      unlayer: {
+        json: { foo: chance.word() },
+        previewUrl: chance.url(),
+      },
+      recipientVariables: [1, 2, 3],
+    };
+
+    const updateResponse = await app.inject({
+      method: 'PUT',
+      url: `/templates/${createdTemplate.id}`,
+      headers: headersWithToken,
+      payload: updatedPayload,
+    });
+
+    expect(updateResponse.statusCode).toEqual(200);
+    expect(updateResponse.json().title).toEqual(updatedPayload.title);
+
+    const getTemplate = await app.inject({
+      method: 'GET',
+      url: `/templates/${createdTemplate.id}`,
+      headers: headersWithToken,
+    });
+
+    expect(getTemplate.statusCode).toEqual(200);
+    expect(getTemplate.json()).toEqual(expect.objectContaining(updatedPayload));
+  });
+
+  it('should return 409 if updated with a duplicate title', async () => {
+    stubAuthUserResponse({
+      abilities: [
+        ABILITIES.TEMPLATE_CREATE,
+        ABILITIES.TEMPLATE_VIEW,
+        ABILITIES.TEMPLATE_EDIT,
+      ],
+    });
+
+    const templateOne = {
+      ...newTemplate,
+      title: chance.word(),
+    };
+
+    const templateTwo = {
+      ...newTemplate,
+      title: chance.word(),
+    };
+
+    const responseOne = await app.inject({
+      method: 'POST',
+      url: '/templates',
+      headers: headersWithToken,
+      payload: templateOne,
+    });
+
+    const createdTemplateOne = responseOne.json();
+    expect(responseOne.statusCode).toEqual(201);
+
+    const responseTwo = await app.inject({
+      method: 'POST',
+      url: '/templates',
+      headers: headersWithToken,
+      payload: templateTwo,
+    });
+
+    expect(responseTwo.statusCode).toEqual(201);
+
+    const updatedPayload = {
+      title: templateTwo.title,
+      ...newTemplate,
+    };
+
+    const updateResponse = await app.inject({
+      method: 'PUT',
+      url: `/templates/${createdTemplateOne.id}`,
+      headers: headersWithToken,
+      payload: updatedPayload,
+    });
+
+    expect(updateResponse.statusCode).toEqual(409);
+    expect(updateResponse.json().message).toEqual(
+      'The following properties must be unique: title',
+    );
+    expect(updateResponse.json().error).toEqual('Conflict');
+  });
+
+  it('should return 404 if you updated a non-existent template', async () => {
+    stubAuthUserResponse({
+      abilities: [
+        ABILITIES.TEMPLATE_CREATE,
+        ABILITIES.TEMPLATE_VIEW,
+        ABILITIES.TEMPLATE_EDIT,
+      ],
+    });
+
+    const updatedPayload = {
+      title: chance.word(),
+      subject: chance.word(),
+      unlayer: {
+        json: { foo: chance.word() },
+        previewUrl: chance.url(),
+      },
+      recipientVariables: [1, 2, 3],
+    };
+
+    const updateResponse = await app.inject({
+      method: 'PUT',
+      url: `/templates/${chance.guid()}`,
+      headers: headersWithToken,
+      payload: updatedPayload,
+    });
+
+    expect(updateResponse.statusCode).toEqual(404);
   });
 });

@@ -21,6 +21,8 @@ describe('TemplatesController', () => {
             findOne: jest.fn(() => []),
             delete: jest.fn(() => []),
             update: jest.fn(),
+            updateOne: jest.fn(),
+            remove: jest.fn(),
           },
         },
       ],
@@ -124,5 +126,116 @@ describe('TemplatesController', () => {
     await expect(
       templatesController.deleteTemplate(templateId, { companyId }),
     ).rejects.toThrow('Not Found');
+  });
+
+  it('should be able to update a template', async () => {
+    const id = chance.guid();
+    const companyId = chance.guid();
+    const userId = chance.guid();
+
+    const oldTemplate = {
+      title: chance.sentence(),
+      subject: chance.sentence(),
+      recipientVariables: [],
+      unlayer: {
+        json: {},
+        previewUrl: chance.url(),
+      },
+      companyId,
+      createdBy: userId,
+      createdAt: chance.date(),
+    };
+
+    const template = {
+      title: chance.sentence(),
+      subject: chance.sentence(),
+      recipientVariables: [],
+      unlayer: {
+        json: {},
+        previewUrl: chance.url(),
+      },
+    };
+
+    const authData = {
+      userId,
+      companyId,
+    };
+
+    const mockDate = new Date();
+    const spy = jest
+      .spyOn(global, 'Date')
+      .mockImplementation(() => mockDate as unknown as string);
+
+    jest
+      .spyOn(templatesService, 'findOne')
+      .mockReturnValueOnce(oldTemplate as any);
+
+    await templatesController.updateTemplate(id, template, authData);
+
+    expect(templatesService.updateOne).toHaveBeenCalledWith(id, companyId, {
+      ...oldTemplate,
+      ...template,
+      updatedBy: userId,
+      updatedAt: mockDate,
+      companyId,
+    });
+
+    spy.mockRestore();
+  });
+
+  it('should not be possible to override companyId', async () => {
+    const id = chance.guid();
+    const companyId = chance.guid();
+    const userId = chance.guid();
+
+    const oldTemplate = {
+      title: chance.sentence(),
+      subject: chance.sentence(),
+      recipientVariables: [],
+      unlayer: {
+        json: {},
+        previewUrl: chance.url(),
+      },
+      companyId,
+      createdBy: userId,
+      createdAt: chance.date(),
+    };
+
+    const template = {
+      title: chance.sentence(),
+      subject: chance.sentence(),
+      recipientVariables: [],
+      unlayer: {
+        json: {},
+        previewUrl: chance.url(),
+      },
+      companyId: chance.guid(),
+    };
+
+    const authData = {
+      userId,
+      companyId,
+    };
+
+    const mockDate = new Date();
+    const spy = jest
+      .spyOn(global, 'Date')
+      .mockImplementation(() => mockDate as unknown as string);
+
+    jest
+      .spyOn(templatesService, 'findOne')
+      .mockReturnValueOnce(oldTemplate as any);
+
+    await templatesController.updateTemplate(id, template, authData);
+
+    expect(templatesService.updateOne).toHaveBeenCalledWith(id, companyId, {
+      ...oldTemplate,
+      ...template,
+      updatedBy: userId,
+      updatedAt: mockDate,
+      companyId,
+    });
+
+    spy.mockRestore();
   });
 });
