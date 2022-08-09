@@ -54,11 +54,12 @@ describe('TemplatesService', () => {
             new: jest.fn().mockResolvedValue(mockTemplate),
             constructor: jest.fn().mockResolvedValue(mockTemplate),
             create: jest.fn().mockResolvedValue(TemplateDto),
+            findOneAndUpdate: jest.fn(),
             findAll: jest.fn(),
             findOne: jest.fn(),
             update: jest.fn(),
             remove: jest.fn(),
-            exec: jest.fn(),
+            lean: jest.fn(),
             populate: jest.fn(),
             skip: jest.fn(),
             offset: jest.fn(),
@@ -78,7 +79,7 @@ describe('TemplatesService', () => {
   describe('findAll()', () => {
     it('should return all templates', async () => {
       jest.spyOn(model, 'find').mockReturnValue({
-        exec: jest.fn().mockResolvedValueOnce(mockTemplateCollection),
+        lean: jest.fn().mockResolvedValueOnce(mockTemplateCollection),
         count: jest.fn().mockReturnValue(mockTemplateCollection.length),
         skip: jest.fn().mockReturnThis(),
         limit: jest.fn().mockReturnThis(),
@@ -100,7 +101,7 @@ describe('TemplatesService', () => {
   describe('findOne()', () => {
     it('should return a single template', async () => {
       jest.spyOn(model, 'findOne').mockReturnValue({
-        exec: jest.fn().mockResolvedValueOnce(mockTemplate),
+        lean: jest.fn().mockResolvedValueOnce(mockTemplate),
         limit: jest.fn().mockReturnThis(),
       } as any);
 
@@ -117,6 +118,21 @@ describe('TemplatesService', () => {
 
       const template = await service.delete(chance.guid(), chance.guid());
       expect(template).toEqual(template);
+    });
+  });
+
+  describe('updateOne()', () => {
+    it('should updated a single template', async () => {
+      const id = chance.guid();
+      const companyId = chance.guid();
+      const updatedTemplate = generateTemplate();
+
+      await service.updateOne(id, companyId, updatedTemplate);
+      expect(model.findOneAndUpdate).toHaveBeenCalledWith(
+        { id, companyId },
+        updatedTemplate,
+        { returnDocument: 'after' },
+      );
     });
   });
 });

@@ -9,6 +9,7 @@ import {
   Delete,
   Param,
   HttpCode,
+  Put,
 } from '@nestjs/common';
 import { ACL, AuthContext } from '@cerbero/mod-auth';
 import { TemplateDto, FilterQueryDto, CreateTemplateDto } from './dto';
@@ -104,5 +105,35 @@ export class TemplatesController {
     const template = await this.templatesService.delete(id, companyId);
 
     if (!template) throw new NotFoundException();
+  }
+
+  @Put('/:id')
+  @ACL('templates/template:edit')
+  @UseInterceptors(new TransformInterceptor(TemplateDto))
+  @ApiOkResponse({ type: TemplateDto })
+  @ApiForbiddenResponse({ type: ErrorResponseDto })
+  @ApiNotFoundResponse({ type: ErrorResponseDto })
+  @ApiConflictResponse({ type: ErrorResponseDto })
+  @ApiBadRequestResponse({ type: ErrorResponseDto })
+  public async updateTemplate(
+    @Param('id') id: string,
+    @Body() templateDto: CreateTemplateDto,
+    @AuthContext() { userId: updatedBy, companyId },
+  ): Promise<TemplateDto | Error> {
+    const template = await this.templatesService.findOne(id, companyId);
+
+    if (!template) {
+      throw new NotFoundException();
+    }
+
+    const payload = {
+      ...template,
+      ...templateDto,
+      companyId,
+      updatedBy,
+      updatedAt: new Date(),
+    };
+
+    return this.templatesService.updateOne(id, companyId, payload);
   }
 }

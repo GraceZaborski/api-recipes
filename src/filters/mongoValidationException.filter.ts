@@ -4,7 +4,12 @@ import { MongoServerError } from 'mongodb';
 export class MongoValidationExceptionFilter implements ExceptionFilter {
   catch(exception: MongoServerError) {
     if (exception.code === 11000) {
-      throw new ConflictException(exception.message);
+      const keys = Object.keys(exception.keyPattern)
+        .filter((k) => k !== 'companyId')
+        .join(',');
+      const message = `The following properties must be unique: ${keys}`;
+
+      throw new ConflictException(message);
     }
 
     throw exception;
