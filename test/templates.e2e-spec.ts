@@ -167,6 +167,41 @@ describe('TemplatesController (e2e)', () => {
     ]);
   });
 
+  it('should be able to filter on exact title', async () => {
+    const TITLE_SEARCH_STRING = chance.word();
+
+    const searchTemplate = {
+      ...newTemplate,
+      title: TITLE_SEARCH_STRING,
+    };
+
+    stubAuthUserResponse({
+      abilities: [ABILITIES.TEMPLATE_CREATE, ABILITIES.TEMPLATE_VIEW],
+    });
+    const create = await app.inject({
+      method: 'POST',
+      url: '/templates',
+      headers: headersWithToken,
+      payload: searchTemplate,
+    });
+
+    expect(create.statusCode).toEqual(201);
+    const { id: searchTemplateId } = create.json();
+
+    const searchTitle = await app.inject({
+      method: 'GET',
+      url: '/templates',
+      query: { title: TITLE_SEARCH_STRING },
+      headers: headersWithToken,
+    });
+
+    const [searchTitleTemplate] = searchTitle.json().results;
+    expect(searchTitle.statusCode).toEqual(200);
+    expect(searchTitle.json().results.length).toEqual(1);
+    expect(searchTitleTemplate.id).toEqual(searchTemplateId);
+    expect(searchTitleTemplate.title).toEqual(searchTemplate.title);
+  });
+
   it('should be able to search title and subject', async () => {
     const TITLE_SEARCH_STRING = chance.word();
     const SUBJECT_SEARCH_STRING = chance.word();

@@ -35,6 +35,7 @@ describe('TemplatesService', () => {
     offset: 1,
     search: '',
     createdBy: undefined,
+    title: undefined,
     sortBy: 'createdAt',
     sortOrder: 'desc',
   };
