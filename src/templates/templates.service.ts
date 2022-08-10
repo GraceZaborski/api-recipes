@@ -26,6 +26,7 @@ export class TemplatesService {
       search,
       companyId,
       createdBy = undefined,
+      title = undefined,
       sortBy = 'createdAt',
       sortOrder = 'desc',
     } = filterQuery;
@@ -37,6 +38,10 @@ export class TemplatesService {
 
     if (createdBy) {
       findQuery.createdBy = createdBy;
+    }
+
+    if (title) {
+      findQuery.title = title;
     }
 
     const results = await this.templateModel

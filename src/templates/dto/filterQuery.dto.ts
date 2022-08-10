@@ -26,6 +26,11 @@ export class FilterQueryDto extends PaginationQueryDto {
   createdBy: string;
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  title: string;
+
+  @IsOptional()
   @IsEnum(SortBy)
   @ApiPropertyOptional({
     enum: SortBy,

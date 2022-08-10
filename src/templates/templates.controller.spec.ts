@@ -61,6 +61,7 @@ describe('TemplatesController', () => {
       offset: null,
       search: null,
       createdBy: undefined,
+      title: undefined,
       sortBy: 'createdAt',
       sortOrder: 'desc',
     };
