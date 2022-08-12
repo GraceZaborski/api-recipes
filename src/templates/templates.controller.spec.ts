@@ -82,7 +82,6 @@ describe('TemplatesController', () => {
     const newTemplate = {
       title: chance.sentence(),
       subject: chance.sentence(),
-      recipientVariables: [],
       unlayer: {
         json: {},
         previewUrl: chance.url(),
@@ -137,7 +136,6 @@ describe('TemplatesController', () => {
     const oldTemplate = {
       title: chance.sentence(),
       subject: chance.sentence(),
-      recipientVariables: [],
       unlayer: {
         json: {},
         previewUrl: chance.url(),
@@ -150,7 +148,6 @@ describe('TemplatesController', () => {
     const template = {
       title: chance.sentence(),
       subject: chance.sentence(),
-      recipientVariables: [],
       unlayer: {
         json: {},
         previewUrl: chance.url(),
@@ -192,7 +189,6 @@ describe('TemplatesController', () => {
     const oldTemplate = {
       title: chance.sentence(),
       subject: chance.sentence(),
-      recipientVariables: [],
       unlayer: {
         json: {},
         previewUrl: chance.url(),
@@ -205,7 +201,6 @@ describe('TemplatesController', () => {
     const template = {
       title: chance.sentence(),
       subject: chance.sentence(),
-      recipientVariables: [],
       unlayer: {
         json: {},
         previewUrl: chance.url(),

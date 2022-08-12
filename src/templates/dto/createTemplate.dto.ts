@@ -5,5 +5,4 @@ export class CreateTemplateDto extends PickType(TemplateDto, [
   'title',
   'subject',
   'unlayer',
-  'recipientVariables',
 ]) {}

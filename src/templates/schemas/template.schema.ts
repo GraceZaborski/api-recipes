@@ -36,9 +36,6 @@ export class Template {
   @Prop({ type: Object })
   unlayer: UnlayerDesign;
 
-  @Prop(Array)
-  recipientVariables: RecipientVariable[];
-
   @Prop({ index: true })
   companyId: string;
 

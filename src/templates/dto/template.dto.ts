@@ -5,13 +5,12 @@ import {
   IsObject,
   ValidateNested,
   IsUrl,
-  IsArray,
   IsDate,
   IsUUID,
   IsOptional,
 } from 'class-validator';
 import { Exclude, Expose, Type } from 'class-transformer';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 class UnlayerDesign {
   @Expose()
@@ -51,11 +50,6 @@ export class TemplateDto {
   @Type(() => UnlayerDesign)
   @ApiProperty()
   readonly unlayer: UnlayerDesign;
-
-  @Expose()
-  @IsArray()
-  @ApiPropertyOptional()
-  readonly recipientVariables: Record<string, any>[];
 
   @Expose()
   @IsString()

@@ -37,7 +37,6 @@ const ABILITIES = {
 const newTemplate = {
   title: chance.sentence(),
   subject: chance.sentence(),
-  recipientVariables: [],
   unlayer: {
     json: { foo: 'bar' },
     previewUrl: chance.url(),
@@ -158,7 +157,6 @@ describe('TemplatesController (e2e)', () => {
       'title',
       'subject',
       'unlayer',
-      'recipientVariables',
       'companyId',
       'createdBy',
       'createdAt',
@@ -640,7 +638,6 @@ describe('TemplatesController (e2e)', () => {
         json: { foo: chance.word() },
         previewUrl: chance.url(),
       },
-      recipientVariables: [1, 2, 3],
     };
 
     const updateResponse = await app.inject({
@@ -736,7 +733,6 @@ describe('TemplatesController (e2e)', () => {
         json: { foo: chance.word() },
         previewUrl: chance.url(),
       },
-      recipientVariables: [1, 2, 3],
     };
 
     const updateResponse = await app.inject({
