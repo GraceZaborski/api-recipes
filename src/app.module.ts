@@ -7,6 +7,7 @@ import { LoggerModule } from './logger';
 import { TemplatesModule } from './templates/templates.module';
 import { UnlayerModule } from './unlayer/unlayer.module';
 import { GcpStorageModule } from './gcp-storage/gcp-storage.module';
+import { UploadModule } from './upload/upload.module';
 import configuration from './config/configuration';
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import configuration from './config/configuration';
     TemplatesModule,
     UnlayerModule,
     GcpStorageModule,
+    UploadModule,
   ],
   controllers: [HeartbeatController],
   providers: [],

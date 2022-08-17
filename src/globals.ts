@@ -2,8 +2,10 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { MongoValidationExceptionFilter } from './filters/mongoValidationException.filter';
 import { config } from './config/configuration';
+import { contentParser } from 'fastify-multer';
 
 export function setupGlobals(app) {
+  app.register(contentParser);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.useGlobalFilters(new MongoValidationExceptionFilter());
 

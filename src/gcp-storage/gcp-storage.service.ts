@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Storage, Bucket } from '@google-cloud/storage';
 import axios from 'axios';
+import { Stream } from 'stream';
 
 @Injectable()
 export class GcpStorageService {
@@ -55,5 +56,33 @@ export class GcpStorageService {
     }
 
     throw new Error('Failed to transfer file');
+  }
+
+  uploadFromStream(
+    stream: Stream,
+    path: string,
+    contentType: string,
+  ): Promise<{ url: string }> {
+    const blob = this.bucket.file(path);
+
+    return new Promise((resolve, reject) => {
+      stream.pipe(
+        blob
+          .createWriteStream({
+            resumable: false,
+            metadata: {
+              contentType,
+            },
+          })
+          .on('finish', () => {
+            resolve({
+              url: `https://${this.hostname}/${blob.name}`,
+            });
+          })
+          .on('error', (error) => {
+            reject(error);
+          }),
+      );
+    });
   }
 }
