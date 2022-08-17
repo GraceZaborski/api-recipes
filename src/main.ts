@@ -19,4 +19,5 @@ async function bootstrap() {
   const BIND_ADDRESS = app.get(ConfigService).get('bindAddress');
   await app.listen(PORT, BIND_ADDRESS);
 }
+
 bootstrap();

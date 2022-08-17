@@ -64,6 +64,11 @@ export const config = {
       height: 355,
     },
   },
+  uploads: {
+    image: {
+      resizeTo: 800,
+    },
+  },
   gcp: {
     storage: {
       bucket: CAMPAIGN_V2_PUBLIC_BUCKET,
