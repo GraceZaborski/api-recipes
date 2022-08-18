@@ -21,6 +21,8 @@ const {
   DOMAIN = 'aether.staging.beamery.engineer',
   CAMPAIGN_V2_PUBLIC_BUCKET = 'name',
   CAMPAIGN_V2_PUBLIC_HOSTNAME,
+  GCP_API_ENDPOINT = undefined,
+  GCP_PROJECT_ID = undefined,
 } = process.env;
 
 export const isLocal = !NAMESPACE;
@@ -73,6 +75,8 @@ export const config = {
     storage: {
       bucket: CAMPAIGN_V2_PUBLIC_BUCKET,
       hostname: CAMPAIGN_V2_PUBLIC_HOSTNAME,
+      apiEndpoint: GCP_API_ENDPOINT,
+      projectId: GCP_PROJECT_ID,
     },
   },
 };

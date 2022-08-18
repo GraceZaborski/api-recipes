@@ -1,0 +1,10 @@
+version: '3.6'
+services:
+  fake-gcs:
+    image: fsouza/fake-gcs-server:latest
+    container_name: api-campaigns-fake-gcs
+    ports:
+      - 4443:4443
+    volumes:
+      - ./test/assets/dummy_gcs:/data
+    command: ['-scheme', 'http', '-backend', 'memory']

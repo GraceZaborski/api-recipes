@@ -11,10 +11,11 @@ export class GcpStorageService {
   private readonly hostname: string;
 
   constructor(private configService: ConfigService) {
-    const { bucket, hostname } = this.configService.get('gcp.storage');
+    const { bucket, hostname, apiEndpoint, projectId } =
+      this.configService.get('gcp.storage');
     this.hostname = hostname;
 
-    this.storage = new Storage();
+    this.storage = new Storage({ apiEndpoint, projectId });
     this.bucket = this.storage.bucket(bucket);
   }
 

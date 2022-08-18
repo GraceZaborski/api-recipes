@@ -30,12 +30,17 @@ const ABILITIES = {
   TEMPLATE_EDIT: 'templates/template:edit',
 };
 
-// This is skipped by default as it requires gcp credentials to run.
-describe.skip('UploadController (e2e)', () => {
+describe('UploadController (e2e)', () => {
   let app: NestFastifyApplication;
   let headersWithToken;
 
   beforeAll(async () => {
+    const gcpApiEndpoint = 'http://localhost:4443';
+
+    const config = configuration();
+    config.gcp.storage.apiEndpoint = gcpApiEndpoint;
+    config.gcp.storage.bucket = 'dummy_bucket';
+
     headersWithToken = {
       'x-token-payload': buildXTokenPayload({ companyId, userId, roles }),
     };
@@ -43,7 +48,7 @@ describe.skip('UploadController (e2e)', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({
-          load: [configuration],
+          load: [() => config],
           isGlobal: true,
         }),
         UploadModule,
