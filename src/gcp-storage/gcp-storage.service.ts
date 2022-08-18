@@ -25,8 +25,6 @@ export class GcpStorageService {
     method: string,
     httpOpts?: Record<string, any>,
   ): Promise<{ url: string }> {
-    const blob = this.bucket.file(path);
-
     const response = await axios[method]({
       ...httpOpts,
       url,
@@ -34,26 +32,11 @@ export class GcpStorageService {
     });
 
     if (response.status >= 200 && response.status < 300) {
-      return new Promise((resolve, reject) => {
-        const contentType = response.headers['content-type'];
-        response.data.pipe(
-          blob
-            .createWriteStream({
-              resumable: false,
-              metadata: {
-                contentType,
-              },
-            })
-            .on('finish', () => {
-              resolve({
-                url: `https://${this.hostname}/${blob.name}`,
-              });
-            })
-            .on('error', (error) => {
-              reject(error);
-            }),
-        );
-      });
+      return this.uploadFromStream(
+        response.data,
+        path,
+        response.headers['content-type'],
+      );
     }
 
     throw new Error('Failed to transfer file');

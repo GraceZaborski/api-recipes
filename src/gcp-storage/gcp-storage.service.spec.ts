@@ -61,56 +61,78 @@ describe('GcpStorageService', () => {
     expect(service).toBeDefined();
   });
 
-  it('should be able to upload a file', async () => {
-    const path = 'path';
-    const url = 'url';
-    const method = 'post';
-    const httpOpts = { foo: 'bar' };
-    const contentType = 'image/png';
+  describe('streamFromUrl', () => {
+    it('should be able to upload a file', async () => {
+      const path = 'path';
+      const url = 'url';
+      const method = 'post';
+      const httpOpts = { foo: 'bar' };
+      const contentType = 'image/png';
 
-    mockAxios.mockResolvedValueOnce({
-      status: 200,
-      headers: {
-        'content-type': contentType,
-      },
-      data: {
-        pipe: jest.fn(() => new PassThrough()),
-      },
+      mockAxios.mockResolvedValueOnce({
+        status: 200,
+        headers: {
+          'content-type': contentType,
+        },
+        data: {
+          pipe: jest.fn(() => new PassThrough()),
+        },
+      });
+
+      mockedStream.emit('finish');
+      mockedStream.end();
+      const result = await service.streamFromUrl(path, url, method, httpOpts);
+
+      expect(mockFile.createWriteStream).toHaveBeenCalledWith({
+        resumable: false,
+        metadata: { contentType },
+      });
+
+      expect(result.url).toEqual('https://hostname/name');
     });
 
-    mockedStream.emit('finish');
-    mockedStream.end();
-    const result = await service.streamFromUrl(path, url, method, httpOpts);
+    it('should throw an exception if the upload fails', async () => {
+      const path = 'path';
+      const url = 'url';
+      const method = 'post';
+      const httpOpts = { foo: 'bar' };
+      const contentType = 'image/png';
 
-    expect(mockFile.createWriteStream).toHaveBeenCalledWith({
-      resumable: false,
-      metadata: { contentType },
+      mockAxios.mockResolvedValueOnce({
+        status: 500,
+        headers: {
+          'content-type': contentType,
+        },
+        data: {
+          pipe: jest.fn(() => new PassThrough()),
+        },
+      });
+
+      mockedStream.emit('finish');
+      mockedStream.end();
+      await expect(
+        service.streamFromUrl(path, url, method, httpOpts),
+      ).rejects.toThrow();
     });
-
-    expect(result.url).toEqual('https://hostname/name');
   });
 
-  it('should throw an exception if the upload fails', async () => {
-    const path = 'path';
-    const url = 'url';
-    const method = 'post';
-    const httpOpts = { foo: 'bar' };
-    const contentType = 'image/png';
+  describe('uploadFromStream', () => {
+    it('should be able to upload a file', async () => {
+      const path = 'path';
+      const contentType = 'image/png';
 
-    mockAxios.mockResolvedValueOnce({
-      status: 500,
-      headers: {
-        'content-type': contentType,
-      },
-      data: {
-        pipe: jest.fn(() => new PassThrough()),
-      },
+      const stream = new PassThrough();
+
+      mockedStream.emit('finish');
+      mockedStream.end();
+      const result = await service.uploadFromStream(stream, path, contentType);
+
+      expect(mockFile.createWriteStream).toHaveBeenCalledWith({
+        resumable: false,
+        metadata: { contentType },
+      });
+
+      expect(result.url).toEqual('https://hostname/name');
     });
-
-    mockedStream.emit('finish');
-    mockedStream.end();
-    await expect(
-      service.streamFromUrl(path, url, method, httpOpts),
-    ).rejects.toThrow();
   });
 });
