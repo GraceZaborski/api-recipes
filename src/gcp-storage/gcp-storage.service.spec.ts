@@ -48,6 +48,7 @@ describe('GcpStorageService', () => {
             get: jest.fn(() => ({
               bucket,
               hostname,
+              protocol: 'https',
             })),
           },
         },

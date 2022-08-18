@@ -19,6 +19,7 @@ import { UploadModule } from '../src/upload/upload.module';
 import { ConfigModule } from '@nestjs/config';
 import configuration from '../src/config/configuration';
 import * as FormData from 'form-data';
+import sizeOf from 'image-size';
 
 const companyId = 'test-company-id';
 const userId = 'test-user-id';
@@ -30,16 +31,18 @@ const ABILITIES = {
   TEMPLATE_EDIT: 'templates/template:edit',
 };
 
+const gcpApiEndpoint = 'http://localhost:4443';
+
 describe('UploadController (e2e)', () => {
   let app: NestFastifyApplication;
   let headersWithToken;
 
   beforeAll(async () => {
-    const gcpApiEndpoint = 'http://localhost:4443';
-
     const config = configuration();
     config.gcp.storage.apiEndpoint = gcpApiEndpoint;
     config.gcp.storage.bucket = 'dummy_bucket';
+    config.gcp.storage.hostname = 'localhost:4443';
+    config.gcp.storage.protocol = 'http';
 
     headersWithToken = {
       'x-token-payload': buildXTokenPayload({ companyId, userId, roles }),
@@ -102,6 +105,19 @@ describe('UploadController (e2e)', () => {
     expect(response.statusCode).toEqual(201);
     const { url } = response.json();
     expect(url.includes('.jpg')).toBe(true);
+
+    const objectPath = url.replace('http://localhost:4443/', '');
+
+    const objectUrl = `${gcpApiEndpoint}/storage/v1/b/dummy_bucket/o/${objectPath}`;
+    const req = await fetch(objectUrl);
+    const object = await req.json();
+    expect(object.contentType).toEqual('image/png');
+
+    const imageReq = await fetch(`${objectUrl}?alt=media`);
+    const image = Buffer.from(await imageReq.arrayBuffer());
+    const { width } = sizeOf(image);
+
+    expect(width).toEqual(configuration().uploads.image.resizeTo);
   });
 
   it('should return 400 if its not an image', async () => {

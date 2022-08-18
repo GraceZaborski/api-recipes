@@ -75,6 +75,7 @@ export const config = {
     storage: {
       bucket: CAMPAIGN_V2_PUBLIC_BUCKET,
       hostname: CAMPAIGN_V2_PUBLIC_HOSTNAME,
+      protocol: 'https',
       apiEndpoint: GCP_API_ENDPOINT,
       projectId: GCP_PROJECT_ID,
     },
