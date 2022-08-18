@@ -25,7 +25,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "test:e2e:ci": "yarn docker:e2e:start && jest --config ./test/jest-e2e.json && yarn docker:e2e:stop",
-    "test:all": "yarn test && yarn test:e2e",
+    "test:all": "yarn test && yarn test:e2e:ci",
     "get-token": "util/scripts/getToken.js",
     "commitlint": "commitlint",
     "prepare": "husky install"
