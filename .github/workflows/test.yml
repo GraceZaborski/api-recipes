@@ -38,4 +38,4 @@ jobs:
         run: yarn test
 
       - name: Jest e2e
-        run: yarn test:e2e
+        run: yarn test:e2e:ci
