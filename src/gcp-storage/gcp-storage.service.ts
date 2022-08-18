@@ -9,11 +9,13 @@ export class GcpStorageService {
   private readonly storage: Storage;
   private readonly bucket: Bucket;
   private readonly hostname: string;
+  private readonly protocol: 'http' | 'https' = 'https';
 
   constructor(private configService: ConfigService) {
-    const { bucket, hostname, apiEndpoint, projectId } =
+    const { bucket, hostname, apiEndpoint, projectId, protocol } =
       this.configService.get('gcp.storage');
     this.hostname = hostname;
+    this.protocol = protocol;
 
     this.storage = new Storage({ apiEndpoint, projectId });
     this.bucket = this.storage.bucket(bucket);
@@ -60,7 +62,7 @@ export class GcpStorageService {
           })
           .on('finish', () => {
             resolve({
-              url: `https://${this.hostname}/${blob.name}`,
+              url: `${this.protocol}://${this.hostname}/${blob.name}`,
             });
           })
           .on('error', (error) => {
