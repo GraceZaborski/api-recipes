@@ -50,7 +50,7 @@ const allTemplatesResponse = {
   offset: 0,
 };
 
-describe('TemplatesController (e2e)', () => {
+describe.skip('TemplatesController (e2e)', () => {
   let app: NestFastifyApplication;
   let headersWithToken;
 
