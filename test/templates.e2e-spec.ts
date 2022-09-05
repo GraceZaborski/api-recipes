@@ -744,4 +744,64 @@ describe('TemplatesController (e2e)', () => {
 
     expect(updateResponse.statusCode).toEqual(404);
   });
+
+  it('should be able to create a template without a previewUrl', async () => {
+    stubAuthUserResponse({ abilities: [ABILITIES.TEMPLATE_CREATE] });
+
+    const template = {
+      ...newTemplate,
+      title: chance.word(),
+      unlayer: {
+        json: newTemplate.unlayer.json,
+      },
+    };
+
+    const response = await app.inject({
+      method: 'POST',
+      url: '/templates',
+      headers: headersWithToken,
+      payload: template,
+    });
+
+    expect(response.statusCode).toEqual(201);
+    expect(response.json().unlayer.previewUrl).toEqual(null);
+  });
+
+  it('should be able to update a template without a previewUrl', async () => {
+    stubAuthUserResponse({
+      abilities: [ABILITIES.TEMPLATE_CREATE, ABILITIES.TEMPLATE_EDIT],
+    });
+
+    const template = {
+      ...newTemplate,
+      title: chance.word(),
+    };
+
+    const responseOne = await app.inject({
+      method: 'POST',
+      url: '/templates',
+      headers: headersWithToken,
+      payload: template,
+    });
+
+    expect(responseOne.statusCode).toEqual(201);
+    const { id } = responseOne.json();
+
+    const updatedTemplate = {
+      ...template,
+      unlayer: {
+        json: newTemplate.unlayer.json,
+      },
+    };
+
+    const responseTwo = await app.inject({
+      method: 'PUT',
+      url: `/templates/${id}`,
+      headers: headersWithToken,
+      payload: updatedTemplate,
+    });
+
+    expect(responseTwo.statusCode).toEqual(200);
+    expect(responseTwo.json().unlayer.previewUrl).toEqual(null);
+  });
 });

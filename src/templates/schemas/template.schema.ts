@@ -7,7 +7,7 @@ export class UnlayerDesign {
   json: Record<string, any>;
 
   @Prop()
-  previewUrl: string;
+  previewUrl: string | null;
 }
 
 @Schema()

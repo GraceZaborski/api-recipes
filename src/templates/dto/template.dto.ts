@@ -22,7 +22,8 @@ class UnlayerDesign {
   @IsString()
   @IsUrl()
   @ApiProperty()
-  readonly previewUrl: string;
+  @IsOptional()
+  readonly previewUrl?: string | null = null;
 }
 
 @Exclude()
