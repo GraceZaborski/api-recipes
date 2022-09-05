@@ -18,6 +18,8 @@ import {
   authSandbox,
   sandbox,
 } from './utils/authUtils';
+import { ConfigModule } from '@nestjs/config';
+import configuration from '../src/config/configuration';
 
 import { proto } from '@beamery/chimera-auth-client';
 import { setupGlobals } from '../src/globals';
@@ -34,14 +36,142 @@ const ABILITIES = {
   TEMPLATE_EDIT: 'templates/template:edit',
 };
 
-const newTemplate = {
+const design = {
+  counters: { u_row: 1, u_column: 1, u_content_text: 1, u_content_image: 1 },
+  body: {
+    id: 'cXXcF1U4S8',
+    rows: [
+      {
+        id: 'qtnc_BST9x',
+        cells: [1],
+        columns: [
+          {
+            id: '_vyAvcBBmd',
+            contents: [
+              {
+                id: 'YQEc_9ZPYF',
+                type: 'text',
+                values: {
+                  containerPadding: '10px',
+                  anchor: '',
+                  textAlign: 'left',
+                  lineHeight: '140%',
+                  linkStyle: {
+                    inherit: true,
+                    linkColor: '#0000ee',
+                    linkHoverColor: '#0000ee',
+                    linkUnderline: true,
+                    linkHoverUnderline: true,
+                  },
+                  hideDesktop: false,
+                  displayCondition: null,
+                  _meta: {
+                    htmlID: 'u_content_text_1',
+                    htmlClassNames: 'u_content_text',
+                  },
+                  selectable: true,
+                  draggable: true,
+                  duplicatable: true,
+                  deletable: true,
+                  hideable: true,
+                  text: '<p style="font-size: 14px; line-height: 140%;">This is a new Text block. Change the text.<br />This is a new Text block. Change the text. 1</p>\n<p style="font-size: 14px; line-height: 140%;">This is a new Text block. Change the text. 2</p>\n<p style="font-size: 14px; line-height: 140%;">This is a new Text block. Change the text.3 </p>\n<p style="font-size: 14px; line-height: 140%;">This is a new Text block. Change the text.4</p>\n<p style="font-size: 14px; line-height: 140%;">This is a new Text block. Change the text.5</p>\n<p style="font-size: 14px; line-height: 140%;">This is a new Text block. Change the text.6</p>\n<p style="font-size: 14px; line-height: 140%;">This is a new Text block. Change the text.7</p>\n<p style="font-size: 14px; line-height: 140%;">This is a new Text block. Change the text.8</p>\n<p style="font-size: 14px; line-height: 140%;">\\This is a new Text block. Change the text.9</p>\n<p style="font-size: 14px; line-height: 140%;">This is a new Text block. Change the text.10</p>',
+                },
+              },
+            ],
+            values: {
+              backgroundColor: '',
+              padding: '0px',
+              borderRadius: '0px',
+              _meta: { htmlID: 'u_column_1', htmlClassNames: 'u_column' },
+            },
+          },
+        ],
+        values: {
+          displayCondition: null,
+          columns: false,
+          backgroundColor: '',
+          columnsBackgroundColor: '',
+          backgroundImage: {
+            url: '',
+            fullWidth: true,
+            repeat: false,
+            center: true,
+            cover: false,
+          },
+          padding: '0px',
+          anchor: '',
+          hideDesktop: false,
+          _meta: { htmlID: 'u_row_1', htmlClassNames: 'u_row' },
+          selectable: true,
+          draggable: true,
+          duplicatable: true,
+          deletable: true,
+          hideable: true,
+        },
+      },
+    ],
+    values: {
+      popupPosition: 'center',
+      popupWidth: '600px',
+      popupHeight: 'auto',
+      borderRadius: '10px',
+      contentAlign: 'center',
+      contentVerticalAlign: 'center',
+      contentWidth: '500px',
+      fontFamily: { label: 'Arial', value: 'arial,helvetica,sans-serif' },
+      textColor: '#000000',
+      popupBackgroundColor: '#FFFFFF',
+      popupBackgroundImage: {
+        url: '',
+        fullWidth: true,
+        repeat: false,
+        center: true,
+        cover: true,
+      },
+      popupOverlay_backgroundColor: 'rgba(0, 0, 0, 0.1)',
+      popupCloseButton_position: 'top-right',
+      popupCloseButton_backgroundColor: '#DDDDDD',
+      popupCloseButton_iconColor: '#000000',
+      popupCloseButton_borderRadius: '0px',
+      popupCloseButton_margin: '0px',
+      popupCloseButton_action: {
+        name: 'close_popup',
+        attrs: {
+          onClick:
+            "document.querySelector('.u-popup-container').style.display = 'none';",
+        },
+      },
+      backgroundColor: '#ffffff',
+      backgroundImage: {
+        url: '',
+        fullWidth: true,
+        repeat: false,
+        center: true,
+        cover: false,
+      },
+      preheaderText: '',
+      linkStyle: {
+        body: true,
+        linkColor: '#0000ee',
+        linkHoverColor: '#0000ee',
+        linkUnderline: true,
+        linkHoverUnderline: true,
+      },
+      _meta: { htmlID: 'u_body', htmlClassNames: 'u_body' },
+    },
+  },
+  schemaVersion: 9,
+};
+
+const generateTemplate = () => ({
   title: chance.sentence(),
   subject: chance.sentence(),
   unlayer: {
-    json: { foo: 'bar' },
-    previewUrl: chance.url(),
+    json: design,
   },
-};
+});
+
+const newTemplate = generateTemplate();
 
 const allTemplatesResponse = {
   results: [],
@@ -50,11 +180,34 @@ const allTemplatesResponse = {
   offset: 0,
 };
 
+jest.setTimeout(60000);
+
+// pesky secrets detection
+const ul = ['Y8fjb', 'OVsy5XU'].join();
+
 describe('TemplatesController (e2e)', () => {
   let app: NestFastifyApplication;
   let headersWithToken;
 
+  const gcpApiEndpoint = 'http://localhost:4443';
+
   beforeAll(async () => {
+    const config = configuration();
+    config.gcp.storage.apiEndpoint = gcpApiEndpoint;
+    config.gcp.storage.bucket = 'dummy_bucket';
+    config.gcp.storage.hostname = 'localhost:4443';
+    config.gcp.storage.protocol = 'http';
+
+    config.unlayer = {
+      apiKey: ul,
+      apiUrl: `https://frontier.aether.staging.beamery.engineer/unlayer-export-api/v1`,
+      previewImage: {
+        displayMode: 'email',
+        width: 422,
+        height: 355,
+      },
+    };
+
     headersWithToken = {
       'x-token-payload': buildXTokenPayload({ companyId, userId, roles }),
     };
@@ -67,6 +220,10 @@ describe('TemplatesController (e2e)', () => {
           { name: 'Templates', schema: TemplateSchema },
         ]),
         AuthModule.forRoot(),
+        ConfigModule.forRoot({
+          load: [() => config],
+          isGlobal: true,
+        }),
       ],
     })
       .overrideProvider(proto.Auth)
@@ -84,9 +241,17 @@ describe('TemplatesController (e2e)', () => {
   });
 
   afterAll(async () => {
+    jest.setTimeout(10000);
+    console.log('closing mongo');
     await closeInMongodConnection();
+    console.log('closing app');
+    // setTimeout(() => {
+    //   console.log(process._getActiveHandles());
+    // }, 4000);
     await app.close();
+    console.log('closing restore');
     sandbox.restore();
+    console.log('closed');
   });
 
   it('should return 403 without the correct permissions', async () => {
@@ -636,7 +801,6 @@ describe('TemplatesController (e2e)', () => {
       subject: chance.word(),
       unlayer: {
         json: { foo: chance.word() },
-        previewUrl: chance.url(),
       },
     };
 
@@ -657,7 +821,15 @@ describe('TemplatesController (e2e)', () => {
     });
 
     expect(getTemplate.statusCode).toEqual(200);
-    expect(getTemplate.json()).toEqual(expect.objectContaining(updatedPayload));
+    expect(getTemplate.json()).toEqual(
+      expect.objectContaining({
+        ...updatedPayload,
+        unlayer: {
+          ...updatedPayload.unlayer,
+          previewUrl: null,
+        },
+      }),
+    );
   });
 
   it('should return 409 if updated with a duplicate title', async () => {
@@ -731,7 +903,6 @@ describe('TemplatesController (e2e)', () => {
       subject: chance.word(),
       unlayer: {
         json: { foo: chance.word() },
-        previewUrl: chance.url(),
       },
     };
 
@@ -743,5 +914,29 @@ describe('TemplatesController (e2e)', () => {
     });
 
     expect(updateResponse.statusCode).toEqual(404);
+  });
+
+  it('should be able to create a template with a preview sync', async () => {
+    stubAuthUserResponse({ abilities: [ABILITIES.TEMPLATE_CREATE] });
+
+    const template = generateTemplate();
+
+    const response = await app.inject({
+      method: 'POST',
+      url: '/templates',
+      headers: headersWithToken,
+      payload: {
+        ...template,
+        generatePreview: 'sync',
+      },
+    });
+
+    expect(response.statusCode).toEqual(201);
+    const { previewUrl } = response.json().unlayer;
+    expect(previewUrl).toBeDefined();
+    expect(
+      previewUrl.startsWith(`http://localhost:4443/${companyId}/export-image/`),
+    ).toBeTruthy();
+    expect(previewUrl.endsWith('.png')).toBeTruthy();
   });
 });

@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { GcpStorageService } from './gcp-storage.service';
 import { PassThrough } from 'stream';
 import * as gcs from '@google-cloud/storage';
-import axios from 'axios';
+import * as axios from 'axios';
 
 describe('GcpStorageService', () => {
   let service: GcpStorageService;
@@ -34,7 +34,7 @@ describe('GcpStorageService', () => {
     const storageMock = jest.spyOn(gcs, 'Storage');
     storageMock.mockImplementation(() => mockStorage);
 
-    mockAxios = jest.spyOn(axios, 'post');
+    mockAxios = jest.spyOn(axios, 'default');
   });
 
   beforeEach(async () => {
@@ -66,7 +66,7 @@ describe('GcpStorageService', () => {
     it('should be able to upload a file', async () => {
       const path = 'path';
       const url = 'url';
-      const method = 'post';
+      const method = 'POST';
       const httpOpts = { foo: 'bar' };
       const contentType = 'image/png';
 
@@ -95,7 +95,7 @@ describe('GcpStorageService', () => {
     it('should throw an exception if the upload fails', async () => {
       const path = 'path';
       const url = 'url';
-      const method = 'post';
+      const method = 'POST';
       const httpOpts = { foo: 'bar' };
       const contentType = 'image/png';
 

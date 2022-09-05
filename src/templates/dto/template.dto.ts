@@ -19,9 +19,9 @@ class UnlayerDesign {
   readonly json: Record<string, any>;
 
   @Expose()
+  @IsOptional()
   @IsString()
   @IsUrl()
-  @ApiProperty()
   readonly previewUrl: string;
 }
 

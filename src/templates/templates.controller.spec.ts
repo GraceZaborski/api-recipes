@@ -86,6 +86,7 @@ describe('TemplatesController', () => {
         json: {},
         previewUrl: chance.url(),
       },
+      generatePreview: undefined,
     };
 
     const authData = {
@@ -100,14 +101,17 @@ describe('TemplatesController', () => {
 
     await templatesController.createTemplate(newTemplate, authData);
 
-    expect(templatesService.create).toHaveBeenCalledWith({
-      ...newTemplate,
-      createdBy: authData.userId,
-      companyId: authData.companyId,
-      createdAt: mockDate,
-      updatedAt: null,
-      updatedBy: null,
-    });
+    expect(templatesService.create).toHaveBeenCalledWith(
+      {
+        ...newTemplate,
+        createdBy: authData.userId,
+        companyId: authData.companyId,
+        createdAt: mockDate,
+        updatedAt: null,
+        updatedBy: null,
+      },
+      undefined,
+    );
 
     spy.mockRestore();
   });
@@ -152,6 +156,7 @@ describe('TemplatesController', () => {
         json: {},
         previewUrl: chance.url(),
       },
+      generatePreview: undefined,
     };
 
     const authData = {
@@ -170,7 +175,7 @@ describe('TemplatesController', () => {
 
     await templatesController.updateTemplate(id, template, authData);
 
-    expect(templatesService.updateOne).toHaveBeenCalledWith(id, companyId, {
+    expect(templatesService.updateOne).toHaveBeenCalledWith(id, {
       ...oldTemplate,
       ...template,
       updatedBy: userId,
@@ -206,6 +211,7 @@ describe('TemplatesController', () => {
         previewUrl: chance.url(),
       },
       companyId: chance.guid(),
+      generatePreview: undefined,
     };
 
     const authData = {
@@ -224,7 +230,7 @@ describe('TemplatesController', () => {
 
     await templatesController.updateTemplate(id, template, authData);
 
-    expect(templatesService.updateOne).toHaveBeenCalledWith(id, companyId, {
+    expect(templatesService.updateOne).toHaveBeenCalledWith(id, {
       ...oldTemplate,
       ...template,
       updatedBy: userId,

@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { Chance } from 'chance';
 import { FilterQueryDto, TemplateDto } from './dto';
 import { TemplateDocument } from './schemas/template.schema';
+import { UnlayerService } from '../unlayer/unlayer.service';
 
 const chance = new Chance();
 
@@ -29,6 +30,7 @@ export const mockTemplateCollection = [...Array(10).keys()].map(
 describe('TemplatesService', () => {
   let service: TemplatesService;
   let model: Model<TemplateDocument>;
+  let unlayerService: UnlayerService;
 
   const filterQueryDto: FilterQueryDto = {
     limit: 10,
@@ -66,11 +68,18 @@ describe('TemplatesService', () => {
             offset: jest.fn(),
           },
         },
+        {
+          provide: UnlayerService,
+          useValue: {
+            generatePreviewImage: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<TemplatesService>(TemplatesService);
     model = module.get<Model<TemplateDocument>>(getModelToken('Template'));
+    unlayerService = module.get<UnlayerService>(UnlayerService);
   });
 
   it('should be defined', () => {
@@ -122,16 +131,65 @@ describe('TemplatesService', () => {
     });
   });
 
+  describe('create()', () => {
+    it('should create a template', async () => {
+      const template = {
+        ...generateTemplate(),
+        // generatePreview: 'sync',
+      };
+      const exampleUrl = undefined;
+
+      jest
+        .spyOn(unlayerService, 'generatePreviewImage')
+        .mockImplementationOnce(async () => {
+          return { url: exampleUrl };
+        });
+
+      await service.create(template);
+
+      // expect(unlayerService.generatePreviewImage).toHaveBeenCalledWith(
+      //   template.unlayer.json,
+      //   template.companyId,
+      // );
+
+      expect(model.create).toHaveBeenCalledWith({
+        ...template,
+        unlayer: {
+          ...template.unlayer,
+          previewUrl: exampleUrl,
+        },
+      });
+    });
+  });
+
   describe('updateOne()', () => {
     it('should updated a single template', async () => {
       const id = chance.guid();
-      const companyId = chance.guid();
       const updatedTemplate = generateTemplate();
+      const exampleUrl = undefined;
 
-      await service.updateOne(id, companyId, updatedTemplate);
+      jest
+        .spyOn(unlayerService, 'generatePreviewImage')
+        .mockImplementationOnce(async () => {
+          return { url: exampleUrl };
+        });
+
+      await service.updateOne(id, updatedTemplate);
+
+      // expect(unlayerService.generatePreviewImage).toHaveBeenCalledWith(
+      //   updatedTemplate.unlayer.json,
+      //   updatedTemplate.companyId,
+      // );
+
       expect(model.findOneAndUpdate).toHaveBeenCalledWith(
-        { id, companyId },
-        updatedTemplate,
+        { id, companyId: updatedTemplate.companyId },
+        {
+          ...updatedTemplate,
+          unlayer: {
+            ...updatedTemplate.unlayer,
+            previewUrl: exampleUrl,
+          },
+        },
         { returnDocument: 'after' },
       );
     });

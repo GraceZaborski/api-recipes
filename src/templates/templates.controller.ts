@@ -80,7 +80,10 @@ export class TemplatesController {
     @Body() templateDto: CreateTemplateDto,
     @AuthContext() { userId: createdBy, companyId },
   ): Promise<TemplateDto | Error> {
+    const { generatePreview } = templateDto;
+
     const payload = {
+      generateTemplate: undefined,
       ...templateDto,
       companyId,
       createdBy,
@@ -89,7 +92,7 @@ export class TemplatesController {
       updatedAt: null,
     };
 
-    return this.templatesService.create(payload);
+    return this.templatesService.create(payload, generatePreview);
   }
 
   @Delete('/:id')
@@ -134,6 +137,6 @@ export class TemplatesController {
       updatedAt: new Date(),
     };
 
-    return this.templatesService.updateOne(id, companyId, payload);
+    return this.templatesService.updateOne(id, payload);
   }
 }

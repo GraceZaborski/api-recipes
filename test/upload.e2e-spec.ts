@@ -33,7 +33,7 @@ const ABILITIES = {
 
 const gcpApiEndpoint = 'http://localhost:4443';
 
-describe('UploadController (e2e)', () => {
+describe.skip('UploadController (e2e)', () => {
   let app: NestFastifyApplication;
   let headersWithToken;
 

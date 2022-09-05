@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Storage, Bucket } from '@google-cloud/storage';
-import axios from 'axios';
-import { Stream } from 'stream';
+// import { request } from 'gaxios';
+import * as request from 'request';
+import { pipeline } from 'node:stream/promises';
+const abortController = new AbortController();
 
 @Injectable()
 export class GcpStorageService {
@@ -24,51 +26,69 @@ export class GcpStorageService {
   async streamFromUrl(
     path: string,
     url: string,
-    method: string,
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE',
     httpOpts?: Record<string, any>,
   ): Promise<{ url: string }> {
-    const response = await axios[method]({
-      ...httpOpts,
-      url,
-      responseType: 'stream',
-    });
+    try {
+      // const response = await request<Readable>({
+      //   headers: httpOpts?.headers,
+      //   data: httpOpts?.data,
+      //   signal: abortController.signal,
+      //   url,
+      //   method,
+      //   responseType: 'stream',
+      // });
 
-    if (response.status >= 200 && response.status < 300) {
+      const response = request[`${method.toLowerCase()}`]({
+        headers: httpOpts?.headers,
+        url,
+        json: httpOpts?.data,
+      });
+
+      response.on('close', () => {
+        console.log('closing request');
+      });
+
+      response.on('error', (err) => {
+        console.log('STREAM ERRORED', err);
+      });
+
+      // if (response.status >= 200 && response.status < 300) {
       return this.uploadFromStream(
-        response.data,
+        response,
         path,
         response.headers['content-type'],
       );
+      // }
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
 
     throw new Error('Failed to transfer file');
   }
 
-  uploadFromStream(
-    stream: Stream,
+  async uploadFromStream(
+    stream,
     path: string,
     contentType: string,
   ): Promise<{ url: string }> {
     const blob = this.bucket.file(path);
-
-    return new Promise((resolve, reject) => {
-      stream.pipe(
-        blob
-          .createWriteStream({
-            resumable: false,
-            metadata: {
-              contentType,
-            },
-          })
-          .on('finish', () => {
-            resolve({
-              url: `${this.protocol}://${this.hostname}/${blob.name}`,
-            });
-          })
-          .on('error', (error) => {
-            reject(error);
-          }),
-      );
+    const writeStream = blob.createWriteStream({
+      resumable: false,
+      metadata: {
+        contentType,
+      },
     });
+
+    await pipeline(stream, writeStream);
+
+    stream.destroy();
+    stream.end();
+    writeStream.end();
+    writeStream.destroy();
+    abortController.abort();
+
+    return { url: `${this.protocol}://${this.hostname}/${blob.name}` };
   }
 }
