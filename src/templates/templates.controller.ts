@@ -84,6 +84,12 @@ export class TemplatesController {
       ...templateDto,
       companyId,
       createdBy,
+      unlayer: {
+        ...templateDto.unlayer,
+        previewUrl: templateDto.unlayer.previewUrl
+          ? templateDto.unlayer.previewUrl
+          : null,
+      },
       createdAt: new Date(),
       updatedBy: null,
       updatedAt: null,
@@ -129,6 +135,12 @@ export class TemplatesController {
     const payload = {
       ...template,
       ...templateDto,
+      unlayer: {
+        ...templateDto.unlayer,
+        previewUrl: templateDto.unlayer.previewUrl
+          ? templateDto.unlayer.previewUrl
+          : null,
+      },
       companyId,
       updatedBy,
       updatedAt: new Date(),
