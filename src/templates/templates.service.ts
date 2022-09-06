@@ -10,7 +10,8 @@ type FilterWithCompany = FilterQueryDto & { companyId?: string };
 @Injectable()
 export class TemplatesService {
   constructor(
-    @InjectModel(Template.name) private readonly templateModel: Model<Template>,
+    @InjectModel(Template.name, 'campaigns')
+    private readonly templateModel: Model<Template>,
   ) {}
 
   public async findOne(id: string, companyId: string): Promise<TemplateDto> {

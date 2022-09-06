@@ -8,6 +8,7 @@ import { TemplatesModule } from './templates/templates.module';
 import { UnlayerModule } from './unlayer/unlayer.module';
 import { GcpStorageModule } from './gcp-storage/gcp-storage.module';
 import { UploadModule } from './upload/upload.module';
+import { CompaniesModule } from './companies/companies.module';
 import configuration from './config/configuration';
 @Module({
   imports: [
@@ -18,14 +19,23 @@ import configuration from './config/configuration';
     LoggerModule,
     AuthModule.forRoot(),
     MongooseModule.forRootAsync({
+      connectionName: 'campaigns',
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => configService.get('mongo'),
+      inject: [ConfigService],
+    }),
+    MongooseModule.forRootAsync({
+      connectionName: 'seed',
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) =>
+        configService.get('mongoSeed'),
       inject: [ConfigService],
     }),
     TemplatesModule,
     UnlayerModule,
     GcpStorageModule,
     UploadModule,
+    CompaniesModule,
   ],
   controllers: [HeartbeatController],
   providers: [],

@@ -323,6 +323,11 @@
   resolved "https://verdaccio.support.beamery.engineer/@beamery%2fchimera-auth-client/-/chimera-auth-client-2.0.0.tgz#2b3485ceb6cd4114b8146c2429af2e2953f170ca"
   integrity sha512-EzIAEqQTr4wCnxBGy3mvcyBX6QKqlmSfF/1a+GkLnxg0RpSf5Pcxl5AQXhorQRNeFnJb+QIk/eEZOy12gjelcQ==
 
+"@beamery/chimera-user-client@^1.0.0":
+  version "1.0.0"
+  resolved "https://verdaccio.support.beamery.engineer/@beamery%2fchimera-user-client/-/chimera-user-client-1.0.0.tgz#e843952f33361c59d96767ca5bec969cb879e54c"
+  integrity sha512-MU9ZW5H3Whu+MeVku0oJnH7rfRjUQ1XyX9JpVoHhO3yX8Y6faq9n15Z4B8LWlIJRHp6iDbX/2k4qV0NHXhtQrg==
+
 "@beamery/commitlint-config@^1.3.0":
   version "1.3.0"
   resolved "https://verdaccio.support.beamery.engineer/@beamery%2fcommitlint-config/-/commitlint-config-1.3.0.tgz#0bc3d6044058b01e9e8c6dd82313def099ee3233"

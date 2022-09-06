@@ -8,3 +8,10 @@ services:
     volumes:
       - ./test/assets/dummy_gcs:/data
     command: ['-scheme', 'http', '-backend', 'memory']
+  mongo:
+    image: mongo:4.4
+    container_name: api-campaigns-mongodb-e2e
+    ports:
+      - 27017:27017
+    volumes:
+      - ./util/mongo/local-mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro

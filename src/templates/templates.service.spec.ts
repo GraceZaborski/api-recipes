@@ -45,7 +45,7 @@ describe('TemplatesService', () => {
       providers: [
         TemplatesService,
         {
-          provide: getModelToken('Template'),
+          provide: getModelToken('Template', 'campaigns'),
           useValue: {
             find: jest.fn().mockReturnValue(mockTemplateCollection),
             count: jest.fn().mockReturnValue(mockTemplateCollection.length),
@@ -70,7 +70,9 @@ describe('TemplatesService', () => {
     }).compile();
 
     service = module.get<TemplatesService>(TemplatesService);
-    model = module.get<Model<TemplateDocument>>(getModelToken('Template'));
+    model = module.get<Model<TemplateDocument>>(
+      getModelToken('Template', 'campaigns'),
+    );
   });
 
   it('should be defined', () => {

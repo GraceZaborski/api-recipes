@@ -3,12 +3,9 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import { MongooseModule } from '@nestjs/mongoose';
+import { getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from '@cerbero/mod-auth';
-import {
-  closeInMongodConnection,
-  rootMongooseTestModule,
-} from './utils/mongooseTest';
+import { rootMongooseTestModule } from './utils/mongooseTest';
 import { Chance } from 'chance';
 import { TemplatesModule } from '../src/templates/templates.module';
 import { TemplateSchema } from '../src/templates/schemas/template.schema';
@@ -54,6 +51,11 @@ describe('TemplatesController (e2e)', () => {
   let app: NestFastifyApplication;
   let headersWithToken;
 
+  const clearTemplates = async () => {
+    const campaigns = app.get(getModelToken('Template', 'campaigns'));
+    await campaigns.deleteMany({});
+  };
+
   beforeAll(async () => {
     headersWithToken = {
       'x-token-payload': buildXTokenPayload({ companyId, userId, roles }),
@@ -62,10 +64,12 @@ describe('TemplatesController (e2e)', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         TemplatesModule,
-        rootMongooseTestModule(),
-        MongooseModule.forFeature([
-          { name: 'Templates', schema: TemplateSchema },
-        ]),
+        rootMongooseTestModule('campaigns'),
+        rootMongooseTestModule('seed'),
+        MongooseModule.forFeature(
+          [{ name: 'Templates', schema: TemplateSchema }],
+          'campaigns',
+        ),
         AuthModule.forRoot(),
       ],
     })
@@ -81,10 +85,11 @@ describe('TemplatesController (e2e)', () => {
 
     await app.init();
     await app.getHttpAdapter().getInstance().ready();
+    await clearTemplates();
   });
 
   afterAll(async () => {
-    await closeInMongodConnection();
+    await clearTemplates();
     await app.close();
     sandbox.restore();
   });
