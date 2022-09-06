@@ -11,18 +11,6 @@ export class UnlayerDesign {
 }
 
 @Schema()
-export class RecipientVariable {
-  @Prop()
-  fallback: string;
-
-  @Prop()
-  template: string;
-
-  @Prop()
-  variable: string;
-}
-
-@Schema()
 export class Template {
   @Prop({ type: String, unique: true, default: uuidv4 })
   id: string;

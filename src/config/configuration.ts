@@ -19,8 +19,21 @@ const {
 
 export const isLocal = !NAMESPACE;
 
-const mongoCampaigns = getMongoConfig('CAMPAIGNS', SVC_NAME);
-const mongoSeed = getMongoConfig('SEED', SVC_NAME);
+const mongoCampaigns = getMongoConfig('CAMPAIGNS', {
+  appName: SVC_NAME,
+});
+
+const mongoSeed = getMongoConfig('CAMPAIGNS_SEED', {
+  appName: SVC_NAME,
+});
+
+if (!isLocal && !mongoCampaigns) {
+  throw new Error('No mongo config for campaigns');
+}
+
+if (!isLocal && !mongoSeed) {
+  throw new Error('No mongo config for seed');
+}
 
 export const config = {
   port: PORT,
@@ -61,4 +74,6 @@ export const config = {
   },
 };
 
-export default () => config;
+export default () => {
+  return config;
+};
