@@ -253,16 +253,21 @@ describe('TemplatesController (e2e)', () => {
   it('should return 409 if a template is created with a duplicate title', async () => {
     stubAuthUserResponse({ abilities: [ABILITIES.TEMPLATE_CREATE] });
 
-    const template = {
+    const templateOne = {
       ...newTemplate,
-      title: chance.word(),
+      title: 'Hello',
+    };
+
+    const templateTwo = {
+      ...newTemplate,
+      title: 'hello',
     };
 
     const response = await app.inject({
       method: 'POST',
       url: '/templates',
       headers: headersWithToken,
-      payload: template,
+      payload: templateOne,
     });
 
     expect(response.statusCode).toEqual(201);
@@ -271,7 +276,7 @@ describe('TemplatesController (e2e)', () => {
       method: 'POST',
       url: '/templates',
       headers: headersWithToken,
-      payload: template,
+      payload: templateTwo,
     });
 
     expect(duplicateResponse.statusCode).toEqual(409);
@@ -676,7 +681,7 @@ describe('TemplatesController (e2e)', () => {
 
     const templateTwo = {
       ...newTemplate,
-      title: chance.word(),
+      title: 'Template',
     };
 
     const responseOne = await app.inject({
@@ -699,8 +704,8 @@ describe('TemplatesController (e2e)', () => {
     expect(responseTwo.statusCode).toEqual(201);
 
     const updatedPayload = {
-      title: templateTwo.title,
       ...newTemplate,
+      title: 'template',
     };
 
     const updateResponse = await app.inject({
