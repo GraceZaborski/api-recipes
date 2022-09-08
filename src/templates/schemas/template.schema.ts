@@ -60,5 +60,8 @@ TemplateSchema.index({ title: 'text', subject: 'text' });
 TemplateSchema.index({ companyId: 1, createdBy: -1 });
 TemplateSchema.index({ companyId: 1, createdAt: -1 });
 TemplateSchema.index({ companyId: 1, updatedAt: -1 });
-TemplateSchema.index({ companyId: 1, title: 1 }, { unique: true });
+TemplateSchema.index(
+  { companyId: 1, title: 1 },
+  { unique: true, collation: { locale: 'en', strength: 2 } },
+);
 TemplateSchema.index({ companyId: 1, subject: 1 });
