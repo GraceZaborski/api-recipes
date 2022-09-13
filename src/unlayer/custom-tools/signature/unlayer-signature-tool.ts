@@ -1,7 +1,12 @@
 import { mergeStringifiedObjects } from '../unlayer-tools-utils';
 import { unlayerSignatureMissingHtml } from './unlayer-signature-html';
 
-export const getSignatureToolConfig = ({ user }) => {
+export const getSignatureToolConfig = ({
+  user,
+}: {
+  user?: any;
+  company?: any;
+}) => {
   const { emailSignature = null } = user;
   const signatureHtml: string = emailSignature || unlayerSignatureMissingHtml;
 

@@ -9,6 +9,7 @@ import { UnlayerModule } from './unlayer/unlayer.module';
 import { GcpStorageModule } from './gcp-storage/gcp-storage.module';
 import { UploadModule } from './upload/upload.module';
 import { CompaniesModule } from './companies/companies.module';
+import { CampaignsModule } from './campaigns/campaigns.module';
 import configuration from './config/configuration';
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import configuration from './config/configuration';
     GcpStorageModule,
     UploadModule,
     CompaniesModule,
+    CampaignsModule,
   ],
   controllers: [HeartbeatController],
   providers: [],

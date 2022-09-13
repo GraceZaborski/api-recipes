@@ -1,10 +1,14 @@
 import { mergeStringifiedObjects } from '../unlayer-tools-utils';
 import { unlayerUnsubscribeDefaultHtml } from './unlayer-unsubscribe-html';
 
-export const getUnsubscribeToolConfig = ({ company }) => {
-  const { settings } = company;
+export const getUnsubscribeToolConfig = ({
+  company,
+}: {
+  user?: any;
+  company?: any;
+}) => {
   const unsubscribeHtml: string =
-    settings?.campaigns?.unsubscribe?.url?.html ||
+    company?.settings?.campaigns?.unsubscribe?.url?.html ||
     unlayerUnsubscribeDefaultHtml;
 
   const staticConfig = JSON.stringify({

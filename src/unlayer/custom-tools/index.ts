@@ -5,7 +5,7 @@ export * from './unlayer-tools-utils';
 export * from './signature';
 export * from './unsubscribe';
 
-export const getAllConfigs = ({ user, company }) => {
+export const getAllConfigs = ({ user = {}, company = {} }) => {
   const configs = [
     getSignatureToolConfig({ user, company }),
     getUnsubscribeToolConfig({ user, company }),

@@ -4,13 +4,14 @@ const {
   PORT = 8000,
   BIND_ADDRESS = '0.0.0.0',
   NAMESPACE,
-  LOG_LEVEL = 'info',
+  LOG_LEVEL = 'debug',
   MONGO_URI = 'mongodb://localhost/campaigns',
   MONGO_URI_SEED = 'mongodb://localhost/seed',
   SVC_NAME = 'api-campaigns',
   ENABLE_SWAGGER = 'true',
   UNLAYER_ONPREM_API_KEY,
   DOMAIN = 'aether.staging.beamery.engineer',
+  LOCAL_DOMAIN,
   CAMPAIGN_V2_PUBLIC_BUCKET = 'name',
   CAMPAIGN_V2_PUBLIC_HOSTNAME,
   GCP_API_ENDPOINT = undefined,
@@ -36,6 +37,9 @@ if (!isLocal && !mongoSeed) {
 }
 
 export const config = {
+  externalUrl: isLocal
+    ? LOCAL_DOMAIN
+    : `https://frontier.${DOMAIN}/api-campaigns`,
   port: PORT,
   bindAddress: BIND_ADDRESS,
   isLocal,
