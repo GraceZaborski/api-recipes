@@ -1,5 +1,5 @@
 import { ACL, AuthContext } from '@cerbero/mod-auth';
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Header, Param, Post } from '@nestjs/common';
 import { GcpStorageService } from '../gcp-storage/gcp-storage.service';
 import { UnlayerExportDto } from './dto/unlayer.dto';
 import { v4 as uuid } from 'uuid';
@@ -13,8 +13,8 @@ import {
 import { UnlayerExportImageResponseDto } from './dto/exportImageResponse.dto';
 import { ErrorResponseDto } from '../common/dto/errorResponse.dto';
 import { UnlayerService } from './unlayer.service';
+import { UnlayerInternalExportDto } from './dto/internalExport.dto';
 @ApiTags('unlayer')
-@ApiSecurity('api_key')
 @Controller('unlayer')
 export class UnlayerController {
   private unlayerConfig: {
@@ -23,14 +23,43 @@ export class UnlayerController {
     previewImage: Record<string, string>;
   };
 
+  private externalUrl: string;
+
   constructor(
     private gcpStorageService: GcpStorageService,
     private configService: ConfigService,
     private unlayerService: UnlayerService,
   ) {
     this.unlayerConfig = this.configService.get('unlayer');
+    this.externalUrl = this.configService.get('externalUrl');
   }
 
+  @Post('/internal/export/html')
+  async internalExportHtml(@Body() unlayerExport: UnlayerInternalExportDto) {
+    const { userId, companyId, design, displayMode = 'email' } = unlayerExport;
+    const { apiUrl, apiKey } = this.unlayerConfig;
+
+    const customJS = `${
+      this.externalUrl
+    }/unlayer/public/custom-js/int/${userId}/${companyId}/tools.js?${Date.now()}`;
+
+    const response = await fetch(`${apiUrl}/html`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        design,
+        displayMode,
+        customJS,
+      }),
+    });
+
+    return response.json();
+  }
+
+  @ApiSecurity('api_key')
   @Post('/export/image')
   @ACL('templates/template:create')
   @ApiOkResponse({ type: UnlayerExportImageResponseDto })
@@ -58,9 +87,20 @@ export class UnlayerController {
     return { url };
   }
 
-  @ACL('templates/template:create')
-  @Get('/custom-js')
-  async test(@AuthContext() { companyId, userId }) {
-    return this.unlayerService.getCustomJs({ companyId, userId });
+  @Get('/public/custom-js/:campaignId/tools.js')
+  @Header('Content-Type', 'text/javascript')
+  async customJs(@Param() { campaignId }) {
+    const id = campaignId === 'test' ? null : campaignId;
+    return (
+      await this.unlayerService.getCustomJsByCampaignId({ campaignId: id })
+    ).join('\n');
+  }
+
+  @Get('/public/custom-js/int/:userId/:companyId/tools.js')
+  @Header('Content-Type', 'text/javascript')
+  async customJsUserCompany(@Param() { userId, companyId }) {
+    return (
+      await this.unlayerService.getCustomJsByUserCompany({ userId, companyId })
+    ).join('\n');
   }
 }

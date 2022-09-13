@@ -2,6 +2,54 @@ db = db.getSiblingDB('campaigns');
 db.createCollection('templates');
 
 dbSeed = db.getSiblingDB('seed');
+
+dbSeed.createCollection('campaigns');
+dbSeed.campaigns.insertOne({
+  id: 'd70904b7-be6d-4e5b-a60b-ebfb237b6a5d',
+  title: 'test',
+  type: 'dynamic',
+  from: 'grace.zaborski+aether@beamery.com',
+  touchpoints: [
+    {
+      subject: 'test',
+      rules: {
+        AND: [
+          {
+            condition: 'NOT_REPLIED',
+          },
+        ],
+        OR: [],
+      },
+      delay: {
+        tz: 'Europe/London',
+      },
+      unlayer: {
+        json: {},
+        previewUrl: null,
+        html: ' ',
+      },
+      recipientVariables: [],
+      modules: [],
+      first: true,
+      id: 'dY96IOUhaW',
+      createdBy: '4e5c39290c1f97a95c75',
+      createdAt: {
+        $date: {
+          $numberLong: '1663149258430',
+        },
+      },
+    },
+  ],
+  version: 2,
+  companyId: '427cd31dbb0c78500714',
+  createdBy: '4e5c39290c1f97a95c75',
+  createdAt: {
+    $date: {
+      $numberLong: '1663149258430',
+    },
+  },
+});
+
 dbSeed.createCollection('companies');
 
 dbSeed.companies.insertOne({

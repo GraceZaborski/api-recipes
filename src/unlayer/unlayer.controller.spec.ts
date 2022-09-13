@@ -2,6 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { GcpStorageService } from '../gcp-storage/gcp-storage.service';
 import { UnlayerController } from './unlayer.controller';
+import { UnlayerService } from './unlayer.service';
 
 describe('UnlayerController', () => {
   let controller: UnlayerController;
@@ -26,6 +27,12 @@ describe('UnlayerController', () => {
               apiKey: '',
               previewImage: {},
             })),
+          },
+        },
+        {
+          provide: UnlayerService,
+          useValue: {
+            getCustomJs: jest.fn(),
           },
         },
       ],
