@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TemplatesController } from './templates.controller';
 import { TemplatesService } from './templates.service';
 import { Chance } from 'chance';
-import { CompaniesService } from '../companies/companies.service';
 
 const chance = new Chance();
 
@@ -24,12 +23,6 @@ describe('TemplatesController', () => {
             update: jest.fn(),
             updateOne: jest.fn(),
             remove: jest.fn(),
-          },
-        },
-        {
-          provide: CompaniesService,
-          useValue: {
-            findOne: jest.fn(() => []),
           },
         },
       ],

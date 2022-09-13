@@ -22,7 +22,7 @@ module.exports = () => {
   const context = withRoot('.');
   const devtool = 'source-map';
   const entry = { main: ['./src/main'] };
-  const extensions = ['.ts', '.js', '.json'];
+  const extensions = ['.ts', '.js', '.json', '.tsx'];
   const mode = process.env.NODE_ENV || 'development';
   const path = withRoot('dist');
   const target = 'node';
