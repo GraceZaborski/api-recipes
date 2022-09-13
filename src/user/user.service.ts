@@ -17,6 +17,8 @@ export class UserService {
       company_id: authorization.companyId,
     });
 
-    return this.chimera.getUser(request);
+    const { user } = await this.chimera.getUser(request);
+
+    return user;
   }
 }

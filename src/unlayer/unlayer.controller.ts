@@ -1,5 +1,5 @@
 import { ACL, AuthContext } from '@cerbero/mod-auth';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { GcpStorageService } from '../gcp-storage/gcp-storage.service';
 import { UnlayerExportDto } from './dto/unlayer.dto';
 import { v4 as uuid } from 'uuid';
@@ -12,7 +12,7 @@ import {
 } from '@nestjs/swagger';
 import { UnlayerExportImageResponseDto } from './dto/exportImageResponse.dto';
 import { ErrorResponseDto } from '../common/dto/errorResponse.dto';
-
+import { UnlayerService } from './unlayer.service';
 @ApiTags('unlayer')
 @ApiSecurity('api_key')
 @Controller('unlayer')
@@ -26,6 +26,7 @@ export class UnlayerController {
   constructor(
     private gcpStorageService: GcpStorageService,
     private configService: ConfigService,
+    private unlayerService: UnlayerService,
   ) {
     this.unlayerConfig = this.configService.get('unlayer');
   }
@@ -55,5 +56,11 @@ export class UnlayerController {
     );
 
     return { url };
+  }
+
+  @ACL('templates/template:create')
+  @Get('/custom-js')
+  async test(@AuthContext() { companyId, userId }) {
+    return this.unlayerService.getCustomJs({ companyId, userId });
   }
 }

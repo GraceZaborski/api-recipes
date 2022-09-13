@@ -28,22 +28,12 @@ import {
 } from '@nestjs/swagger';
 import { ErrorResponseDto } from '../common/dto/errorResponse.dto';
 import { PaginatedTemplates } from './dto/paginatedTemplates.dto';
-import { CompaniesService } from '../companies/companies.service';
 
 @ApiTags('templates')
 @ApiSecurity('api_key')
 @Controller('templates')
 export class TemplatesController {
-  constructor(
-    private templatesService: TemplatesService,
-    private companiesService: CompaniesService,
-  ) {}
-
-  @Get('/test')
-  public async test() {
-    const company = await this.companiesService.findOne('427cd31dbb0c78500714');
-    return company;
-  }
+  constructor(private templatesService: TemplatesService) {}
 
   @Get()
   @ACL('templates/template:view')
