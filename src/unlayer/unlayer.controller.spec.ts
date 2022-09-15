@@ -116,6 +116,47 @@ describe('UnlayerController', () => {
     dateSpy.mockRestore();
   });
 
+  it('should be able to export with displayMode defaulting to email', async () => {
+    const unlayerExport: UnlayerInternalExportDto = {
+      design: { foo: 'bar' },
+      userId: 'test-userId',
+      companyId: 'test-companyId',
+    };
+
+    const returnedJson = { foo: 'bar' };
+
+    const fetchSpy = jest.spyOn(global, 'fetch').mockImplementation(
+      jest.fn(async () => ({
+        json: jest.fn(() => returnedJson),
+      })) as jest.Mock,
+    );
+
+    const mockDate = Date.now();
+    const dateSpy = jest
+      .spyOn(global.Date, 'now')
+      .mockImplementation(() => mockDate as unknown as number);
+
+    const result = await controller.internalExportHtml(unlayerExport);
+
+    expect(result).toEqual(returnedJson);
+
+    expect(global.fetch).toBeCalledWith(`${apiUrl}/html`, {
+      body: JSON.stringify({
+        design: unlayerExport.design,
+        displayMode: 'email',
+        customJS: `${externalUrl}/unlayer/public/custom-js/int/${unlayerExport.userId}/${unlayerExport.companyId}/tools.js?${mockDate}`,
+      }),
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+    });
+
+    fetchSpy.mockRestore();
+    dateSpy.mockRestore();
+  });
+
   it('should be able to export an image', async () => {
     const unlayerExport: UnlayerExportDto = {
       json: { foo: 'bar' },

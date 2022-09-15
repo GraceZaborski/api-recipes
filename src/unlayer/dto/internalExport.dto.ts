@@ -22,5 +22,5 @@ export class UnlayerInternalExportDto {
   @IsString()
   @IsOptional()
   @ApiProperty()
-  readonly displayMode: string;
+  readonly displayMode?: string;
 }
