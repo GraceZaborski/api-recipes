@@ -4,7 +4,7 @@ const {
   PORT = 8000,
   BIND_ADDRESS = '0.0.0.0',
   NAMESPACE,
-  LOG_LEVEL = 'debug',
+  LOG_LEVEL = 'info',
   MONGO_URI = 'mongodb://localhost/campaigns',
   MONGO_URI_SEED = 'mongodb://localhost/seed',
   SVC_NAME = 'api-campaigns',
