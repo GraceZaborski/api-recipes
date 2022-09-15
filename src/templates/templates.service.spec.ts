@@ -99,6 +99,121 @@ describe('TemplatesService', () => {
         limit: filterQueryDto.limit,
       });
     });
+
+    it('should add $text query if search is set', async () => {
+      jest.spyOn(model, 'find').mockReturnValue({
+        lean: jest.fn().mockResolvedValueOnce(mockTemplateCollection),
+        count: jest.fn().mockReturnValue(mockTemplateCollection.length),
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        populate: jest.fn().mockReturnThis(),
+        sort: jest.fn().mockReturnThis(),
+      } as any);
+
+      await service.findAll({
+        ...filterQueryDto,
+        search: 'test',
+      });
+
+      expect(model.find).toHaveBeenCalledWith(
+        expect.objectContaining({
+          $text: { $search: 'test' },
+        }),
+      );
+    });
+
+    it('should add createdBy query if createdBy is set', async () => {
+      jest.spyOn(model, 'find').mockReturnValue({
+        lean: jest.fn().mockResolvedValueOnce(mockTemplateCollection),
+        count: jest.fn().mockReturnValue(mockTemplateCollection.length),
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        populate: jest.fn().mockReturnThis(),
+        sort: jest.fn().mockReturnThis(),
+      } as any);
+
+      const createdBy = 'test';
+
+      await service.findAll({
+        ...filterQueryDto,
+        createdBy,
+      });
+
+      expect(model.find).toHaveBeenCalledWith(
+        expect.objectContaining({
+          createdBy,
+        }),
+      );
+    });
+
+    it('should add title query if title is set', async () => {
+      jest.spyOn(model, 'find').mockReturnValue({
+        lean: jest.fn().mockResolvedValueOnce(mockTemplateCollection),
+        count: jest.fn().mockReturnValue(mockTemplateCollection.length),
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        populate: jest.fn().mockReturnThis(),
+        sort: jest.fn().mockReturnThis(),
+      } as any);
+
+      const title = 'test';
+
+      await service.findAll({
+        ...filterQueryDto,
+        title,
+      });
+
+      expect(model.find).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title,
+        }),
+      );
+    });
+
+    it('should use defaults for missing input properties', async () => {
+      jest.spyOn(model, 'find').mockReturnValue({
+        lean: jest.fn().mockResolvedValueOnce(mockTemplateCollection),
+        count: jest.fn().mockReturnValue(mockTemplateCollection.length),
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        populate: jest.fn().mockReturnThis(),
+        sort: jest.fn().mockReturnThis(),
+      } as any);
+
+      await service.findAll({
+        ...filterQueryDto,
+        limit: undefined,
+        offset: undefined,
+        sortBy: undefined,
+        sortOrder: undefined,
+      });
+
+      expect(model.find().skip).toHaveBeenCalledWith(0);
+      expect(model.find().limit).toHaveBeenCalledWith(20);
+      expect(model.find().sort).toHaveBeenCalledWith({
+        createdAt: -1,
+      });
+    });
+
+    it('should handle asc sortOrder correctly', async () => {
+      jest.spyOn(model, 'find').mockReturnValue({
+        lean: jest.fn().mockResolvedValueOnce(mockTemplateCollection),
+        count: jest.fn().mockReturnValue(mockTemplateCollection.length),
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        populate: jest.fn().mockReturnThis(),
+        sort: jest.fn().mockReturnThis(),
+      } as any);
+
+      await service.findAll({
+        ...filterQueryDto,
+        sortOrder: 'asc',
+      });
+
+      expect(model.find().sort).toHaveBeenCalledWith({
+        createdAt: 1,
+      });
+    });
   });
 
   describe('findOne()', () => {
@@ -136,6 +251,15 @@ describe('TemplatesService', () => {
         updatedTemplate,
         { returnDocument: 'after' },
       );
+    });
+  });
+
+  describe('create()', () => {
+    it('should create a new template', async () => {
+      const template = generateTemplate();
+
+      await service.create(template);
+      expect(model.create).toHaveBeenCalledWith(template);
     });
   });
 });
