@@ -1,7 +1,7 @@
 import { MongooseModuleOptions } from '@nestjs/mongoose';
 import { ReadPreferenceMode } from 'mongodb';
 
-export const getMongoConfig = (configName, opts) => {
+export const getMongoConfig = (configName, opts = {}) => {
   const dbName = process.env[`DAL_MONGODB_${configName}_database`];
   if (!dbName) {
     return null;
