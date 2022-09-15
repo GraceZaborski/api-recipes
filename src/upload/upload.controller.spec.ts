@@ -45,4 +45,12 @@ describe('UploadController', () => {
     await controller.uploadImage({ companyId: 'test' }, file);
     expect(service.uploadImage).toHaveBeenCalledWith('test', file);
   });
+
+  it('should handle non images', async () => {
+    const file = null;
+
+    await expect(
+      controller.uploadImage({ companyId: 'test' }, file),
+    ).rejects.toThrow();
+  });
 });
