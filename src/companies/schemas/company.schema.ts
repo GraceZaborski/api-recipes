@@ -17,21 +17,27 @@ export class CompanySettingsCampaignsUrl {
   html: string;
 
   @Prop()
-  htmlSimple: string;
+  htmlSimple?: string;
 
   @Prop()
-  rv: RecipientVariable[];
+  rv?: RecipientVariable[];
 }
+
 @Schema()
-export class CompanySettingsCampaigns {
+export class CompanySettingsCampaignsUnsubscribe {
   @Prop({ type: Object })
   url: CompanySettingsCampaignsUrl;
 }
 
 @Schema()
+export class CompanySettingsCampaigns {
+  unsubscribe: CompanySettingsCampaignsUnsubscribe;
+}
+
+@Schema()
 export class CompanySettings {
   @Prop({ type: Object })
-  campaigns: CompanySettingsCampaigns;
+  campaigns?: CompanySettingsCampaigns;
 }
 
 @Schema()
