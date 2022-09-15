@@ -112,10 +112,10 @@
     "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
-      "^.+\\.(t|j)sx?$": "ts-jest"
+      "^.+\\.(ts|js|tsx|jsx)$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "**/*.(t|j)sx?"
+      "**/*.(ts|js|tsx|jsx)"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",

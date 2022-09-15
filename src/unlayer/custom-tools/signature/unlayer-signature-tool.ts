@@ -10,8 +10,6 @@ export const getSignatureToolConfig = ({
   const { emailSignature = null } = user;
   const signatureHtml: string = emailSignature || unlayerSignatureMissingHtml;
 
-  console.log(signatureHtml);
-  console.log(user);
   const staticConfig = JSON.stringify({
     name: 'signature',
     supportedDisplayModes: ['email'],
