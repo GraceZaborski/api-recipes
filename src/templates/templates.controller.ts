@@ -148,4 +148,13 @@ export class TemplatesController {
 
     return this.templatesService.updateOne(id, companyId, payload);
   }
+
+  @Get('byUniqueUsers')
+  @ACL('templates/template:view')
+  @ApiOkResponse({ type: TemplateDto })
+  @ApiForbiddenResponse({ type: ErrorResponseDto })
+  @ApiNotFoundResponse({ type: ErrorResponseDto })
+  public async getUniqueTemplateOwners(@AuthContext() { companyId }) {
+    return this.templatesService.uniqueCreatedByList(companyId);
+  }
 }
