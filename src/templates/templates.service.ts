@@ -80,21 +80,9 @@ export class TemplatesService {
     });
   }
 
-  public async uniqueCreatedByList(companyId: string): Promise<Array<object>> {
+  public async uniqueCreatedByList(companyId: string): Promise<object> {
     return (await this.templateModel.distinct('createdBy', { companyId })).map(
-      async (id) => {
-        console.log('--id---', id);
-        const userData = await this.userService.getUser({
-          id,
-          companyId,
-        });
-
-        console.log('--userData---', userData);
-        return {
-          userId: id,
-          userName: `${userData.firstName} ${userData.lastName}`,
-        };
-      },
+      (id) => ({ id, companyId }),
     );
   }
 }

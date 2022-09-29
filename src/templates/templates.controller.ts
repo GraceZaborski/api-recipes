@@ -12,9 +12,15 @@ import {
   Put,
 } from '@nestjs/common';
 import { ACL, AuthContext } from '@cerbero/mod-auth';
-import { TemplateDto, FilterQueryDto, CreateTemplateDto } from './dto';
+import {
+  TemplateDto,
+  FilterQueryDto,
+  CreateTemplateDto,
+  UserListDTO,
+} from './dto';
 import { TemplatesService } from './templates.service';
 import { TransformInterceptor } from '../interceptors/classTransformer.interceptor';
+import { HydrateUserDataInterceptor } from '../interceptors/hydrateUserData.interceptor';
 import {
   ApiBadRequestResponse,
   ApiConflictResponse,
@@ -149,12 +155,14 @@ export class TemplatesController {
     return this.templatesService.updateOne(id, companyId, payload);
   }
 
-  @Get('byUniqueUsers')
+  @Get('uniqueUsersList')
   @ACL('templates/template:view')
-  @ApiOkResponse({ type: TemplateDto })
+  @HttpCode(200)
+  @ApiOkResponse({ type: UserListDTO })
   @ApiForbiddenResponse({ type: ErrorResponseDto })
   @ApiNotFoundResponse({ type: ErrorResponseDto })
-  public async getUniqueTemplateOwners(@AuthContext() { companyId }) {
+  @UseInterceptors(HydrateUserDataInterceptor)
+  public async getUniqueTemplateCreators(@AuthContext() { companyId }) {
     return this.templatesService.uniqueCreatedByList(companyId);
   }
 }
