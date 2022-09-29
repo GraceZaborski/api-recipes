@@ -16,7 +16,6 @@ async function bootstrap() {
   setupGlobals(app);
 
   const PORT = app.get(ConfigService).get('port');
-  console.log('-----', PORT);
   const BIND_ADDRESS = app.get(ConfigService).get('bindAddress');
   await app.listen(PORT, BIND_ADDRESS);
 }

@@ -17,10 +17,7 @@ export class UserService {
       company_id: authorization.companyId,
     });
 
-    console.log('-----user request ---------');
-
     const { user } = await this.chimera.getUser(request);
-    console.log('-----user found ---------', user);
 
     return user;
   }
