@@ -5,14 +5,19 @@ import { FilterQueryDto } from './dto';
 import { PaginatedTemplates } from './dto/paginatedTemplates.dto';
 import { TemplateDto } from './dto/template.dto';
 import { Template } from './schemas/template.schema';
+import { UserService } from '../user/user.service';
 
 type FilterWithCompany = FilterQueryDto & { companyId?: string };
 @Injectable()
 export class TemplatesService {
+  userService: UserService;
   constructor(
     @InjectModel(Template.name, 'campaigns')
     private readonly templateModel: Model<Template>,
-  ) {}
+    userService: UserService,
+  ) {
+    this.userService = userService;
+  }
 
   public async findOne(id: string, companyId: string): Promise<TemplateDto> {
     return this.templateModel.findOne({ id, companyId }).lean();
@@ -73,5 +78,23 @@ export class TemplatesService {
     return this.templateModel.findOneAndUpdate({ id, companyId }, templateDto, {
       returnDocument: 'after',
     });
+  }
+
+  public async uniqueCreatedByList(companyId: string): Promise<Array<object>> {
+    return (await this.templateModel.distinct('createdBy', { companyId })).map(
+      async (id) => {
+        console.log('--id---', id);
+        const userData = await this.userService.getUser({
+          id,
+          companyId,
+        });
+
+        console.log('--userData---', userData);
+        return {
+          userId: id,
+          userName: `${userData.firstName} ${userData.lastName}`,
+        };
+      },
+    );
   }
 }

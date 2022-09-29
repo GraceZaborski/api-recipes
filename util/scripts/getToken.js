@@ -107,7 +107,7 @@ const main = async () => {
     const res = await loginRes.json();
     error = res.error;
     message = res.message;
-  } catch (error) {}
+  } catch (error) { }
 
   return console.error(
     `Unknown error. Status: ${loginRes.status}`,
