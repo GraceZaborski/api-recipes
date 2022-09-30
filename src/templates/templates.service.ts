@@ -5,19 +5,14 @@ import { FilterQueryDto } from './dto';
 import { PaginatedTemplates } from './dto/paginatedTemplates.dto';
 import { TemplateDto } from './dto/template.dto';
 import { Template } from './schemas/template.schema';
-import { UserService } from '../user/user.service';
 
 type FilterWithCompany = FilterQueryDto & { companyId?: string };
 @Injectable()
 export class TemplatesService {
-  userService: UserService;
   constructor(
     @InjectModel(Template.name, 'campaigns')
     private readonly templateModel: Model<Template>,
-    userService: UserService,
-  ) {
-    this.userService = userService;
-  }
+  ) {}
 
   public async findOne(id: string, companyId: string): Promise<TemplateDto> {
     return this.templateModel.findOne({ id, companyId }).lean();
