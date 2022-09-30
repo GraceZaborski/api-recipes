@@ -12,11 +12,13 @@ import { TemplateSchema } from '../src/templates/schemas/template.schema';
 import {
   stubAuthUserResponse,
   buildXTokenPayload,
+  authStub,
   authSandbox,
-  sandbox,
 } from './utils/authUtils';
+import { userStub, userSandbox, stubUserResponse } from './utils/userUtils';
 
 import { proto } from '@beamery/chimera-auth-client';
+import { proto as userProto } from '@beamery/chimera-user-client';
 import { setupGlobals } from '../src/globals';
 
 const chance = new Chance();
@@ -74,7 +76,9 @@ describe('TemplatesController (e2e)', () => {
       ],
     })
       .overrideProvider(proto.Auth)
-      .useValue(authSandbox)
+      .useValue(authStub)
+      .overrideProvider(userProto.User)
+      .useValue(userStub)
       .compile();
 
     app = moduleFixture.createNestApplication<NestFastifyApplication>(
@@ -91,7 +95,8 @@ describe('TemplatesController (e2e)', () => {
   afterAll(async () => {
     await clearTemplates();
     await app.close();
-    sandbox.restore();
+    authSandbox.restore();
+    userSandbox.restore();
   });
 
   it('should return 403 without the correct permissions', async () => {
@@ -813,5 +818,47 @@ describe('TemplatesController (e2e)', () => {
 
     expect(responseTwo.statusCode).toEqual(200);
     expect(responseTwo.json().unlayer.previewUrl).toEqual(null);
+  });
+
+  it('should be able to get a unique list of createdBy users', async () => {
+    stubAuthUserResponse({
+      abilities: [ABILITIES.TEMPLATE_VIEW],
+    });
+
+    const firstName = chance.first();
+    const lastName = chance.last();
+
+    stubUserResponse({
+      id: 'test',
+      firstName,
+      lastName,
+    });
+
+    const templateResponse = await app.inject({
+      method: 'GET',
+      url: '/templates',
+      headers: headersWithToken,
+      query: { offset: '0', limit: '100' },
+    });
+
+    const templates = templateResponse.json();
+
+    const uniqueUserIds = [
+      ...new Set(templates.results.map((t) => t.createdBy)),
+    ];
+
+    const result = await app.inject({
+      method: 'GET',
+      url: '/templates/users',
+      headers: headersWithToken,
+    });
+
+    const { users } = result.json();
+
+    const names = users.map((u) => u.name);
+    names.forEach((n) => expect(n).toEqual(`${firstName} ${lastName}`));
+
+    const ids = users.map((u) => u.id);
+    expect(uniqueUserIds.sort()).toEqual(ids.sort());
   });
 });

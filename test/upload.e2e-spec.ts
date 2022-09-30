@@ -8,7 +8,7 @@ import {
   stubAuthUserResponse,
   buildXTokenPayload,
   authSandbox,
-  sandbox,
+  authStub,
 } from './utils/authUtils';
 
 import { proto } from '@beamery/chimera-auth-client';
@@ -59,7 +59,7 @@ describe('UploadController (e2e)', () => {
       ],
     })
       .overrideProvider(proto.Auth)
-      .useValue(authSandbox)
+      .useValue(authStub)
       .compile();
 
     app = moduleFixture.createNestApplication<NestFastifyApplication>(
@@ -74,7 +74,7 @@ describe('UploadController (e2e)', () => {
 
   afterAll(async () => {
     await app.close();
-    sandbox.restore();
+    authSandbox.restore();
   });
 
   it('should be able to upload an image', async () => {

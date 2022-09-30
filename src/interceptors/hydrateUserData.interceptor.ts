@@ -28,6 +28,7 @@ export class HydrateUserDataInterceptor<T>
 
   async getHydratedUserData(id: string, companyId: string) {
     const userData = await this.userService.getUser({ id, companyId });
+
     return {
       id,
       name: `${userData.firstName} ${userData.lastName}`,

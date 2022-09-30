@@ -155,7 +155,7 @@ export class TemplatesController {
     return this.templatesService.updateOne(id, companyId, payload);
   }
 
-  @Get('uniqueUsersList')
+  @Get('/users')
   @ACL('templates/template:view')
   @HttpCode(200)
   @ApiOkResponse({ type: UserListDTO })

@@ -9,12 +9,12 @@ type StubResponse = {
   companyId?: string;
 };
 
-export const sandbox = sinon.createSandbox();
+export const authSandbox = sinon.createSandbox();
 
-export const authSandbox = sandbox.createStubInstance(proto.Auth);
+export const authStub = authSandbox.createStubInstance(proto.Auth);
 
 export const stubAuthUserResponse = (userRolesAbilities: StubResponse) =>
-  authSandbox.getUserAbilities.resolves(
+  authStub.getUserAbilities.resolves(
     proto.GetUserAbilitiesResponse.fromObject(userRolesAbilities),
   );
 
