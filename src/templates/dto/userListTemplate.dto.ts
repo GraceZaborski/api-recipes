@@ -1,6 +1,18 @@
-import { IsString, MaxLength, IsArray } from 'class-validator';
+import { IsString, IsArray } from 'class-validator';
 import { Exclude, Expose, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+
+class HydratedUser {
+  @Expose()
+  @IsString()
+  @ApiProperty()
+  id: string;
+
+  @Expose()
+  @IsString()
+  @ApiProperty()
+  name: string;
+}
 
 class UserDTO {
   @Expose()
@@ -11,8 +23,12 @@ class UserDTO {
   @Expose()
   @IsString()
   @ApiProperty()
-  @MaxLength(255)
-  name: string;
+  companyId: string;
+
+  @Expose()
+  @Type(() => HydratedUser)
+  @ApiProperty({ type: HydratedUser })
+  user: HydratedUser;
 }
 
 @Exclude()
