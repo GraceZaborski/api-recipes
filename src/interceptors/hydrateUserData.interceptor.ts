@@ -3,6 +3,7 @@ import {
   ExecutionContext,
   NestInterceptor,
   Injectable,
+  mixin,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -12,41 +13,58 @@ export interface Response<T> {
   data: T;
 }
 
-@Injectable()
-export class HydrateUserDataInterceptor<T>
-  implements NestInterceptor<T, Response<T>>
-{
-  constructor(private userService: UserService) {}
+export function HydrateUserDataInterceptorFactory({
+  idPropertyName,
+  collectionPath = null,
+}: {
+  idPropertyName: string;
+  collectionPath?: string;
+}) {
+  @Injectable()
+  class HydrateUserDataInterceptor<T>
+    implements NestInterceptor<T, Response<T>>
+  {
+    constructor(public userService: UserService) {}
 
-  async hydrateUserData(usersData: any[]) {
-    return await Promise.all(
-      usersData.map((user) =>
-        this.getHydratedUserData(user.id, user.companyId),
-      ),
-    );
-  }
-
-  async getHydratedUserData(id: string, companyId: string) {
-    const userData = await this.userService.getUser({ id, companyId });
-
-    return {
-      id,
-      name: `${userData.firstName} ${userData.lastName}`,
-    };
-  }
-
-  async intercept(
-    context: ExecutionContext,
-    next: CallHandler,
-  ): Promise<Observable<any>> {
-    try {
-      return next.handle().pipe(
-        map(async (data) => ({
-          users: await this.hydrateUserData(data),
-        })),
+    async hydrateUserData(data: any[]) {
+      const path = collectionPath ? data[collectionPath] : data;
+      return await Promise.all(
+        path.map((item) =>
+          this.getHydratedUserData(item, item[idPropertyName], item.companyId),
+        ),
       );
-    } catch (e) {
-      console.log(`Error while hydrating user data, error: `, e.message);
+    }
+
+    async getHydratedUserData(item: any, id: string, companyId: string) {
+      const userData = await this.userService.getUser({ id, companyId });
+
+      return {
+        ...item,
+        user: {
+          id,
+          name: `${userData.firstName} ${userData.lastName}`,
+        },
+      };
+    }
+
+    async intercept(
+      context: ExecutionContext,
+      next: CallHandler,
+    ): Promise<Observable<any>> {
+      try {
+        return next.handle().pipe(
+          map(async (data) => {
+            const hydratedData = await this.hydrateUserData(data);
+            return collectionPath
+              ? { [collectionPath]: hydratedData }
+              : hydratedData;
+          }),
+        );
+      } catch (e) {
+        console.log(`Error while hydrating user data, error: `, e.message);
+      }
     }
   }
+
+  return mixin(HydrateUserDataInterceptor);
 }

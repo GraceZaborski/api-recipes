@@ -853,9 +853,8 @@ describe('TemplatesController (e2e)', () => {
       headers: headersWithToken,
     });
 
-    const { users } = result.json();
-
-    const names = users.map((u) => u.name);
+    const users = result.json();
+    const names = users.map((u) => u.user.name);
     names.forEach((n) => expect(n).toEqual(`${firstName} ${lastName}`));
 
     const ids = users.map((u) => u.id);
