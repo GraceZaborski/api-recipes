@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TemplatesController } from './templates.controller';
 import { TemplatesService } from './templates.service';
 import { Chance } from 'chance';
+import { UserService } from '../user/user.service';
 
 const chance = new Chance();
 
@@ -23,6 +24,12 @@ describe('TemplatesController', () => {
             update: jest.fn(),
             updateOne: jest.fn(),
             remove: jest.fn(),
+          },
+        },
+        {
+          provide: UserService,
+          useValue: {
+            getUser: jest.fn(() => []),
           },
         },
       ],
