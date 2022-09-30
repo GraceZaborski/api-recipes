@@ -20,7 +20,7 @@ import {
 } from './dto';
 import { TemplatesService } from './templates.service';
 import { TransformInterceptor } from '../interceptors/classTransformer.interceptor';
-import { HydrateUserDataInterceptor } from '../interceptors/hydrateUserData.interceptor';
+import { HydrateUserDataInterceptorFactory } from '../interceptors/hydrateUserData.interceptor';
 import {
   ApiBadRequestResponse,
   ApiConflictResponse,
@@ -161,8 +161,13 @@ export class TemplatesController {
   @ApiOkResponse({ type: UserListDTO })
   @ApiForbiddenResponse({ type: ErrorResponseDto })
   @ApiNotFoundResponse({ type: ErrorResponseDto })
-  @UseInterceptors(HydrateUserDataInterceptor)
+  @UseInterceptors(
+    HydrateUserDataInterceptorFactory({
+      idPropertyName: 'id',
+    }),
+  )
   public async getUniqueTemplateCreators(@AuthContext() { companyId }) {
-    return this.templatesService.uniqueCreatedByList(companyId);
+    const users = await this.templatesService.uniqueCreatedByList(companyId);
+    return users;
   }
 }
