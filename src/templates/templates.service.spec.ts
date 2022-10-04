@@ -165,7 +165,7 @@ describe('TemplatesService', () => {
 
       expect(model.find).toHaveBeenCalledWith(
         expect.objectContaining({
-          title,
+          title: { $regex: /^test$/i },
         }),
       );
     });
