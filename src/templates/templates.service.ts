@@ -7,6 +7,10 @@ import { TemplateDto } from './dto/template.dto';
 import { Template } from './schemas/template.schema';
 
 type FilterWithCompany = FilterQueryDto & { companyId?: string };
+type TemplatesMongoFilter = Omit<FilterWithCompany, 'title'> & {
+  title?: { $regex: RegExp };
+};
+
 @Injectable()
 export class TemplatesService {
   constructor(
@@ -31,7 +35,7 @@ export class TemplatesService {
       sortBy = 'createdAt',
       sortOrder = 'desc',
     } = filterQuery;
-    const findQuery: Partial<FilterWithCompany> = { companyId };
+    const findQuery: Partial<TemplatesMongoFilter> = { companyId };
 
     if (search) {
       findQuery['$text'] = { $search: search };
@@ -42,7 +46,9 @@ export class TemplatesService {
     }
 
     if (title) {
-      findQuery.title = title;
+      findQuery.title = {
+        $regex: new RegExp('^' + title + '$', 'i'),
+      };
     }
 
     const results = await this.templateModel
