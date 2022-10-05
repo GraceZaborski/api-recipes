@@ -10,6 +10,7 @@ import {
   Param,
   HttpCode,
   Put,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { ACL, AuthContext } from '@cerbero/mod-auth';
 import {
@@ -34,12 +35,16 @@ import {
 } from '@nestjs/swagger';
 import { ErrorResponseDto } from '../common/dto/errorResponse.dto';
 import { PaginatedTemplates } from './dto/paginatedTemplates.dto';
+import { Logger } from '../logger';
 
 @ApiTags('templates')
 @ApiSecurity('api_key')
 @Controller('templates')
 export class TemplatesController {
-  constructor(private templatesService: TemplatesService) {}
+  constructor(
+    private templatesService: TemplatesService,
+    private logger: Logger,
+  ) {}
 
   @Get()
   @ACL('templates/template:view')
@@ -135,6 +140,7 @@ export class TemplatesController {
     const template = await this.templatesService.findOne(id, companyId);
 
     if (!template) {
+      this.logger.debug('template not found', { id, companyId });
       throw new NotFoundException();
     }
 
@@ -169,5 +175,11 @@ export class TemplatesController {
   public async getUniqueTemplateCreators(@AuthContext() { companyId }) {
     const users = await this.templatesService.uniqueCreatedByList(companyId);
     return users;
+  }
+
+  @Get('/test')
+  public async test() {
+    this.logger.error({ msg: 'testing', payload: { foo: 'bar' } });
+    throw new InternalServerErrorException();
   }
 }

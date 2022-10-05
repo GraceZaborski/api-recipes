@@ -3,10 +3,15 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { MongoValidationExceptionFilter } from './filters/mongoValidationException.filter';
 import { config } from './config/configuration';
 import { contentParser } from 'fastify-multer';
+import { Logger } from './logger';
 
-export function setupGlobals(app) {
+export async function setupGlobals(app) {
+  const logger = await app.resolve(Logger);
+  logger.log = (...args) => logger.logger.info(...args);
+  app.useLogger(logger);
   app.register(contentParser);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  // app.useGlobalFilters(new HttpExceptionFilter(logger));
   app.useGlobalFilters(new MongoValidationExceptionFilter());
 
   if (config.enableSwagger) {

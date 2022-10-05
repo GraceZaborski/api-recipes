@@ -13,7 +13,7 @@ async function bootstrap() {
     new FastifyAdapter(),
   );
 
-  setupGlobals(app);
+  await setupGlobals(app);
 
   const PORT = app.get(ConfigService).get('port');
   const BIND_ADDRESS = app.get(ConfigService).get('bindAddress');
