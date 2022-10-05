@@ -5,6 +5,7 @@ import { FilterQueryDto } from './dto';
 import { PaginatedTemplates } from './dto/paginatedTemplates.dto';
 import { TemplateDto } from './dto/template.dto';
 import { Template } from './schemas/template.schema';
+import * as _ from 'lodash';
 
 type FilterWithCompany = FilterQueryDto & { companyId?: string };
 type TemplatesMongoFilter = Omit<FilterWithCompany, 'title'> & {
@@ -47,7 +48,7 @@ export class TemplatesService {
 
     if (title) {
       findQuery.title = {
-        $regex: new RegExp('^' + title + '$', 'i'),
+        $regex: new RegExp('^' + _.escapeRegExp(title) + '$', 'i'),
       };
     }
 
