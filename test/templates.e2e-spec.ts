@@ -910,4 +910,54 @@ describe('TemplatesController (e2e)', () => {
     expect(getResponseThree.statusCode).toEqual(200);
     expect(getResponseThree.json().results.length).toBe(0);
   });
+
+  it('should be able to search for a template with a title containing special characters', async () => {
+    stubAuthUserResponse({
+      abilities: [ABILITIES.TEMPLATE_CREATE, ABILITIES.TEMPLATE_VIEW],
+    });
+
+    const template = {
+      ...newTemplate,
+      title: 'Title*?&',
+    };
+
+    const postResponse = await app.inject({
+      method: 'POST',
+      url: '/templates',
+      headers: headersWithToken,
+      payload: template,
+    });
+
+    expect(postResponse.statusCode).toEqual(201);
+
+    const getResponseOne = await app.inject({
+      method: 'GET',
+      url: `/templates`,
+      headers: headersWithToken,
+      query: { title: template.title },
+    });
+
+    expect(getResponseOne.statusCode).toEqual(200);
+    expect(getResponseOne.json().results.length).toBe(1);
+
+    const getResponseTwo = await app.inject({
+      method: 'GET',
+      url: `/templates`,
+      headers: headersWithToken,
+      query: { title: template.title.toUpperCase() },
+    });
+
+    expect(getResponseTwo.statusCode).toEqual(200);
+    expect(getResponseTwo.json().results.length).toBe(1);
+
+    const getResponseThree = await app.inject({
+      method: 'GET',
+      url: `/templates`,
+      headers: headersWithToken,
+      query: { title: template.title.concat(' 123') },
+    });
+
+    expect(getResponseThree.statusCode).toEqual(200);
+    expect(getResponseThree.json().results.length).toBe(0);
+  });
 });
