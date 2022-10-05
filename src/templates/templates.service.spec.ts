@@ -170,6 +170,30 @@ describe('TemplatesService', () => {
       );
     });
 
+    it('should add title query with special characters escaped if title is set', async () => {
+      jest.spyOn(model, 'find').mockReturnValue({
+        lean: jest.fn().mockResolvedValueOnce(mockTemplateCollection),
+        count: jest.fn().mockReturnValue(mockTemplateCollection.length),
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        populate: jest.fn().mockReturnThis(),
+        sort: jest.fn().mockReturnThis(),
+      } as any);
+
+      const title = 'test*?&';
+
+      await service.findAll({
+        ...filterQueryDto,
+        title,
+      });
+
+      expect(model.find).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: { $regex: /^test\*\?&$/i },
+        }),
+      );
+    });
+
     it('should use defaults for missing input properties', async () => {
       jest.spyOn(model, 'find').mockReturnValue({
         lean: jest.fn().mockResolvedValueOnce(mockTemplateCollection),
