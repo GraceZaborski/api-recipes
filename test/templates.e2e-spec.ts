@@ -260,6 +260,61 @@ describe('TemplatesController (e2e)', () => {
     expect(searchSubjectTemplate.subject).toEqual(searchTemplate.subject);
   });
 
+  it('should show correct count when filtering', async () => {
+    const resultCount = await app.inject({
+      method: 'GET',
+      url: '/templates',
+      headers: headersWithToken,
+    });
+
+    const count = resultCount.json().count;
+
+    const TITLE_SEARCH_STRING = chance.word();
+
+    const searchTemplate = {
+      ...newTemplate,
+      title: TITLE_SEARCH_STRING,
+    };
+
+    stubAuthUserResponse({
+      abilities: [ABILITIES.TEMPLATE_CREATE, ABILITIES.TEMPLATE_VIEW],
+    });
+    const create = await app.inject({
+      method: 'POST',
+      url: '/templates',
+      headers: headersWithToken,
+      payload: searchTemplate,
+    });
+
+    expect(create.statusCode).toEqual(201);
+    const { id: searchTemplateId } = create.json();
+
+    const resultCount2 = await app.inject({
+      method: 'GET',
+      url: '/templates',
+      headers: headersWithToken,
+    });
+
+    const count2 = resultCount2.json().count;
+    expect(count2).toEqual(count + 1);
+
+    const searchTitle = await app.inject({
+      method: 'GET',
+      url: '/templates',
+      query: { title: TITLE_SEARCH_STRING },
+      headers: headersWithToken,
+    });
+
+    const response = searchTitle.json();
+    expect(response.count).toEqual(1);
+
+    const [searchTitleTemplate] = response.results;
+    expect(searchTitle.statusCode).toEqual(200);
+    expect(searchTitle.json().results.length).toEqual(1);
+    expect(searchTitleTemplate.id).toEqual(searchTemplateId);
+    expect(searchTitleTemplate.title).toEqual(searchTemplate.title);
+  });
+
   it('should return 409 if a template is created with a duplicate title', async () => {
     stubAuthUserResponse({ abilities: [ABILITIES.TEMPLATE_CREATE] });
 
