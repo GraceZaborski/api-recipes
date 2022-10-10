@@ -59,7 +59,7 @@ export class TemplatesService {
       .limit(limit)
       .lean();
 
-    const count = await this.templateModel.count();
+    const count = await this.templateModel.find(findQuery).count();
 
     return { results, count, limit, offset };
   }
