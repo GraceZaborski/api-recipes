@@ -28,7 +28,7 @@ function level(label: string) {
   return { 'log.level': label };
 }
 
-function log(object: LogObject) {
+function log(object: LogObject): Omit<LogObject, 'error'> {
   const { error, ...ecsObject } = object;
   ecsObject.ecs = { version: '1.6.0' };
 
