@@ -19,13 +19,15 @@ export const getSignatureToolConfig = ({
     usageLimit: 1,
   });
 
+  const signatureHtmlEscaped = signatureHtml.replace(/"/g, "'");
+
   const renderer = `{
     renderer: {
       Viewer: window.unlayer.createViewer({
-        render: () => "${signatureHtml}",
+        render: () => "${signatureHtmlEscaped}",
       }),
       exporters: {
-        email: () => "${signatureHtml}",
+        email: () => "${signatureHtmlEscaped}",
       }
     }
   }`.replace(/\n/g, '');
