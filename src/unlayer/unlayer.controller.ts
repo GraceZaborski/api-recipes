@@ -1,5 +1,13 @@
 import { ACL, AuthContext } from '@cerbero/mod-auth';
-import { Body, Controller, Get, Header, Param, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Header,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { GcpStorageService } from '../gcp-storage/gcp-storage.service';
 import { UnlayerExportDto } from './dto/unlayer.dto';
 import { v4 as uuid } from 'uuid';
@@ -36,12 +44,28 @@ export class UnlayerController {
 
   @Post('/internal/export/html')
   async internalExportHtml(@Body() unlayerExport: UnlayerInternalExportDto) {
-    const { userId, companyId, design, displayMode = 'email' } = unlayerExport;
+    const {
+      userId,
+      companyId,
+      campaignId,
+      design,
+      displayMode = 'email',
+    } = unlayerExport;
     const { apiUrl, apiKey } = this.unlayerConfig;
 
-    const customJS = `${
-      this.externalUrl
-    }/unlayer/public/custom-js/int/${userId}/${companyId}/tools.js?${Date.now()}`;
+    if ((!userId || !companyId) && !campaignId) {
+      throw new BadRequestException(
+        'Must supply userId and companyId, or campaignId',
+      );
+    }
+
+    const customJS = campaignId
+      ? `${
+          this.externalUrl
+        }/unlayer/public/custom-js/${campaignId}/tools.js?${Date.now()}`
+      : `${
+          this.externalUrl
+        }/unlayer/public/custom-js/int/${userId}/${companyId}/tools.js?${Date.now()}`;
 
     const response = await fetch(`${apiUrl}/html`, {
       method: 'POST',

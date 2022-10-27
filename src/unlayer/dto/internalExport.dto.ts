@@ -11,12 +11,20 @@ export class UnlayerInternalExportDto {
   @Expose()
   @IsString()
   @ApiProperty()
-  readonly userId: string;
+  @IsOptional()
+  readonly userId?: string;
 
   @Expose()
   @IsString()
   @ApiProperty()
-  readonly companyId: string;
+  @IsOptional()
+  readonly companyId?: string;
+
+  @Expose()
+  @IsString()
+  @ApiProperty()
+  @IsOptional()
+  readonly campaignId?: string;
 
   @Expose()
   @IsString()
