@@ -24,15 +24,21 @@ To start dependencies (mongo):
 yarn docker:dev:start
 ```
 
-To forward Chimera for ACL/Auth service:
+To forward Chimera for ACL/Auth and User service:
 
 ```
 kube_cloudflare.sh beamery-staging kubectl port-forward -n aether svc/auth 50050
 ```
 
 ```
+kube_cloudflare.sh beamery-staging kubectl port-forward -n aether svc/user 50053
+```
+
+```
 export CHIMERA_AUTH_SERVICE_LOADBALANCER=localhost &&\
-export CHIMERA_AUTH_PORT=50050
+export CHIMERA_AUTH_PORT=50050 &&\
+export CHIMERA_USER_SERVICE_LOADBALANCER=localhost &&\
+CHIMERA_USER_PORT=50053
 
 ```
 
