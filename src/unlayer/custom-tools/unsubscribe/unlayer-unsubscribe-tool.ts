@@ -23,6 +23,9 @@ export const getUnsubscribeToolConfig = ({
   const unsubscribeHtmlProcessed = unsubscribeHtml.replace(/"/g, "'");
 
   const renderer = `{
+    values: {
+      html: "${unsubscribeHtmlProcessed}",
+    },
     renderer: {
       Viewer: window.unlayer.createViewer({
         render: () => "${unsubscribeHtmlProcessed}",
