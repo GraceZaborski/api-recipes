@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CampaignsService } from '../campaigns/campaigns.service';
 import { CompaniesService } from '../companies/companies.service';
 import { UserService } from '../user/user.service';
-import { getAllConfigs } from './custom-tools';
+import { getAllConfigs, getUnsubscribeHtml } from './custom-tools';
 
 @Injectable()
 export class UnlayerService {
@@ -43,5 +43,15 @@ export class UnlayerService {
     const company = await this.companiesService.findOne(companyId);
 
     return getAllConfigs({ user, company });
+  }
+
+  public async getUnsubscribeHtml({ companyId }) {
+    if (!companyId) {
+      return '';
+    }
+
+    const company = await this.companiesService.findOne(companyId);
+
+    return getUnsubscribeHtml({ company });
   }
 }
