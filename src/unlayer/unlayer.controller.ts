@@ -129,4 +129,15 @@ export class UnlayerController {
       await this.unlayerService.getCustomJsByUserCompany({ userId, companyId })
     ).join('\n');
   }
+
+  @ApiSecurity('api_key')
+  @Get('/custom-js/unsubscribe-html')
+  @ACL('campaigns/campaign:create')
+  async unsubscribeHtml(@AuthContext() { companyId }) {
+    const unsubscribeHtml = await this.unlayerService.getUnsubscribeHtml({
+      companyId,
+    });
+
+    return { unsubscribeHtml };
+  }
 }

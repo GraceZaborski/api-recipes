@@ -31,6 +31,7 @@ const ABILITIES = {
   TEMPLATE_VIEW: 'templates/template:view',
   TEMPLATE_DELETE: 'templates/template:remove',
   TEMPLATE_EDIT: 'templates/template:edit',
+  CAMPAIGN_CREATE: 'campaigns/campaign:create',
 };
 
 const newTemplate = {
