@@ -136,6 +136,15 @@ describe('TemplatesController (e2e)', () => {
 
   it('should return no templates initially', async () => {
     stubAuthUserResponse({ abilities: [ABILITIES.TEMPLATE_VIEW] });
+    const firstName = chance.first();
+    const lastName = chance.last();
+
+    stubUserResponse({
+      id: 'test',
+      firstName,
+      lastName,
+    });
+
     const response = await app.inject({
       method: 'GET',
       url: '/templates',
@@ -161,6 +170,15 @@ describe('TemplatesController (e2e)', () => {
 
   it('should return the created template', async () => {
     stubAuthUserResponse({ abilities: [ABILITIES.TEMPLATE_VIEW] });
+    const firstName = chance.first();
+    const lastName = chance.last();
+
+    stubUserResponse({
+      id: 'test',
+      firstName,
+      lastName,
+    });
+
     const response = await app.inject({
       method: 'GET',
       url: '/templates',
@@ -172,7 +190,10 @@ describe('TemplatesController (e2e)', () => {
       expect.objectContaining({
         ...newTemplate,
         companyId,
-        createdBy: userId,
+        user: {
+          name: `${firstName} ${lastName}`,
+          id: 'test-user-id',
+        },
       }),
     );
 
@@ -186,6 +207,7 @@ describe('TemplatesController (e2e)', () => {
       'createdAt',
       'updatedBy',
       'updatedAt',
+      'user',
     ]);
   });
 
@@ -209,6 +231,15 @@ describe('TemplatesController (e2e)', () => {
 
     expect(create.statusCode).toEqual(201);
     const { id: searchTemplateId } = create.json();
+
+    const firstName = chance.first();
+    const lastName = chance.last();
+
+    stubUserResponse({
+      id: 'test',
+      firstName,
+      lastName,
+    });
 
     const searchTitle = await app.inject({
       method: 'GET',
@@ -247,6 +278,15 @@ describe('TemplatesController (e2e)', () => {
     expect(create.statusCode).toEqual(201);
     const { id: searchTemplateId } = create.json();
 
+    const firstName = chance.first();
+    const lastName = chance.last();
+
+    stubUserResponse({
+      id: 'test',
+      firstName,
+      lastName,
+    });
+
     const searchTitle = await app.inject({
       method: 'GET',
       url: '/templates',
@@ -275,6 +315,15 @@ describe('TemplatesController (e2e)', () => {
   });
 
   it('should show correct count when filtering', async () => {
+    const firstName = chance.first();
+    const lastName = chance.last();
+
+    stubUserResponse({
+      id: 'test',
+      firstName,
+      lastName,
+    });
+
     const resultCount = await app.inject({
       method: 'GET',
       url: '/templates',
@@ -437,6 +486,15 @@ describe('TemplatesController (e2e)', () => {
 
     expect(response.statusCode).toEqual(201);
 
+    const firstName = chance.first();
+    const lastName = chance.last();
+
+    stubUserResponse({
+      id: 'test',
+      firstName,
+      lastName,
+    });
+
     const company2Templates = await app.inject({
       method: 'GET',
       url: '/templates',
@@ -486,6 +544,15 @@ describe('TemplatesController (e2e)', () => {
           }),
         ),
     );
+
+    const firstName = chance.first();
+    const lastName = chance.last();
+
+    stubUserResponse({
+      id: 'test',
+      firstName,
+      lastName,
+    });
 
     const allTemplates = await app.inject({
       method: 'GET',
@@ -539,6 +606,15 @@ describe('TemplatesController (e2e)', () => {
 
     const userId2 = chance.guid();
 
+    const firstName = chance.first();
+    const lastName = chance.last();
+
+    stubUserResponse({
+      id: userId2,
+      firstName,
+      lastName,
+    });
+
     const headers = {
       'x-token-payload': buildXTokenPayload({
         companyId,
@@ -575,13 +651,22 @@ describe('TemplatesController (e2e)', () => {
 
     const userIds = templates
       .json()
-      .results.map((template) => template.createdBy)
-      .filter((id) => id === userId);
+      .results.map((template) => template.user.name)
+      .filter((id) => id === `${firstName} ${lastName}`);
 
     expect(userIds.length).toEqual(templates.json().results.length);
   });
 
   it('should be able to sort by createdAt', async () => {
+    const firstName = chance.first();
+    const lastName = chance.last();
+
+    stubUserResponse({
+      id: 'test',
+      firstName,
+      lastName,
+    });
+
     const templatesAsc = await app.inject({
       method: 'GET',
       url: '/templates',
@@ -623,6 +708,15 @@ describe('TemplatesController (e2e)', () => {
     });
 
     expect(response.statusCode).toEqual(201);
+
+    const firstName = chance.first();
+    const lastName = chance.last();
+
+    stubUserResponse({
+      id: 'test',
+      firstName,
+      lastName,
+    });
 
     const createdTemplate = response.json();
 
@@ -733,6 +827,15 @@ describe('TemplatesController (e2e)', () => {
 
     expect(updateResponse.statusCode).toEqual(200);
     expect(updateResponse.json().title).toEqual(updatedPayload.title);
+
+    const firstName = chance.first();
+    const lastName = chance.last();
+
+    stubUserResponse({
+      id: 'test',
+      firstName,
+      lastName,
+    });
 
     const getTemplate = await app.inject({
       method: 'GET',
@@ -916,6 +1019,10 @@ describe('TemplatesController (e2e)', () => {
       ...new Set(templates.results.map((t) => t.createdBy)),
     ];
 
+    const uniqueUserNames = [
+      ...new Set(templates.results.map((t) => t.user.name)),
+    ];
+
     const result = await app.inject({
       method: 'GET',
       url: '/templates/users',
@@ -923,11 +1030,14 @@ describe('TemplatesController (e2e)', () => {
     });
 
     const users = result.json();
-    const names = users.map((u) => u.user.name);
-    names.forEach((n) => expect(n).toEqual(`${firstName} ${lastName}`));
 
     const ids = users.map((u) => u.id);
     expect(uniqueUserIds.sort()).toEqual(ids.sort());
+
+    const names = [...new Set(users.map((u) => u.user.name))];
+    names.forEach((n) => expect(n).toEqual(`${firstName} ${lastName}`));
+
+    expect(uniqueUserNames.sort()).toEqual(names.sort());
   });
 
   it('should be able to search for a template using the title, insensitively', async () => {
@@ -948,6 +1058,14 @@ describe('TemplatesController (e2e)', () => {
     });
 
     expect(postResponse.statusCode).toEqual(201);
+    const firstName = chance.first();
+    const lastName = chance.last();
+
+    stubUserResponse({
+      id: 'test',
+      firstName,
+      lastName,
+    });
 
     const getResponseOne = await app.inject({
       method: 'GET',
@@ -998,6 +1116,14 @@ describe('TemplatesController (e2e)', () => {
     });
 
     expect(postResponse.statusCode).toEqual(201);
+    const firstName = chance.first();
+    const lastName = chance.last();
+
+    stubUserResponse({
+      id: 'test',
+      firstName,
+      lastName,
+    });
 
     const getResponseOne = await app.inject({
       method: 'GET',
