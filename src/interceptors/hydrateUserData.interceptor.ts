@@ -56,7 +56,10 @@ export function HydrateUserDataInterceptorFactory({
           map(async (data) => {
             const hydratedData = await this.hydrateUserData(data);
             return collectionPath
-              ? { [collectionPath]: hydratedData }
+              ? {
+                  ...data,
+                  [collectionPath]: hydratedData,
+                }
               : hydratedData;
           }),
         );

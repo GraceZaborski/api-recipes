@@ -46,6 +46,12 @@ export class TemplatesController {
   @UseInterceptors(new TransformInterceptor(PaginatedTemplates))
   @ApiOkResponse({ type: PaginatedTemplates })
   @ApiForbiddenResponse({ type: ErrorResponseDto })
+  @UseInterceptors(
+    HydrateUserDataInterceptorFactory({
+      idPropertyName: 'createdBy',
+      collectionPath: 'results',
+    }),
+  )
   public async getAllTemplates(
     @Query() filterQuery: FilterQueryDto,
     @AuthContext() { companyId },
