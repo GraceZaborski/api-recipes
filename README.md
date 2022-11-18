@@ -38,7 +38,7 @@ kube_cloudflare.sh beamery-staging kubectl port-forward -n aether svc/user 50053
 export CHIMERA_AUTH_SERVICE_LOADBALANCER=localhost &&\
 export CHIMERA_AUTH_PORT=50050 &&\
 export CHIMERA_USER_SERVICE_LOADBALANCER=localhost &&\
-CHIMERA_USER_PORT=50053
+export CHIMERA_USER_PORT=50053
 
 ```
 

@@ -10,7 +10,6 @@ import {
   Param,
   HttpCode,
   Put,
-  InternalServerErrorException,
 } from '@nestjs/common';
 import { ACL, AuthContext } from '@cerbero/mod-auth';
 import {
@@ -175,11 +174,5 @@ export class TemplatesController {
   public async getUniqueTemplateCreators(@AuthContext() { companyId }) {
     const users = await this.templatesService.uniqueCreatedByList(companyId);
     return users;
-  }
-
-  @Get('/test')
-  public async test() {
-    this.logger.error({ msg: 'testing', payload: { foo: 'bar' } });
-    throw new InternalServerErrorException();
   }
 }

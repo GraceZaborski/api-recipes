@@ -4,6 +4,7 @@ import { MongoValidationExceptionFilter } from './filters/mongoValidationExcepti
 import { config } from './config/configuration';
 import { contentParser } from 'fastify-multer';
 import { Logger } from './logger';
+import { AllExceptionsFilter } from './filters/catch-all-exception.filter';
 
 export async function setupGlobals(app) {
   const logger = await app.resolve(Logger);
@@ -11,7 +12,7 @@ export async function setupGlobals(app) {
   app.useLogger(logger);
   app.register(contentParser);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-  // app.useGlobalFilters(new HttpExceptionFilter(logger));
+  app.useGlobalFilters(new AllExceptionsFilter(logger));
   app.useGlobalFilters(new MongoValidationExceptionFilter());
 
   if (config.enableSwagger) {

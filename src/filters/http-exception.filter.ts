@@ -16,9 +16,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const logLevel = exception.getStatus() >= 500 ? 'error' : 'info';
     this.logger[logLevel](exception.message, exception);
 
-    response.status(exception.getStatus()).send({
-      statusCode: exception.getStatus(),
-      error: exception,
-    });
+    response.status(exception.getStatus()).send(exception);
   }
 }
