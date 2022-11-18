@@ -21,6 +21,11 @@ import { proto } from '@beamery/chimera-auth-client';
 import { proto as userProto } from '@beamery/chimera-user-client';
 import { setupGlobals } from '../src/globals';
 
+import { ConfigModule } from '@nestjs/config';
+import configuration from '../src/config/configuration';
+
+import { LoggerModule } from '../src/logger';
+
 const chance = new Chance();
 
 const companyId = 'test-company-id';
@@ -64,8 +69,12 @@ describe('TemplatesController (e2e)', () => {
       'x-token-payload': buildXTokenPayload({ companyId, userId, roles }),
     };
 
+    const config = configuration();
+    config.logLevel = 'error';
+
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
+        LoggerModule,
         TemplatesModule,
         rootMongooseTestModule('campaigns'),
         rootMongooseTestModule('seed'),
@@ -74,6 +83,10 @@ describe('TemplatesController (e2e)', () => {
           'campaigns',
         ),
         AuthModule.forRoot(),
+        ConfigModule.forRoot({
+          load: [() => configuration()],
+          isGlobal: true,
+        }),
       ],
     })
       .overrideProvider(proto.Auth)
@@ -86,7 +99,7 @@ describe('TemplatesController (e2e)', () => {
       new FastifyAdapter(),
     );
 
-    setupGlobals(app);
+    setupGlobals(app, { useLogger: false });
 
     await app.init();
     await app.getHttpAdapter().getInstance().ready();

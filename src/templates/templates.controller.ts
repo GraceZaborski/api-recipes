@@ -43,7 +43,9 @@ export class TemplatesController {
   constructor(
     private templatesService: TemplatesService,
     private logger: Logger,
-  ) {}
+  ) {
+    this.logger.setContext('TemplatesController');
+  }
 
   @Get()
   @ACL('templates/template:view')

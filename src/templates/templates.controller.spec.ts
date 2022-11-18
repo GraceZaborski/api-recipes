@@ -3,6 +3,7 @@ import { TemplatesController } from './templates.controller';
 import { TemplatesService } from './templates.service';
 import { Chance } from 'chance';
 import { UserService } from '../user/user.service';
+import { Logger } from '../logger';
 
 const chance = new Chance();
 
@@ -30,6 +31,17 @@ describe('TemplatesController', () => {
           provide: UserService,
           useValue: {
             getUser: jest.fn(() => []),
+          },
+        },
+        {
+          provide: Logger,
+          useValue: {
+            log: jest.fn(),
+            error: jest.fn(),
+            warn: jest.fn(),
+            debug: jest.fn(),
+            verbose: jest.fn(),
+            setContext: jest.fn(),
           },
         },
       ],

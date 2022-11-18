@@ -66,7 +66,7 @@ describe('UploadController (e2e)', () => {
       new FastifyAdapter(),
     );
 
-    setupGlobals(app);
+    setupGlobals(app, { useLogger: false });
 
     await app.init();
     await app.getHttpAdapter().getInstance().ready();
