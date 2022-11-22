@@ -1,6 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { OpenTelemetryModule } from '@metinseylan/nestjs-opentelemetry';
+import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
+import { MetricReader } from '@opentelemetry/sdk-metrics';
+
 import { AuthModule } from '@cerbero/mod-auth';
 import { HeartbeatController } from './heartbeat/heartbeat.controller';
 import { LoggerModule } from './logger';
@@ -19,6 +23,17 @@ import configuration from './config/configuration';
     }),
     LoggerModule,
     AuthModule.forRoot(),
+    OpenTelemetryModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        serviceName: configService.get('serviceName'),
+        metricReader: new PrometheusExporter({
+          endpoint: configService.get<string>('telemetry.endpoint'),
+          port: configService.get<number>('telemetry.port'),
+        }) as any as MetricReader,
+      }),
+      inject: [ConfigService],
+    }),
     MongooseModule.forRootAsync({
       connectionName: 'campaigns',
       imports: [ConfigModule],
