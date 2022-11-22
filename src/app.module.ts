@@ -3,8 +3,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { OpenTelemetryModule } from '@metinseylan/nestjs-opentelemetry';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
+import { SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { MetricReader } from '@opentelemetry/sdk-metrics';
-
+import { TraceExporter } from '@google-cloud/opentelemetry-cloud-trace-exporter';
 import { AuthModule } from '@cerbero/mod-auth';
 import { HeartbeatController } from './heartbeat/heartbeat.controller';
 import { LoggerModule } from './logger';
@@ -15,6 +16,9 @@ import { UploadModule } from './upload/upload.module';
 import { CompaniesModule } from './companies/companies.module';
 import { CampaignsModule } from './campaigns/campaigns.module';
 import configuration from './config/configuration';
+
+const gcpTraceExporter = new TraceExporter({});
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -27,6 +31,9 @@ import configuration from './config/configuration';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         serviceName: configService.get('serviceName'),
+        spanProcessor: configService.get('telemetry.enabled')
+          ? new SimpleSpanProcessor(gcpTraceExporter)
+          : undefined,
         metricReader: new PrometheusExporter({
           endpoint: configService.get<string>('telemetry.endpoint'),
           port: configService.get<number>('telemetry.port'),

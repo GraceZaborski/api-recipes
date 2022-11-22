@@ -4,6 +4,9 @@ exports[`reqCustomProps should map headers to respective fields 1`] = `
 Object {
   "beamery.company.id": "mock-company-id",
   "span.id": "mock-span-id",
+  "tags": Array [
+    "api-campaigns",
+  ],
   "trace.id": "mock-trace-id",
   "url": Object {
     "path": "/mock-url",
