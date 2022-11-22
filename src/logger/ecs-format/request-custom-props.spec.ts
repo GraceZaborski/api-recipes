@@ -23,6 +23,7 @@ describe('reqCustomProps', () => {
     } as unknown as IncomingMessage;
 
     expect(reqCustomProps(mockRequest)).toEqual({
+      tags: ['api-campaigns'],
       url: { path: '/mock-url' },
     });
   });

@@ -47,6 +47,7 @@ export const config = {
   logLevel: LOG_LEVEL,
   enableSwagger: ENABLE_SWAGGER === 'true',
   telemetry: {
+    enabled: isLocal ? false : true,
     endpoint: '/metrics',
     port: 8001,
   },

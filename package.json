@@ -35,6 +35,7 @@
     "@cerbero/mod-auth": "^0.6.1",
     "@elastic/ecs-helpers": "^1.1.0",
     "@fastify/static": "^6.4.0",
+    "@google-cloud/opentelemetry-cloud-trace-exporter": "^1.1.0",
     "@google-cloud/storage": "^6.3.0",
     "@metinseylan/nestjs-opentelemetry": "^3.0.0",
     "@nestjs/common": "^9.0.0",
