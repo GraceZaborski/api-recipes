@@ -33,7 +33,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
           error: 'Unspecified error',
         };
 
-    response.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
+    response.status(httpStatus).send({
       ...responseBody,
       traceId: response.request.headers['x-b3-traceid'],
     });
