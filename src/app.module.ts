@@ -27,7 +27,7 @@ import { OpenTelemetryModule } from 'nestjs-otel';
         apiMetrics: {
           enable: true,
           defaultAttributes: {
-            custom: 'label',
+            service_name: 'api-campaigns',
           },
           ignoreRoutes: ['/heartbeat/readiness', '/heartbeat/liveness'],
           ignoreUndefinedRoutes: false,
