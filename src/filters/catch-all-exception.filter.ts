@@ -16,11 +16,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const response = host.switchToHttp().getResponse<FastifyReply>();
     const isHttpException = exception instanceof HttpException;
 
-    const httpStatus = isHttpException
+    const httpStatus: number = isHttpException
       ? exception.getStatus()
       : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const logLevel = httpStatus >= 500 ? 'error' : 'info';
+    const logLevel =
+      httpStatus >= 500 ? 'error' : httpStatus >= 400 ? 'warn' : 'info';
+
     this.logger[logLevel]({
       message: exception.stack,
     });
