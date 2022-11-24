@@ -80,8 +80,6 @@ export class UnlayerController {
       }),
     });
 
-    console.log(response);
-
     return response.json();
   }
 
