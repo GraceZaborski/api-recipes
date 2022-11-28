@@ -28,7 +28,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
     });
 
     const responseBody = isHttpException
-      ? exception
+      ? {
+          statusCode: httpStatus,
+          message: exception.message,
+          error: exception.message,
+        }
       : {
           statusCode: httpStatus,
           message: 'Unspecified error',

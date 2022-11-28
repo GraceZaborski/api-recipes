@@ -407,7 +407,9 @@ describe('TemplatesController (e2e)', () => {
       payload: templateTwo,
     });
 
+    const json = duplicateResponse.json();
     expect(duplicateResponse.statusCode).toEqual(409);
+    expect(json.statusCode).toEqual(409);
   });
 
   it('should allow duplicate titles with different companyIds', async () => {
@@ -740,7 +742,11 @@ describe('TemplatesController (e2e)', () => {
     });
 
     expect(template.statusCode).toEqual(404);
-    expect(template.json()).toEqual({ statusCode: 404, message: 'Not Found' });
+    expect(template.json()).toEqual({
+      statusCode: 404,
+      message: 'Not Found',
+      error: 'Not Found',
+    });
   });
 
   it('should be able to delete a template', async () => {
@@ -783,7 +789,11 @@ describe('TemplatesController (e2e)', () => {
     });
 
     expect(template.statusCode).toEqual(404);
-    expect(template.json()).toEqual({ statusCode: 404, message: 'Not Found' });
+    expect(template.json()).toEqual({
+      statusCode: 404,
+      message: 'Not Found',
+      error: 'Not Found',
+    });
   });
 
   it('should be able to update a template', async () => {
@@ -901,7 +911,9 @@ describe('TemplatesController (e2e)', () => {
     expect(updateResponse.json().message).toEqual(
       'The following properties must be unique: title',
     );
-    expect(updateResponse.json().error).toEqual('Conflict');
+    expect(updateResponse.json().error).toEqual(
+      'The following properties must be unique: title',
+    );
   });
 
   it('should return 404 if you updated a non-existent template', async () => {
