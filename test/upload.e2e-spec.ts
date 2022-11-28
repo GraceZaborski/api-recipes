@@ -17,6 +17,7 @@ import { join } from 'path';
 import { createReadStream } from 'fs';
 import { UploadModule } from '../src/upload/upload.module';
 import { ConfigModule } from '@nestjs/config';
+import { LoggerModule } from '../src/logger';
 import configuration from '../src/config/configuration';
 import * as FormData from 'form-data';
 import sizeOf from 'image-size';
@@ -50,6 +51,7 @@ describe('UploadController (e2e)', () => {
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
+        LoggerModule,
         ConfigModule.forRoot({
           load: [() => config],
           isGlobal: true,

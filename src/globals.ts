@@ -9,12 +9,14 @@ import { AllExceptionsFilter } from './filters/catch-all-exception.filter';
 export async function setupGlobals(app, opts = { useLogger: true }) {
   const { useLogger = true } = opts;
 
+  const logger = await app.resolve(Logger);
+  logger.log = (...args) => logger.logger.info(...args);
+
   if (useLogger) {
-    const logger = await app.resolve(Logger);
-    logger.log = (...args) => logger.logger.info(...args);
     app.useLogger(logger);
-    app.useGlobalFilters(new AllExceptionsFilter(logger));
   }
+
+  app.useGlobalFilters(new AllExceptionsFilter(logger));
 
   app.register(contentParser);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
