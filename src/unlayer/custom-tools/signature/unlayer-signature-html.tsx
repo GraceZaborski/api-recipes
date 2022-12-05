@@ -13,7 +13,7 @@ const UnlayerSignatureMissing = () => (
     }}
   >
     <div style={{ lineHeight: '140%', textAlign: 'center', color: '#704d00' }}>
-      <p>You havent created a signature yet.</p>
+      <p>You have not created a signature yet.</p>
       <p>
         You can do this in <strong>Settings</strong>.
       </p>

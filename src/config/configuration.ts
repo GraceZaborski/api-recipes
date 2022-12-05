@@ -37,6 +37,7 @@ if (!isLocal && !mongoSeed) {
 }
 
 export const config = {
+  serviceName: SVC_NAME,
   externalUrl: isLocal
     ? LOCAL_DOMAIN
     : `https://frontier.${DOMAIN}/api-campaigns`,
@@ -45,6 +46,11 @@ export const config = {
   isLocal,
   logLevel: LOG_LEVEL,
   enableSwagger: ENABLE_SWAGGER === 'true',
+  telemetry: {
+    enabled: isLocal ? false : true,
+    endpoint: '/metrics',
+    port: 8001,
+  },
   mongo: {
     uri: isLocal ? MONGO_URI : mongoCampaigns.uri,
     ...(isLocal ? {} : mongoCampaigns.options),

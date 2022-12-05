@@ -113,6 +113,7 @@ export class UnlayerController {
 
   @Get('/public/custom-js/:campaignId/tools.js')
   @Header('Content-Type', 'text/javascript')
+  @Header('Cache-Control', 'max-age=30')
   async customJs(@Param() { campaignId }) {
     const id = campaignId === 'test' ? null : campaignId;
     return (
@@ -122,9 +123,21 @@ export class UnlayerController {
 
   @Get('/public/custom-js/int/:userId/:companyId/tools.js')
   @Header('Content-Type', 'text/javascript')
+  @Header('Cache-Control', 'max-age=30')
   async customJsUserCompany(@Param() { userId, companyId }) {
     return (
       await this.unlayerService.getCustomJsByUserCompany({ userId, companyId })
     ).join('\n');
+  }
+
+  @ApiSecurity('api_key')
+  @Get('/custom-js/unsubscribe-html')
+  @ACL('campaigns/campaign:create')
+  async unsubscribeHtml(@AuthContext() { companyId }) {
+    const unsubscribeHtml = await this.unlayerService.getUnsubscribeHtml({
+      companyId,
+    });
+
+    return { unsubscribeHtml };
   }
 }

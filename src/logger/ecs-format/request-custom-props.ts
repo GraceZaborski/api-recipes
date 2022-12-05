@@ -34,5 +34,7 @@ export function reqCustomProps(req: IncomingMessage) {
     requestDTO['beamery.company.id'] = companyId;
   }
 
+  requestDTO['tags'] = ['api-campaigns'];
+
   return requestDTO;
 }

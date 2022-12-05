@@ -6,14 +6,16 @@ import {
 } from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
 import { setupGlobals } from './globals';
+import opentelSDK from './tracing';
 
 async function bootstrap() {
+  await opentelSDK.start();
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter(),
   );
 
-  setupGlobals(app);
+  await setupGlobals(app);
 
   const PORT = app.get(ConfigService).get('port');
   const BIND_ADDRESS = app.get(ConfigService).get('bindAddress');

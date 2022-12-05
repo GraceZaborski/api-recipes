@@ -34,18 +34,30 @@ import {
 } from '@nestjs/swagger';
 import { ErrorResponseDto } from '../common/dto/errorResponse.dto';
 import { PaginatedTemplates } from './dto/paginatedTemplates.dto';
+import { Logger } from '../logger';
 
 @ApiTags('templates')
 @ApiSecurity('api_key')
 @Controller('templates')
 export class TemplatesController {
-  constructor(private templatesService: TemplatesService) {}
+  constructor(
+    private templatesService: TemplatesService,
+    private logger: Logger,
+  ) {
+    this.logger.setContext('TemplatesController');
+  }
 
   @Get()
   @ACL('templates/template:view')
   @UseInterceptors(new TransformInterceptor(PaginatedTemplates))
   @ApiOkResponse({ type: PaginatedTemplates })
   @ApiForbiddenResponse({ type: ErrorResponseDto })
+  @UseInterceptors(
+    HydrateUserDataInterceptorFactory({
+      idPropertyName: 'createdBy',
+      collectionPath: 'results',
+    }),
+  )
   public async getAllTemplates(
     @Query() filterQuery: FilterQueryDto,
     @AuthContext() { companyId },
@@ -135,6 +147,7 @@ export class TemplatesController {
     const template = await this.templatesService.findOne(id, companyId);
 
     if (!template) {
+      this.logger.debug('template not found', { id, companyId });
       throw new NotFoundException();
     }
 

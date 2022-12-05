@@ -11,6 +11,8 @@ import { UploadModule } from './upload/upload.module';
 import { CompaniesModule } from './companies/companies.module';
 import { CampaignsModule } from './campaigns/campaigns.module';
 import configuration from './config/configuration';
+import { OpenTelemetryModule } from 'nestjs-otel';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -19,6 +21,19 @@ import configuration from './config/configuration';
     }),
     LoggerModule,
     AuthModule.forRoot(),
+    OpenTelemetryModule.forRoot({
+      metrics: {
+        hostMetrics: true,
+        apiMetrics: {
+          enable: true,
+          defaultAttributes: {
+            service_name: 'api-campaigns',
+          },
+          ignoreRoutes: ['/heartbeat/readiness', '/heartbeat/liveness'],
+          ignoreUndefinedRoutes: false,
+        },
+      },
+    }),
     MongooseModule.forRootAsync({
       connectionName: 'campaigns',
       imports: [ConfigModule],
