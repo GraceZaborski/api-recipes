@@ -12,16 +12,21 @@ export class SettingsService {
     private readonly settingsModel: Model<Settings>,
   ) {}
 
-  async findAll(companyId: string): Promise<SettingsDto> {
+  public async findOne(companyId: string): Promise<SettingsDto> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { status, ...defaultFont } = unlayerSettingsFonts[0];
-    // TODO: add accent colour if set by company here
-    const defaultCompanySettings = {
-      fonts: unlayerSettingsFonts,
-      defaultFont: defaultFont,
-    };
-    const companySettings = await this.settingsModel.find({ companyId }).lean();
-    const settings = { ...companySettings, ...defaultCompanySettings };
-    return settings;
+    const companySettings = await this.settingsModel
+      .findOne({ companyId })
+      .lean();
+    return companySettings;
+  }
+
+  public async updateOne(companyId, settingsDto): Promise<SettingsDto> {
+    return this.settingsModel
+      .findOneAndUpdate(companyId, settingsDto, {
+        returnDocument: 'after',
+        upsert: true,
+      })
+      .lean();
   }
 }

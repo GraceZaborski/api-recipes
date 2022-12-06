@@ -2,12 +2,6 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { OmitType } from '@nestjs/swagger';
 
 @Schema()
-export class Colour {
-  @Prop()
-  colour: string;
-}
-
-@Schema()
 export class Font {
   @Prop()
   label: string;
@@ -21,7 +15,7 @@ export class DefaultFont extends OmitType(Font, ['status'] as const) {}
 @Schema()
 export class Settings {
   @Prop()
-  colours?: Colour[];
+  colours?: string[];
 
   @Prop()
   backgroundColour?: string;

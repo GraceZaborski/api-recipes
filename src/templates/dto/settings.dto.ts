@@ -5,15 +5,10 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { ApiProperty, OmitType } from '@nestjs/swagger';
+import { ApiProperty, OmitType, PickType } from '@nestjs/swagger';
+import { unlayerSettingsFonts } from '../../settings/default-data/unlayer-system-fonts';
 
 // TODO: consider using the swagger plug-in: https://docs.nestjs.com/openapi/cli-plugin#using-the-cli-plugin
-
-class Colour {
-  @IsObject()
-  @ApiProperty()
-  readonly colour: string;
-}
 
 class Font {
   @IsObject()
@@ -25,11 +20,15 @@ class Font {
 
 class DefaultFont extends OmitType(Font, ['status'] as const) {}
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const { status, ...defaultFont } = unlayerSettingsFonts[0];
+
 export class SettingsDto {
+  // TODO: add accent colour if set by company here
   @IsOptional()
   @IsArray()
   @ApiProperty()
-  readonly colours?: Colour[];
+  readonly colours?: string[];
 
   @IsOptional()
   @IsString()
@@ -38,11 +37,11 @@ export class SettingsDto {
 
   @IsArray()
   @ApiProperty()
-  readonly fonts: Font[];
+  readonly fonts: Font[] = unlayerSettingsFonts;
 
   @IsObject()
   @ApiProperty()
-  readonly defaultFont: DefaultFont;
+  readonly defaultFont: DefaultFont = defaultFont;
 
   @IsString()
   @ApiProperty()
@@ -58,3 +57,10 @@ export class SettingsDto {
   @ApiProperty()
   readonly updatedAt?: Date;
 }
+
+export class UpdateSettingsDto extends PickType(SettingsDto, [
+  'fonts',
+  'defaultFont',
+  'backgroundColour',
+  'colours',
+]) {}
