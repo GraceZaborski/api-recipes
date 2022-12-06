@@ -29,12 +29,12 @@ export class SettingsDto {
   @IsOptional()
   @IsArray()
   @ApiProperty()
-  readonly colours: Colour[];
+  readonly colours?: Colour[];
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly backgroundColour: string;
+  readonly backgroundColour?: string;
 
   @IsArray()
   @ApiProperty()
@@ -46,15 +46,15 @@ export class SettingsDto {
 
   @IsString()
   @ApiProperty()
-  readonly companyId: string;
+  readonly companyId?: string;
 
   @IsString()
   @IsOptional()
   @ApiProperty()
-  readonly updatedBy: string;
+  readonly updatedBy?: string;
 
   @IsDate()
   @IsOptional()
   @ApiProperty()
-  readonly updatedAt: Date;
+  readonly updatedAt?: Date;
 }

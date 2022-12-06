@@ -21,10 +21,10 @@ export class DefaultFont extends OmitType(Font, ['status'] as const) {}
 @Schema()
 export class Settings {
   @Prop()
-  colours: Colour[];
+  colours?: Colour[];
 
   @Prop()
-  backgroundColour: string;
+  backgroundColour?: string;
 
   @Prop()
   fonts: Font[];
@@ -33,13 +33,13 @@ export class Settings {
   defaultFont: DefaultFont;
 
   @Prop()
-  companyId: string;
+  companyId?: string;
 
   @Prop()
-  updatedBy: string;
+  updatedBy?: string;
 
   @Prop()
-  updatedAt: Date;
+  updatedAt?: Date;
 }
 
 export const SettingsSchema = SchemaFactory.createForClass(Settings);

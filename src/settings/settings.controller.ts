@@ -1,4 +1,4 @@
-import { ACL, AuthContext } from '@cerbero/mod-auth';
+import { AuthContext } from '@cerbero/mod-auth';
 import { Controller, Get } from '@nestjs/common';
 import {
   ApiForbiddenResponse,
@@ -26,7 +26,6 @@ export class SettingsController {
 
   @Get()
   // TODO: change permissions once available in platform-core
-  @ACL('templates/template:view')
   @ApiOkResponse({ type: SettingsDto })
   @ApiForbiddenResponse({ type: ErrorResponseDto })
   @ApiNotFoundResponse({ type: ErrorResponseDto })
