@@ -22,6 +22,7 @@ import { Logger } from '../logger';
 import { SettingsDto, UpdateSettingsDto } from '../templates/dto/settings.dto';
 import { settingsDefaultData } from './default-data/settings-default-data';
 import { SettingsService } from './settings.service';
+import { isColourValidHexCode } from './utils/is-colour-valid-hex-code';
 
 @ApiTags('settings')
 @ApiSecurity('api_key')
@@ -63,7 +64,9 @@ export class SettingsController {
 
     const colourValuesArray = colours.map((colour) => colour.colour);
     const filteredArray = colours.filter(
-      ({ colour }, index) => !colourValuesArray.includes(colour, index + 1),
+      ({ colour }, index) =>
+        !colourValuesArray.includes(colour, index + 1) &&
+        isColourValidHexCode(colour),
     );
 
     const payload = {
