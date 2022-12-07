@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { OmitType } from '@nestjs/swagger';
+import { Document } from 'mongoose';
 
 @Schema()
 export class Font {
@@ -68,3 +69,5 @@ export class Settings {
 }
 
 export const SettingsSchema = SchemaFactory.createForClass(Settings);
+
+export type SettingsDocument = Settings & Document;
