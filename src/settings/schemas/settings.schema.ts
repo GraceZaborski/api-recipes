@@ -4,23 +4,39 @@ import { OmitType } from '@nestjs/swagger';
 @Schema()
 export class Font {
   @Prop()
+  id: string;
+
+  @Prop()
   label: string;
-  value: string;
-  status: boolean;
+
+  @Prop()
+  style: string;
+
+  @Prop()
+  value: boolean;
 }
 
 @Schema()
-export class DefaultFont extends OmitType(Font, ['status'] as const) {}
+export class Colour {
+  @Prop()
+  id: string;
+
+  @Prop()
+  colour: string;
+}
+
+@Schema()
+export class DefaultFont extends OmitType(Font, ['value'] as const) {}
 
 @Schema()
 export class Settings {
   @Prop()
-  colours?: string[];
+  colours: Colour[];
 
   @Prop()
-  backgroundColour?: string;
+  backgroundColour: string;
 
-  @Prop()
+  @Prop({ type: Array })
   fonts: Font[];
 
   @Prop()

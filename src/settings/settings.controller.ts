@@ -20,7 +20,7 @@ import { ErrorResponseDto } from '../common/dto/errorResponse.dto';
 import { TransformInterceptor } from '../interceptors/classTransformer.interceptor';
 import { Logger } from '../logger';
 import { SettingsDto, UpdateSettingsDto } from '../templates/dto/settings.dto';
-import { Settings } from './schemas/settings.schema';
+import { settingsDefaultData } from './default-data/settings-default-data';
 import { SettingsService } from './settings.service';
 
 @ApiTags('settings')
@@ -42,8 +42,10 @@ export class SettingsController {
   @ApiNotFoundResponse({ type: ErrorResponseDto })
   public async getSettings(
     @AuthContext() { companyId },
-  ): Promise<Settings | Error> {
-    return this.settingsService.findOne(companyId);
+  ): Promise<SettingsDto | Error> {
+    const companySettings = await this.settingsService.findOne(companyId);
+    if (!companySettings) return settingsDefaultData;
+    return companySettings;
   }
 
   @Put()
@@ -56,9 +58,17 @@ export class SettingsController {
   public async updateSettings(
     @Body() settingsDto: UpdateSettingsDto,
     @AuthContext() { userId: updatedBy, companyId },
-  ): Promise<Settings | Error> {
+  ): Promise<SettingsDto | Error> {
+    const { colours } = settingsDto;
+
+    const colourValuesArray = colours.map((colour) => colour.colour);
+    const filteredArray = colours.filter(
+      ({ colour }, index) => !colourValuesArray.includes(colour, index + 1),
+    );
+
     const payload = {
       ...settingsDto,
+      colours: filteredArray,
       companyId,
       updatedBy,
       updatedAt: new Date(),

@@ -1,45 +1,67 @@
 import {
   IsArray,
+  IsBoolean,
   IsDate,
   IsObject,
   IsOptional,
   IsString,
+  ValidateNested,
 } from 'class-validator';
 import { ApiProperty, OmitType, PickType } from '@nestjs/swagger';
 import { unlayerSettingsFonts } from '../../settings/default-data/unlayer-system-fonts';
+import { Type } from 'class-transformer';
 
 // TODO: consider using the swagger plug-in: https://docs.nestjs.com/openapi/cli-plugin#using-the-cli-plugin
 
 class Font {
-  @IsObject()
   @ApiProperty()
+  @IsString()
+  readonly id: string;
+  @ApiProperty()
+  @IsString()
   readonly label: string;
-  readonly value: string;
-  readonly status: boolean;
+  @ApiProperty()
+  @IsString()
+  readonly style: string;
+  @ApiProperty()
+  @IsBoolean()
+  readonly value: boolean;
 }
 
-class DefaultFont extends OmitType(Font, ['status'] as const) {}
+class DefaultFont extends OmitType(Font, ['value'] as const) {}
+
+class Colour {
+  @IsObject()
+  @ApiProperty()
+  @IsOptional()
+  readonly id: string;
+  readonly colour: string;
+}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const { status, ...defaultFont } = unlayerSettingsFonts[0];
+const { value, ...defaultFont } = unlayerSettingsFonts[0];
 
 export class SettingsDto {
   // TODO: add accent colour if set by company here
-  @IsOptional()
   @IsArray()
+  @Type(() => Colour)
   @ApiProperty()
-  readonly colours?: string[];
+  readonly colours: Colour[];
 
-  @IsOptional()
   @IsString()
   @ApiProperty()
+  @IsOptional()
   readonly backgroundColour?: string;
 
   @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => Font)
   @ApiProperty()
-  readonly fonts: Font[] = unlayerSettingsFonts;
+  readonly fonts: Font[];
 
   @IsObject()
+  @ValidateNested({ each: true })
+  @Type(() => Font)
   @ApiProperty()
   readonly defaultFont: DefaultFont = defaultFont;
 
@@ -59,8 +81,8 @@ export class SettingsDto {
 }
 
 export class UpdateSettingsDto extends PickType(SettingsDto, [
+  'colours',
+  'backgroundColour',
   'fonts',
   'defaultFont',
-  'backgroundColour',
-  'colours',
 ]) {}
