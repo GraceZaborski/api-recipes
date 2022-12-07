@@ -46,7 +46,7 @@ export class Settings {
   contentTools: ContentTool[];
 
   @Prop()
-  colours?: Colour[];
+  colours: Colour[];
 
   @Prop()
   backgroundColour?: string;

@@ -2,6 +2,7 @@ import { AuthContext } from '@cerbero/mod-auth';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Put,
   UseInterceptors,
@@ -21,10 +22,8 @@ import { TransformInterceptor } from '../interceptors/classTransformer.intercept
 import { Logger } from '../logger';
 import { SettingsDto, UpdateSettingsDto } from '../templates/dto/settings.dto';
 import { settingsDefaultData } from './default-data/settings-default-data';
-import { unlayerContentTools } from './default-data/unlayer-content-tools';
-import { unlayerSettingsFonts } from './default-data/unlayer-system-fonts';
 import { SettingsService } from './settings.service';
-import { isColourValidHexCode } from './utils/is-colour-valid-hex-code';
+import { filterColours, isColourValidHexCode } from './utils/filter-colours';
 
 @ApiTags('settings')
 @ApiSecurity('api_key')
@@ -63,62 +62,32 @@ export class SettingsController {
     @AuthContext() { userId: updatedBy, companyId },
   ): Promise<SettingsDto | Error> {
     // colours
-    const { colours } = settingsDto;
+    const { colours, backgroundColour } = settingsDto;
 
-    const colourValuesArray = colours.map((colour) => colour.colour);
-    const filteredArray = colours.filter(
-      ({ colour }, index) =>
-        !colourValuesArray.includes(colour, index + 1) &&
-        isColourValidHexCode(colour),
-    );
+    const filteredColours = filterColours(colours);
 
-    // contentTools
-    const { contentTools: updatedTools } = settingsDto;
-
-    const combinedTools = updatedTools.concat(unlayerContentTools);
-
-    const uniqueTools = [];
-
-    const filteredTools = combinedTools.filter((element) => {
-      const isDuplicate = uniqueTools.includes(element.tool);
-
-      if (!isDuplicate) {
-        uniqueTools.push(element.tool);
-
-        return true;
-      }
-
-      return false;
-    });
-
-    //fonts
-    const { fonts: updatedFonts } = settingsDto;
-
-    const combinedFonts = updatedFonts.concat(unlayerSettingsFonts);
-
-    const uniqueFonts = [];
-
-    const filteredFonts = combinedFonts.filter((element) => {
-      const isDuplicate = uniqueFonts.includes(element.label);
-
-      if (!isDuplicate) {
-        uniqueFonts.push(element.label);
-
-        return true;
-      }
-
-      return false;
-    });
+    const validBackgroundColour = isColourValidHexCode(backgroundColour)
+      ? backgroundColour
+      : '#ffffff';
 
     const payload = {
       ...settingsDto,
-      colours: filteredArray,
-      contentTools: filteredTools,
-      fonts: filteredFonts,
+      colours: filteredColours,
+      backgroundColour: validBackgroundColour,
       companyId,
       updatedBy,
       updatedAt: new Date(),
     };
     return this.settingsService.updateOne(companyId, payload);
+  }
+
+  @Delete()
+  @ApiOkResponse({ type: SettingsDto })
+  @ApiNotFoundResponse({ type: ErrorResponseDto })
+  @ApiBadRequestResponse({ type: ErrorResponseDto })
+  public async deleteSettings(
+    @AuthContext() { companyId },
+  ): Promise<SettingsDto | Error> {
+    return this.settingsService.deleteOne(companyId);
   }
 }
