@@ -68,7 +68,7 @@ export class SettingsController {
 
     const validBackgroundColour = isColourValidHexCode(backgroundColour)
       ? backgroundColour
-      : '#ffffff';
+      : undefined;
 
     const payload = {
       ...settingsDto,

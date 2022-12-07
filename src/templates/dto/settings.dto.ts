@@ -58,7 +58,7 @@ class ContentTool {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const { value, ...defaultFont } = unlayerSettingsFonts[0];
+export const { value, ...defaultFont } = unlayerSettingsFonts[0];
 
 export class SettingsDto {
   @IsArray()
