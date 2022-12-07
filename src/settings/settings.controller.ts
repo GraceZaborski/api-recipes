@@ -21,6 +21,8 @@ import { TransformInterceptor } from '../interceptors/classTransformer.intercept
 import { Logger } from '../logger';
 import { SettingsDto, UpdateSettingsDto } from '../templates/dto/settings.dto';
 import { settingsDefaultData } from './default-data/settings-default-data';
+import { unlayerContentTools } from './default-data/unlayer-content-tools';
+import { unlayerSettingsFonts } from './default-data/unlayer-system-fonts';
 import { SettingsService } from './settings.service';
 import { isColourValidHexCode } from './utils/is-colour-valid-hex-code';
 
@@ -60,6 +62,7 @@ export class SettingsController {
     @Body() settingsDto: UpdateSettingsDto,
     @AuthContext() { userId: updatedBy, companyId },
   ): Promise<SettingsDto | Error> {
+    // colours
     const { colours } = settingsDto;
 
     const colourValuesArray = colours.map((colour) => colour.colour);
@@ -69,9 +72,49 @@ export class SettingsController {
         isColourValidHexCode(colour),
     );
 
+    // contentTools
+    const { contentTools: updatedTools } = settingsDto;
+
+    const combinedTools = updatedTools.concat(unlayerContentTools);
+
+    const uniqueTools = [];
+
+    const filteredTools = combinedTools.filter((element) => {
+      const isDuplicate = uniqueTools.includes(element.tool);
+
+      if (!isDuplicate) {
+        uniqueTools.push(element.tool);
+
+        return true;
+      }
+
+      return false;
+    });
+
+    //fonts
+    const { fonts: updatedFonts } = settingsDto;
+
+    const combinedFonts = updatedFonts.concat(unlayerSettingsFonts);
+
+    const uniqueFonts = [];
+
+    const filteredFonts = combinedFonts.filter((element) => {
+      const isDuplicate = uniqueFonts.includes(element.label);
+
+      if (!isDuplicate) {
+        uniqueFonts.push(element.label);
+
+        return true;
+      }
+
+      return false;
+    });
+
     const payload = {
       ...settingsDto,
       colours: filteredArray,
+      contentTools: filteredTools,
+      fonts: filteredFonts,
       companyId,
       updatedBy,
       updatedAt: new Date(),
