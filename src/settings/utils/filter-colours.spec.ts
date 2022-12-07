@@ -1,4 +1,19 @@
-import { isColourValidHexCode } from './is-colour-valid-hex-code';
+import { filterColours, isColourValidHexCode } from './filter-colours';
+
+describe('filterColours', () => {
+  it('deduplicates colours', () => {
+    expect(
+      filterColours([
+        { id: '1', colour: '#ffffff' },
+        { id: '2', colour: '#ffffff' },
+        { id: '3', colour: '#000000' },
+      ]),
+    ).toEqual([
+      { id: '2', colour: '#ffffff' },
+      { id: '3', colour: '#000000' },
+    ]);
+  });
+});
 
 describe('isColourValidHexCode', () => {
   it('returns true for a valid 6-digit hex code', () => {
