@@ -26,21 +26,36 @@ export class Colour {
 }
 
 @Schema()
+export class ContentTool {
+  @Prop()
+  id: string;
+
+  @Prop()
+  tool: string;
+
+  @Prop()
+  value: boolean;
+}
+
+@Schema()
 export class DefaultFont extends OmitType(Font, ['value'] as const) {}
 
 @Schema()
 export class Settings {
   @Prop()
-  colours: Colour[];
+  contentTools: ContentTool[];
 
   @Prop()
-  backgroundColour: string;
+  colours?: Colour[];
 
-  @Prop({ type: Array })
+  @Prop()
+  backgroundColour?: string;
+
+  @Prop()
   fonts: Font[];
 
   @Prop()
-  defaultFont: DefaultFont;
+  defaultFont?: DefaultFont;
 
   @Prop()
   companyId?: string;
