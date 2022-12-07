@@ -72,8 +72,7 @@ export class SettingsDto {
   @ValidateNested({ each: true })
   @Type(() => Colour)
   @ApiProperty()
-  @IsOptional()
-  readonly colours?: Colour[];
+  readonly colours: Colour[];
 
   @IsString()
   @ApiProperty()
