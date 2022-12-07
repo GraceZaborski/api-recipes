@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { OmitType } from '@nestjs/swagger';
 import { Document } from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
 
 @Schema()
 export class Font {
@@ -41,8 +42,11 @@ export class ContentTool {
 @Schema()
 export class DefaultFont extends OmitType(Font, ['value'] as const) {}
 
-@Schema()
+@Schema({ versionKey: false })
 export class Settings {
+  @Prop({ type: String, unique: true, default: uuidv4 })
+  _id: string;
+
   @Prop()
   contentTools: ContentTool[];
 

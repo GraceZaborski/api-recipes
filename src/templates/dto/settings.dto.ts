@@ -5,6 +5,7 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  IsUUID,
   ValidateNested,
 } from 'class-validator';
 import { ApiProperty, OmitType, PickType } from '@nestjs/swagger';
@@ -61,6 +62,10 @@ class ContentTool {
 export const { value, ...defaultFont } = unlayerSettingsFonts[0];
 
 export class SettingsDto {
+  @IsUUID()
+  @ApiProperty()
+  readonly _id: string;
+
   @IsArray()
   @ApiProperty()
   @ValidateNested({ each: true })
