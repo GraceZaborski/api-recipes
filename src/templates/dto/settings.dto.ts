@@ -8,7 +8,12 @@ import {
   IsUUID,
   ValidateNested,
 } from 'class-validator';
-import { ApiProperty, OmitType, PickType } from '@nestjs/swagger';
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  OmitType,
+  PickType,
+} from '@nestjs/swagger';
 import { unlayerSettingsFonts } from '../../settings/default-data/unlayer-system-fonts';
 import { Exclude, Type } from 'class-transformer';
 
@@ -64,50 +69,58 @@ export const { value, ...defaultFont } = unlayerSettingsFonts[0];
 export class SettingsDto {
   @Exclude()
   @IsUUID()
-  @ApiProperty()
   readonly _id?: string;
 
   @IsArray()
-  @ApiProperty()
+  @ApiProperty({
+    isArray: true,
+    type: ContentTool,
+  })
   @ValidateNested({ each: true })
   @Type(() => ContentTool)
   readonly contentTools: ContentTool[];
 
-  // TODO: add accent colour if set by company here
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => Colour)
-  @ApiProperty()
+  @ApiProperty({
+    isArray: true,
+    type: Colour,
+  })
   readonly colours: Colour[];
 
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   readonly backgroundColour?: string = '#ffffff';
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => Font)
-  @ApiProperty()
+  @ApiProperty({
+    isArray: true,
+    type: Font,
+  })
   readonly fonts: Font[];
 
   @IsObject()
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   readonly defaultFont?: DefaultFont = defaultFont;
 
   @IsString()
-  @ApiProperty()
+  @IsOptional()
+  @ApiPropertyOptional()
   readonly companyId?: string;
 
   @IsString()
   @IsOptional()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly updatedBy?: string;
 
   @IsDate()
   @IsOptional()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly updatedAt?: Date;
 }
 
