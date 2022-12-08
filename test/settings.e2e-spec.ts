@@ -47,7 +47,6 @@ describe('SettingsController (e2e)', () => {
   };
 
   beforeAll(async () => {
-    jest.setTimeout(9000 * 1000);
     headersWithToken = {
       'x-token-payload': buildXTokenPayload({ companyId, userId, roles }),
     };
