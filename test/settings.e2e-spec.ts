@@ -124,7 +124,9 @@ describe('SettingsController (e2e)', () => {
     });
 
     expect(response.statusCode).toEqual(200);
-    expect(response.json()).toEqual(settingsDefaultData);
+    expect(response.json().backgroundColour).toEqual(
+      settingsDefaultData.backgroundColour,
+    );
     expect(Object.keys(response.json())).toEqual(
       expect.arrayContaining([
         'colours',
@@ -304,7 +306,7 @@ describe('SettingsController (e2e)', () => {
     );
   });
 
-  it('should return 400 for a mal-formed payloads', async () => {
+  it('should return 400 for malformed payloads', async () => {
     stubAuthUserResponse({ abilities: [SETTINGS_EDIT_ABILITY] });
 
     const updateSettingsDtoMissingProperties = {
