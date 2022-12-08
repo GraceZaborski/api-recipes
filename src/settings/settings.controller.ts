@@ -47,7 +47,7 @@ export class SettingsController {
   }
 
   @Put()
-  // @ACL('campaigns_settings/edit')
+  @ACL('campaigns_settings/edit')
   @ApiOkResponse({ type: SettingsDto })
   @UseInterceptors(new TransformInterceptor(SettingsDto))
   @ApiForbiddenResponse({ type: ErrorResponseDto })
