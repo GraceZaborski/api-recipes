@@ -1,17 +1,14 @@
 import { filterColours, isColourValidHexCode } from './filter-colours';
+import { v4 as uuid } from 'uuid';
 
 describe('filterColours', () => {
   it('deduplicates colours', () => {
-    expect(
-      filterColours([
-        { id: '1', colour: '#ffffff' },
-        { id: '2', colour: '#ffffff' },
-        { id: '3', colour: '#000000' },
-      ]),
-    ).toEqual([
-      { id: '2', colour: '#ffffff' },
-      { id: '3', colour: '#000000' },
-    ]);
+    const args = [
+      { id: uuid(), colour: '#ffffff' },
+      { id: uuid(), colour: '#ffffff' },
+      { id: uuid(), colour: '#000000' },
+    ];
+    expect(filterColours(args)).toEqual([args[1], args[2]]);
   });
 });
 

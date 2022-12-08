@@ -5,7 +5,6 @@ import { Model } from 'mongoose';
 import { updateSettingsDtoMinimalPayload } from '../../test/settings.e2e-spec';
 import { SettingsDto } from '../templates/dto/settings.dto';
 import { settingsDefaultData } from './default-data/settings-default-data';
-
 import { SettingsDocument } from './schemas/settings.schema';
 import { SettingsService } from './settings.service';
 

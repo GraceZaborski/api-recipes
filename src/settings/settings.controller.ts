@@ -6,8 +6,6 @@ import {
   Get,
   Put,
   UseInterceptors,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -37,9 +35,7 @@ export class SettingsController {
   }
 
   @Get()
-  // TODO: change permissions once available in platform-core
   @ApiOkResponse({ type: SettingsDto })
-  @UsePipes(new ValidationPipe({ transform: true }))
   @ApiForbiddenResponse({ type: ErrorResponseDto })
   @ApiNotFoundResponse({ type: ErrorResponseDto })
   public async getSettings(
