@@ -5,7 +5,6 @@ export const unlayerContentTools = [
   { id: uuid(), tool: 'Text', value: true },
   { id: uuid(), tool: 'Button', value: true },
   { id: uuid(), tool: 'Divider', value: true },
-  { id: uuid(), tool: 'Columns', value: true },
   { id: uuid(), tool: 'HTML', value: true },
   { id: uuid(), tool: 'Image', value: true },
   { id: uuid(), tool: 'Video', value: true },
