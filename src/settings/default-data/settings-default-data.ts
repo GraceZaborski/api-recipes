@@ -1,4 +1,4 @@
-import { SettingsDto } from '../../templates/dto/settings.dto';
+import { defaultFont, SettingsDto } from '../../templates/dto/settings.dto';
 import { unlayerContentTools } from './unlayer-content-tools';
 import { unlayerSettingsFonts } from './unlayer-system-fonts';
 
@@ -7,5 +7,5 @@ export const settingsDefaultData: SettingsDto = {
   colours: [],
   backgroundColour: '#ffffff',
   fonts: unlayerSettingsFonts,
-  defaultFont: unlayerSettingsFonts[0],
+  defaultFont: defaultFont,
 };

@@ -1,4 +1,4 @@
-import { AuthContext } from '@cerbero/mod-auth';
+import { ACL, AuthContext } from '@cerbero/mod-auth';
 import {
   Body,
   Controller,
@@ -51,7 +51,7 @@ export class SettingsController {
   }
 
   @Put()
-  // TODO: change permissions once available in platform-core
+  @ACL('campaigns_settings/edit')
   @ApiOkResponse({ type: SettingsDto })
   @UseInterceptors(new TransformInterceptor(SettingsDto))
   @ApiForbiddenResponse({ type: ErrorResponseDto })
@@ -61,7 +61,6 @@ export class SettingsController {
     @Body() settingsDto: UpdateSettingsDto,
     @AuthContext() { userId: updatedBy, companyId },
   ): Promise<SettingsDto | Error> {
-    // colours
     const { colours, backgroundColour } = settingsDto;
 
     const filteredColours = filterColours(colours);
@@ -81,6 +80,7 @@ export class SettingsController {
     return this.settingsService.updateOne(companyId, payload);
   }
 
+  // for testing
   @Delete()
   @ApiOkResponse({ type: SettingsDto })
   @ApiNotFoundResponse({ type: ErrorResponseDto })
