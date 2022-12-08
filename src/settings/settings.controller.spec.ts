@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Chance } from 'chance';
-import { updateSettingsDtoMinimalPayload } from '../../test/settings.e2e-spec';
 import { Logger } from '../logger';
 import { settingsDefaultData } from './default-data/settings-default-data';
+import { mockUpdatePayload } from './mock-update-payload';
 import { SettingsController } from './settings.controller';
 import { SettingsService } from './settings.service';
 
@@ -61,7 +61,7 @@ describe('SettingsController', () => {
     const companyId = chance.guid();
     const userId = chance.guid();
     const updateSettingsDto = {
-      ...updateSettingsDtoMinimalPayload,
+      ...mockUpdatePayload,
       backgroundColour: '#ffffff',
       defaultFont: settingsDefaultData.defaultFont,
     };
@@ -90,7 +90,7 @@ describe('SettingsController', () => {
     const companyId = chance.guid();
     const userId = chance.guid();
     const updateSettingsDto = {
-      ...updateSettingsDtoMinimalPayload,
+      ...mockUpdatePayload,
       colours: [
         { id: '1', colour: '#ffffff' },
         { id: '2', colour: '#ffffff' },

@@ -23,6 +23,7 @@ import { userSandbox, userStub } from './utils/userUtils';
 import { setupGlobals } from '../src/globals';
 import { settingsDefaultData } from '../src/settings/default-data/settings-default-data';
 import { SettingsModule } from '../src/settings/settings.module';
+import { mockUpdatePayload } from '../src/settings/mock-update-payload';
 
 const chance = new Chance();
 
@@ -30,12 +31,6 @@ const companyId = 'test-company-id';
 const userId = 'test-user-id';
 const roles = ['super_admin'];
 const SETTINGS_EDIT_ABILITY = 'campaigns_settings/edit';
-
-export const updateSettingsDtoMinimalPayload = {
-  colours: [],
-  fonts: settingsDefaultData.fonts,
-  contentTools: settingsDefaultData.contentTools,
-};
 
 describe('SettingsController (e2e)', () => {
   let app: NestFastifyApplication;
@@ -142,7 +137,7 @@ describe('SettingsController (e2e)', () => {
     stubAuthUserResponse({ abilities: [SETTINGS_EDIT_ABILITY] });
     const createResponse = await app.inject({
       method: 'PUT',
-      payload: updateSettingsDtoMinimalPayload,
+      payload: mockUpdatePayload,
       url: '/settings',
       headers: headersWithToken,
     });
@@ -176,7 +171,7 @@ describe('SettingsController (e2e)', () => {
 
     const createResponse = await app.inject({
       method: 'PUT',
-      payload: updateSettingsDtoMinimalPayload,
+      payload: mockUpdatePayload,
       url: '/settings',
       headers: headersWithToken,
     });
@@ -220,7 +215,7 @@ describe('SettingsController (e2e)', () => {
     stubAuthUserResponse({ abilities: [SETTINGS_EDIT_ABILITY] });
 
     const updateSettingsDto = {
-      ...updateSettingsDtoMinimalPayload,
+      ...mockUpdatePayload,
       colours: [
         { id: chance.guid(), colour: '#ffffff' },
         { id: chance.guid(), colour: '#ffffff' },
@@ -262,7 +257,7 @@ describe('SettingsController (e2e)', () => {
     );
 
     const updateSettingsDto2 = {
-      ...updateSettingsDtoMinimalPayload,
+      ...mockUpdatePayload,
       colours: [{ id: chance.guid(), colour: '#123456' }],
       backgroundColour: '#123456',
       defaultFont: undefined,
@@ -304,7 +299,7 @@ describe('SettingsController (e2e)', () => {
     stubAuthUserResponse({ abilities: [SETTINGS_EDIT_ABILITY] });
 
     const updateSettingsDtoMissingProperties = {
-      ...updateSettingsDtoMinimalPayload.colours,
+      ...mockUpdatePayload.colours,
     };
 
     let createResponse = await app.inject({
@@ -317,7 +312,7 @@ describe('SettingsController (e2e)', () => {
     expect(createResponse.statusCode).toEqual(400);
 
     const updateSettingsDtoIncompleteProperties = {
-      ...updateSettingsDtoMinimalPayload,
+      ...mockUpdatePayload,
       colours: [{ colour: '#ffffff' }],
     };
 
@@ -332,7 +327,7 @@ describe('SettingsController (e2e)', () => {
 
     createResponse = await app.inject({
       method: 'PUT',
-      payload: updateSettingsDtoMinimalPayload,
+      payload: mockUpdatePayload,
       url: '/settings',
       headers: headersWithToken,
     });

@@ -2,9 +2,9 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Chance } from 'chance';
 import { Model } from 'mongoose';
-import { updateSettingsDtoMinimalPayload } from '../../test/settings.e2e-spec';
 import { SettingsDto } from '../templates/dto/settings.dto';
 import { settingsDefaultData } from './default-data/settings-default-data';
+import { mockUpdatePayload } from './mock-update-payload';
 import { SettingsDocument } from './schemas/settings.schema';
 import { SettingsService } from './settings.service';
 
@@ -42,7 +42,7 @@ describe('SettingsService', () => {
   const companyId = chance.guid();
 
   const settingsDto: SettingsDto = {
-    ...updateSettingsDtoMinimalPayload,
+    ...mockUpdatePayload,
     companyId,
     updatedBy: chance.guid(),
     updatedAt: new Date(),
