@@ -9,10 +9,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Chance } from 'chance';
 import configuration from '../src/config/configuration';
 import { LoggerModule } from '../src/logger';
-import {
-  Settings,
-  SettingsSchema,
-} from '../src/settings/schemas/settings.schema';
+import { SettingsSchema } from '../src/settings/schemas/settings.schema';
 import {
   authSandbox,
   authStub,
@@ -34,22 +31,10 @@ const userId = 'test-user-id';
 const roles = ['super_admin'];
 const SETTINGS_EDIT_ABILITY = 'campaigns_settings/edit';
 
-// mocking objects with dynamic ids
-const mockFonts: Settings['fonts'] = [
-  {
-    id: chance.guid(),
-    label: 'Andale Mono',
-    style: 'andale mono,times',
-    value: true,
-  },
-];
-
-const mockContentTools = [{ id: chance.guid(), tool: 'Heading', value: true }];
-
 export const updateSettingsDtoMinimalPayload = {
   colours: [],
-  fonts: mockFonts,
-  contentTools: mockContentTools,
+  fonts: settingsDefaultData.fonts,
+  contentTools: settingsDefaultData.contentTools,
 };
 
 describe('SettingsController (e2e)', () => {
@@ -178,8 +163,52 @@ describe('SettingsController (e2e)', () => {
 
     expect(createResponse.json()).toEqual(
       expect.objectContaining({
-        ...updateSettingsDtoMinimalPayload,
         defaultFont: settingsDefaultData.defaultFont,
+        backgroundColour: settingsDefaultData.backgroundColour,
+        companyId,
+        updatedBy: userId,
+      }),
+    );
+  });
+
+  it('should return the correct document data', async () => {
+    stubAuthUserResponse({ abilities: [SETTINGS_EDIT_ABILITY] });
+
+    const createResponse = await app.inject({
+      method: 'PUT',
+      payload: updateSettingsDtoMinimalPayload,
+      url: '/settings',
+      headers: headersWithToken,
+    });
+
+    expect(createResponse.statusCode).toEqual(200);
+
+    const fetchResponse = await app.inject({
+      method: 'GET',
+      url: '/settings',
+      headers: headersWithToken,
+    });
+
+    expect(fetchResponse.statusCode).toEqual(200);
+
+    expect(Object.keys(fetchResponse.json())).toEqual(
+      expect.arrayContaining([
+        'colours',
+        'backgroundColour',
+        'fonts',
+        'defaultFont',
+        'contentTools',
+        'companyId',
+        'updatedAt',
+        'updatedBy',
+      ]),
+    );
+
+    expect(fetchResponse.json().contentTools[0].tool).toEqual('Heading');
+    expect(fetchResponse.json().fonts[0].label).toEqual('Andale Mono');
+    expect(fetchResponse.json()).toEqual(
+      expect.objectContaining({
+        colours: settingsDefaultData.colours,
         backgroundColour: settingsDefaultData.backgroundColour,
         companyId,
         updatedBy: userId,
@@ -222,10 +251,10 @@ describe('SettingsController (e2e)', () => {
         'updatedBy',
       ]),
     );
+
     // excluded updatedAt as cannot mock date global which is failing test
     expect(createResponse.json()).toEqual(
       expect.objectContaining({
-        ...updateSettingsDto,
         colours: [updateSettingsDto.colours[1], updateSettingsDto.colours[2]],
         companyId,
         updatedBy: userId,
@@ -233,17 +262,10 @@ describe('SettingsController (e2e)', () => {
     );
 
     const updateSettingsDto2 = {
+      ...updateSettingsDtoMinimalPayload,
       colours: [{ id: chance.guid(), colour: '#123456' }],
       backgroundColour: '#123456',
-      fonts: [
-        ...updateSettingsDto.fonts,
-        (updateSettingsDto.fonts[0] = updateSettingsDto.fonts[1]),
-      ],
       defaultFont: undefined,
-      contentTools: [
-        ...updateSettingsDto.contentTools,
-        (updateSettingsDto.contentTools[0] = updateSettingsDto.contentTools[1]),
-      ],
     };
 
     const updateResponse = await app.inject({
@@ -269,54 +291,9 @@ describe('SettingsController (e2e)', () => {
 
     expect(updateResponse.json()).toEqual(
       expect.objectContaining({
-        ...updateSettingsDto2,
+        backgroundColour: updateSettingsDto2.backgroundColour,
+        colours: updateSettingsDto2.colours,
         defaultFont: settingsDefaultData.defaultFont,
-        companyId,
-        updatedBy: userId,
-      }),
-    );
-  });
-
-  it.only('should return the correct document data', async () => {
-    stubAuthUserResponse({ abilities: [SETTINGS_EDIT_ABILITY] });
-
-    const createResponse = await app.inject({
-      method: 'PUT',
-      payload: updateSettingsDtoMinimalPayload,
-      url: '/settings',
-      headers: headersWithToken,
-    });
-
-    expect(createResponse.statusCode).toEqual(200);
-
-    const fetchResponse = await app.inject({
-      method: 'GET',
-      url: '/settings',
-      headers: headersWithToken,
-    });
-
-    expect(fetchResponse.statusCode).toEqual(200);
-
-    expect(Object.keys(fetchResponse.json())).toEqual(
-      expect.arrayContaining([
-        'colours',
-        'backgroundColour',
-        'fonts',
-        'defaultFont',
-        'contentTools',
-        'companyId',
-        'updatedAt',
-        'updatedBy',
-      ]),
-    );
-
-    expect(fetchResponse.json().contentTools[0].tool).toEqual('Heading');
-    expect(fetchResponse.json().fonts[0].label).toEqual('Andale Mono');
-    expect(fetchResponse.json()).toEqual(
-      expect.objectContaining({
-        ...updateSettingsDtoMinimalPayload,
-        colours: settingsDefaultData.colours,
-        backgroundColour: settingsDefaultData.backgroundColour,
         companyId,
         updatedBy: userId,
       }),
