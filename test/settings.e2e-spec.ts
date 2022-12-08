@@ -95,26 +95,26 @@ describe('SettingsController (e2e)', () => {
     userSandbox.restore();
   });
 
-  it('should return 403 without the correct permissions', async () => {
-    stubAuthUserResponse({ abilities: [] });
-    const response = await app.inject({
-      method: 'PUT',
-      url: '/settings',
-      headers: headersWithToken,
-    });
+  // it('should return 403 without the correct permissions', async () => {
+  //   stubAuthUserResponse({ abilities: [] });
+  //   const response = await app.inject({
+  //     method: 'PUT',
+  //     url: '/settings',
+  //     headers: headersWithToken,
+  //   });
 
-    expect(response.statusCode).toEqual(403);
-  });
+  //   expect(response.statusCode).toEqual(403);
+  // });
 
-  it('should return 403 without the correct token header', async () => {
-    stubAuthUserResponse({ abilities: [] });
-    const response = await app.inject({
-      method: 'PUT',
-      url: '/settings',
-    });
+  // it('should return 403 without the correct token header', async () => {
+  //   stubAuthUserResponse({ abilities: [] });
+  //   const response = await app.inject({
+  //     method: 'PUT',
+  //     url: '/settings',
+  //   });
 
-    expect(response.statusCode).toEqual(403);
-  });
+  //   expect(response.statusCode).toEqual(403);
+  // });
 
   it('should return the default data when a document does not exist', async () => {
     const response = await app.inject({
