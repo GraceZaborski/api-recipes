@@ -21,10 +21,6 @@ import { Exclude, Type } from 'class-transformer';
 
 class Font {
   @ApiProperty()
-  @IsUUID()
-  readonly id: string;
-
-  @ApiProperty()
   @IsString()
   readonly label: string;
 
@@ -39,21 +35,7 @@ class Font {
 
 class DefaultFont extends OmitType(Font, ['value'] as const) {}
 
-class Colour {
-  @IsUUID()
-  @ApiProperty()
-  readonly id: string;
-
-  @IsString()
-  @ApiProperty()
-  readonly colour: string;
-}
-
 class ContentTool {
-  @IsUUID()
-  @ApiProperty()
-  readonly id: string;
-
   @IsString()
   @ApiProperty()
   readonly tool: string;
@@ -81,13 +63,9 @@ export class SettingsDto {
   readonly contentTools: ContentTool[];
 
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => Colour)
-  @ApiProperty({
-    isArray: true,
-    type: Colour,
-  })
-  readonly colours: Colour[];
+  @ApiProperty()
+  @IsString({ each: true })
+  readonly colours: string[];
 
   @IsString()
   @ApiPropertyOptional()

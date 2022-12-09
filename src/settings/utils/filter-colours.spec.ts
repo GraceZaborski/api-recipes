@@ -1,13 +1,8 @@
 import { filterColours, isColourValidHexCode } from './filter-colours';
-import { v4 as uuid } from 'uuid';
 
 describe('filterColours', () => {
   it('deduplicates colours', () => {
-    const args = [
-      { id: uuid(), colour: '#ffffff' },
-      { id: uuid(), colour: '#ffffff' },
-      { id: uuid(), colour: '#000000' },
-    ];
+    const args = ['#ffffff', '#ffffff', '#000000'];
     expect(filterColours(args)).toEqual([args[1], args[2]]);
   });
 });

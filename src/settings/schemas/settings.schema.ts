@@ -5,9 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 @Schema()
 export class Font {
-  @Prop({ type: String, unique: true, default: uuidv4 })
-  id: string;
-
   @Prop()
   label: string;
 
@@ -19,19 +16,7 @@ export class Font {
 }
 
 @Schema()
-export class Colour {
-  @Prop({ type: String, unique: true, default: uuidv4 })
-  id: string;
-
-  @Prop()
-  colour: string;
-}
-
-@Schema()
 export class ContentTool {
-  @Prop({ type: String, unique: true, default: uuidv4 })
-  id: string;
-
   @Prop()
   tool: string;
 
@@ -51,7 +36,7 @@ export class Settings {
   contentTools: ContentTool[];
 
   @Prop()
-  colours: Colour[];
+  colours: string[];
 
   @Prop()
   backgroundColour?: string;

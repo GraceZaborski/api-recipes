@@ -6,7 +6,6 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Chance } from 'chance';
 import configuration from '../src/config/configuration';
 import { LoggerModule } from '../src/logger';
 import { SettingsSchema } from '../src/settings/schemas/settings.schema';
@@ -24,8 +23,6 @@ import { setupGlobals } from '../src/globals';
 import { settingsDefaultData } from '../src/settings/default-data/settings-default-data';
 import { SettingsModule } from '../src/settings/settings.module';
 import { mockUpdatePayload } from '../src/settings/mock-update-payload';
-
-const chance = new Chance();
 
 const companyId = 'test-company-id';
 const userId = 'test-user-id';
@@ -119,18 +116,7 @@ describe('SettingsController (e2e)', () => {
     });
 
     expect(response.statusCode).toEqual(200);
-    expect(response.json().backgroundColour).toEqual(
-      settingsDefaultData.backgroundColour,
-    );
-    expect(Object.keys(response.json())).toEqual(
-      expect.arrayContaining([
-        'colours',
-        'backgroundColour',
-        'fonts',
-        'defaultFont',
-        'contentTools',
-      ]),
-    );
+    expect(response.json()).toEqual(settingsDefaultData);
   });
 
   it('should return the default data when undefined is used in payload for optional properties', async () => {
@@ -199,12 +185,9 @@ describe('SettingsController (e2e)', () => {
       ]),
     );
 
-    expect(fetchResponse.json().contentTools[0].tool).toEqual('Heading');
-    expect(fetchResponse.json().fonts[0].label).toEqual('Andale Mono');
     expect(fetchResponse.json()).toEqual(
       expect.objectContaining({
-        colours: settingsDefaultData.colours,
-        backgroundColour: settingsDefaultData.backgroundColour,
+        ...settingsDefaultData,
         companyId,
         updatedBy: userId,
       }),
@@ -216,12 +199,7 @@ describe('SettingsController (e2e)', () => {
 
     const updateSettingsDto = {
       ...mockUpdatePayload,
-      colours: [
-        { id: chance.guid(), colour: '#ffffff' },
-        { id: chance.guid(), colour: '#ffffff' },
-        { id: chance.guid(), colour: '#000000' },
-        { id: chance.guid(), colour: '#hijk' },
-      ],
+      colours: ['#ffffff', '#ffffff', '#000000', '#hijk'],
       backgroundColour: '#ffffff',
       defaultFont: settingsDefaultData.defaultFont,
     };
@@ -250,6 +228,7 @@ describe('SettingsController (e2e)', () => {
     // excluded updatedAt as cannot mock date global which is failing test
     expect(createResponse.json()).toEqual(
       expect.objectContaining({
+        ...updateSettingsDto,
         colours: [updateSettingsDto.colours[1], updateSettingsDto.colours[2]],
         companyId,
         updatedBy: userId,
@@ -258,7 +237,7 @@ describe('SettingsController (e2e)', () => {
 
     const updateSettingsDto2 = {
       ...mockUpdatePayload,
-      colours: [{ id: chance.guid(), colour: '#123456' }],
+      colours: ['#123456'],
       backgroundColour: '#123456',
       defaultFont: undefined,
     };
@@ -286,8 +265,7 @@ describe('SettingsController (e2e)', () => {
 
     expect(updateResponse.json()).toEqual(
       expect.objectContaining({
-        backgroundColour: updateSettingsDto2.backgroundColour,
-        colours: updateSettingsDto2.colours,
+        ...updateSettingsDto2,
         defaultFont: settingsDefaultData.defaultFont,
         companyId,
         updatedBy: userId,
@@ -311,14 +289,14 @@ describe('SettingsController (e2e)', () => {
 
     expect(createResponse.statusCode).toEqual(400);
 
-    const updateSettingsDtoIncompleteProperties = {
+    const updateSettingsDtoIncorrectProperties = {
       ...mockUpdatePayload,
       colours: [{ colour: '#ffffff' }],
     };
 
     createResponse = await app.inject({
       method: 'PUT',
-      payload: updateSettingsDtoIncompleteProperties,
+      payload: updateSettingsDtoIncorrectProperties,
       url: '/settings',
       headers: headersWithToken,
     });
