@@ -10,5 +10,4 @@ export const unlayerContentTools = [
   { id: uuid(), tool: 'Video', value: true },
   { id: uuid(), tool: 'Social', value: true },
   { id: uuid(), tool: 'Signature', value: true },
-  { id: uuid(), tool: 'Unsubscribe', value: true },
 ];
