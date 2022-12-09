@@ -30,7 +30,7 @@ const chance = new Chance();
 const companyId = 'test-company-id';
 const userId = 'test-user-id';
 const roles = ['super_admin'];
-const SETTINGS_EDIT_ABILITY = 'campaigns_settings/edit';
+const SETTINGS_EDIT_ABILITY = 'templates/template:edit';
 
 describe('SettingsController (e2e)', () => {
   let app: NestFastifyApplication;
