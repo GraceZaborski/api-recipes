@@ -199,7 +199,12 @@ describe('SettingsController (e2e)', () => {
 
     const updateSettingsDto = {
       ...mockUpdatePayload,
-      colours: ['#ffffff', '#ffffff', '#000000', '#hijk'],
+      colours: [
+        { colour: '#ffffff' },
+        { colour: '#ffffff' },
+        { colour: '#000000' },
+        { colour: '#hijk' },
+      ],
       backgroundColour: '#ffffff',
       defaultFont: settingsDefaultData.defaultFont,
     };
@@ -237,7 +242,7 @@ describe('SettingsController (e2e)', () => {
 
     const updateSettingsDto2 = {
       ...mockUpdatePayload,
-      colours: ['#123456'],
+      colours: [{ colour: '#123456' }],
       backgroundColour: '#123456',
       defaultFont: undefined,
     };
@@ -291,7 +296,7 @@ describe('SettingsController (e2e)', () => {
 
     const updateSettingsDtoIncorrectProperties = {
       ...mockUpdatePayload,
-      colours: [{ colour: '#ffffff' }],
+      colours: ['#ffffff'],
     };
 
     createResponse = await app.inject({

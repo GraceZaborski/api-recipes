@@ -2,7 +2,11 @@ import { filterColours, isColourValidHexCode } from './filter-colours';
 
 describe('filterColours', () => {
   it('deduplicates colours', () => {
-    const args = ['#ffffff', '#ffffff', '#000000'];
+    const args = [
+      { colour: '#ffffff' },
+      { colour: '#ffffff' },
+      { colour: '#000000' },
+    ];
     expect(filterColours(args)).toEqual([args[1], args[2]]);
   });
 });

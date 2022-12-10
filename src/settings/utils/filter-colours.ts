@@ -10,9 +10,11 @@ export const isColourValidHexCode = (inputValue?: string) => {
 };
 
 export const filterColours = (colours: SettingsDto['colours']) => {
+  const colourValuesArray = colours.map((colour) => colour.colour);
   const filteredArray = colours.filter(
-    (colour, index) =>
-      !colours.includes(colour, index + 1) && isColourValidHexCode(colour),
+    ({ colour }, index) =>
+      !colourValuesArray.includes(colour, index + 1) &&
+      isColourValidHexCode(colour),
   );
   return filteredArray;
 };

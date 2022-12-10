@@ -45,6 +45,12 @@ class ContentTool {
   readonly value: boolean;
 }
 
+class Colour {
+  @IsString()
+  @ApiProperty()
+  readonly colour: string;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const { value, ...defaultFont } = unlayerSettingsFonts[0];
 
@@ -63,9 +69,13 @@ export class SettingsDto {
   readonly contentTools: ContentTool[];
 
   @IsArray()
-  @ApiProperty()
-  @IsString({ each: true })
-  readonly colours: string[];
+  @ValidateNested({ each: true })
+  @Type(() => Colour)
+  @ApiProperty({
+    isArray: true,
+    type: Colour,
+  })
+  readonly colours: Colour[];
 
   @IsString()
   @ApiPropertyOptional()

@@ -91,7 +91,12 @@ describe('SettingsController', () => {
     const userId = chance.guid();
     const updateSettingsDto = {
       ...mockUpdatePayload,
-      colours: ['#ffffff', '#ffffff', '#000000', '#gggggg'],
+      colours: [
+        { colour: '#ffffff' },
+        { colour: '#ffffff' },
+        { colour: '#000000' },
+        { colour: '#gggggg' },
+      ],
       backgroundColour: '#hijkl',
     };
     await settingsController.updateSettings(updateSettingsDto, {

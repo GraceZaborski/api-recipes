@@ -25,6 +25,12 @@ export class ContentTool {
 }
 
 @Schema()
+export class Colour {
+  @Prop()
+  colour: string;
+}
+
+@Schema()
 export class DefaultFont extends OmitType(Font, ['value'] as const) {}
 
 @Schema({ versionKey: false })
@@ -36,7 +42,7 @@ export class Settings {
   contentTools: ContentTool[];
 
   @Prop()
-  colours: string[];
+  colours: Colour[];
 
   @Prop()
   backgroundColour?: string;
