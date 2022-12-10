@@ -52,7 +52,7 @@ class Colour {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const { value, ...defaultFont } = unlayerSettingsFonts[0];
+export const { value, ...defaultFont } = unlayerSettingsFonts[1];
 
 export class SettingsDto {
   @Exclude()
