@@ -145,7 +145,7 @@ describe('SettingsController (e2e)', () => {
     expect(createResponse.json()).toEqual(
       expect.objectContaining({
         defaultFont: settingsDefaultData.defaultFont,
-        backgroundColour: settingsDefaultData.backgroundColour,
+        backgroundColour: null,
         companyId,
         updatedBy: userId,
       }),
@@ -188,6 +188,7 @@ describe('SettingsController (e2e)', () => {
     expect(fetchResponse.json()).toEqual(
       expect.objectContaining({
         ...settingsDefaultData,
+        backgroundColour: null,
         companyId,
         updatedBy: userId,
       }),
@@ -206,7 +207,6 @@ describe('SettingsController (e2e)', () => {
         { colour: '#hijk' },
       ],
       backgroundColour: '#ffffff',
-      defaultFont: settingsDefaultData.defaultFont,
     };
 
     const createResponse = await app.inject({
@@ -243,8 +243,7 @@ describe('SettingsController (e2e)', () => {
     const updateSettingsDto2 = {
       ...mockUpdatePayload,
       colours: [{ colour: '#123456' }],
-      backgroundColour: '#123456',
-      defaultFont: undefined,
+      backgroundColour: '#123',
     };
 
     const updateResponse = await app.inject({
@@ -271,7 +270,7 @@ describe('SettingsController (e2e)', () => {
     expect(updateResponse.json()).toEqual(
       expect.objectContaining({
         ...updateSettingsDto2,
-        defaultFont: settingsDefaultData.defaultFont,
+        backgroundColour: null,
         companyId,
         updatedBy: userId,
       }),

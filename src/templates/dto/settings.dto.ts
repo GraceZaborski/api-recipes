@@ -14,7 +14,6 @@ import {
   OmitType,
   PickType,
 } from '@nestjs/swagger';
-import { unlayerSettingsFonts } from '../../settings/default-data/unlayer-system-fonts';
 import { Exclude, Type } from 'class-transformer';
 
 // TODO: consider using the swagger plug-in: https://docs.nestjs.com/openapi/cli-plugin#using-the-cli-plugin
@@ -31,6 +30,11 @@ class Font {
   @ApiProperty()
   @IsBoolean()
   readonly value: boolean;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  readonly url?: string;
 }
 
 class DefaultFont extends OmitType(Font, ['value'] as const) {}
@@ -50,9 +54,6 @@ class Colour {
   @ApiProperty()
   readonly colour: string;
 }
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const { value, ...defaultFont } = unlayerSettingsFonts[1];
 
 export class SettingsDto {
   @Exclude()
@@ -80,7 +81,7 @@ export class SettingsDto {
   @IsString()
   @ApiPropertyOptional()
   @IsOptional()
-  readonly backgroundColour?: string = '#ffffff';
+  readonly backgroundColour?: string | null;
 
   @IsArray()
   @ValidateNested({ each: true })
@@ -92,9 +93,8 @@ export class SettingsDto {
   readonly fonts: Font[];
 
   @IsObject()
-  @ApiPropertyOptional()
-  @IsOptional()
-  readonly defaultFont?: DefaultFont = defaultFont;
+  @ApiProperty()
+  readonly defaultFont: DefaultFont;
 
   @IsString()
   @IsOptional()

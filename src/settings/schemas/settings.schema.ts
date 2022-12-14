@@ -13,6 +13,9 @@ export class Font {
 
   @Prop()
   value: boolean;
+
+  @Prop()
+  url?: string;
 }
 
 @Schema()
@@ -51,7 +54,7 @@ export class Settings {
   fonts: Font[];
 
   @Prop()
-  defaultFont?: DefaultFont;
+  defaultFont: DefaultFont;
 
   @Prop()
   companyId?: string;
