@@ -107,7 +107,7 @@ describe('SettingsController', () => {
     const payload = {
       ...updateSettingsDto,
       colours: [updateSettingsDto.colours[1], updateSettingsDto.colours[2]],
-      backgroundColour: undefined,
+      backgroundColour: null,
       updatedBy: userId,
       companyId,
       updatedAt: mockDate,
