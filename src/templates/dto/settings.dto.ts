@@ -18,7 +18,7 @@ import { Exclude, Type } from 'class-transformer';
 
 // TODO: consider using the swagger plug-in: https://docs.nestjs.com/openapi/cli-plugin#using-the-cli-plugin
 
-class Font {
+class SystemFont {
   @ApiProperty()
   @IsString()
   readonly label: string;
@@ -30,14 +30,15 @@ class Font {
   @ApiProperty()
   @IsBoolean()
   readonly value: boolean;
-
-  @ApiPropertyOptional()
-  @IsString()
-  @IsOptional()
-  readonly url?: string;
 }
 
-class DefaultFont extends OmitType(Font, ['value'] as const) {}
+class GoogleFont extends SystemFont {
+  @ApiProperty()
+  @IsString()
+  readonly url: string;
+}
+
+class DefaultFont extends OmitType(SystemFont, ['value'] as const) {}
 
 class ContentTool {
   @IsString()
@@ -85,12 +86,21 @@ export class SettingsDto {
 
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => Font)
+  @Type(() => SystemFont)
   @ApiProperty({
     isArray: true,
-    type: Font,
+    type: SystemFont,
   })
-  readonly fonts: Font[];
+  readonly systemFonts: SystemFont[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => GoogleFont)
+  @ApiProperty({
+    isArray: true,
+    type: GoogleFont,
+  })
+  readonly googleFonts: GoogleFont[];
 
   @IsObject()
   @ApiProperty()
@@ -115,7 +125,8 @@ export class SettingsDto {
 export class UpdateSettingsDto extends PickType(SettingsDto, [
   'colours',
   'backgroundColour',
-  'fonts',
+  'systemFonts',
+  'googleFonts',
   'defaultFont',
   'contentTools',
 ]) {}

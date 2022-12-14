@@ -1,6 +1,6 @@
 import { Settings } from '../schemas/settings.schema';
 
-export const unlayerSettingsFonts: Settings['fonts'] = [
+export const unlayerSystemFonts: Settings['systemFonts'] = [
   {
     label: 'Andale Mono',
     value: true,
@@ -76,6 +76,9 @@ export const unlayerSettingsFonts: Settings['fonts'] = [
     value: true,
     style: 'verdana,geneva',
   },
+];
+
+export const unlayerGoogleFonts: Settings['googleFonts'] = [
   {
     label: 'Lobster Two',
     value: true,

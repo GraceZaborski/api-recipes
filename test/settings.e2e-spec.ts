@@ -133,7 +133,8 @@ describe('SettingsController (e2e)', () => {
       expect.arrayContaining([
         'colours',
         'backgroundColour',
-        'fonts',
+        'systemFonts',
+        'googleFonts',
         'defaultFont',
         'contentTools',
         'companyId',
@@ -176,7 +177,8 @@ describe('SettingsController (e2e)', () => {
       expect.arrayContaining([
         'colours',
         'backgroundColour',
-        'fonts',
+        'systemFonts',
+        'googleFonts',
         'defaultFont',
         'contentTools',
         'companyId',
@@ -221,7 +223,8 @@ describe('SettingsController (e2e)', () => {
       expect.arrayContaining([
         'colours',
         'backgroundColour',
-        'fonts',
+        'systemFonts',
+        'googleFonts',
         'defaultFont',
         'contentTools',
         'companyId',
@@ -258,7 +261,8 @@ describe('SettingsController (e2e)', () => {
       expect.arrayContaining([
         'colours',
         'backgroundColour',
-        'fonts',
+        'systemFonts',
+        'googleFonts',
         'defaultFont',
         'contentTools',
         'companyId',

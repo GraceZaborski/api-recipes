@@ -4,7 +4,7 @@ import { Document } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 
 @Schema()
-export class Font {
+export class SystemFont {
   @Prop()
   label: string;
 
@@ -13,9 +13,6 @@ export class Font {
 
   @Prop()
   value: boolean;
-
-  @Prop()
-  url?: string;
 }
 
 @Schema()
@@ -34,7 +31,13 @@ export class Colour {
 }
 
 @Schema()
-export class DefaultFont extends OmitType(Font, ['value'] as const) {}
+export class GoogleFont extends SystemFont {
+  @Prop()
+  url: string;
+}
+
+@Schema()
+export class DefaultFont extends OmitType(SystemFont, ['value'] as const) {}
 
 @Schema({ versionKey: false })
 export class Settings {
@@ -51,7 +54,10 @@ export class Settings {
   backgroundColour?: string;
 
   @Prop()
-  fonts: Font[];
+  systemFonts: SystemFont[];
+
+  @Prop()
+  googleFonts: GoogleFont[];
 
   @Prop()
   defaultFont: DefaultFont;
