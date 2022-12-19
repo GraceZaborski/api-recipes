@@ -310,6 +310,20 @@ describe('SettingsController (e2e)', () => {
 
     expect(createResponse.statusCode).toEqual(400);
 
+    const updateSettingsDtoIncorrectDefaultFont = {
+      ...settingsDefaultData,
+      defaultFont: settingsDefaultData.defaultFont.label,
+    };
+
+    createResponse = await app.inject({
+      method: 'PUT',
+      payload: updateSettingsDtoIncorrectDefaultFont,
+      url: '/settings',
+      headers: headersWithToken,
+    });
+
+    expect(createResponse.statusCode).toEqual(400);
+
     createResponse = await app.inject({
       method: 'PUT',
       payload: settingsDefaultData,
