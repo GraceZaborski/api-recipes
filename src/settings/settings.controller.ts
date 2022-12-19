@@ -1,12 +1,5 @@
 import { ACL, AuthContext } from '@cerbero/mod-auth';
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Put,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Body, Controller, Get, Put, UseInterceptors } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiForbiddenResponse,
@@ -74,16 +67,5 @@ export class SettingsController {
       updatedAt: new Date(),
     };
     return this.settingsService.updateOne(companyId, payload);
-  }
-
-  // for testing
-  @Delete()
-  @ApiOkResponse({ type: SettingsDto })
-  @ApiNotFoundResponse({ type: ErrorResponseDto })
-  @ApiBadRequestResponse({ type: ErrorResponseDto })
-  public async deleteSettings(
-    @AuthContext() { companyId },
-  ): Promise<SettingsDto | Error> {
-    return this.settingsService.deleteOne(companyId);
   }
 }

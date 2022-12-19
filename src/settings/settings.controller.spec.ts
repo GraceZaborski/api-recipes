@@ -21,7 +21,6 @@ describe('SettingsController', () => {
           useValue: {
             findOne: jest.fn(() => []),
             updateOne: jest.fn(),
-            delete: jest.fn(() => []),
           },
         },
         {

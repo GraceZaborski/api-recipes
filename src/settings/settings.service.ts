@@ -26,8 +26,4 @@ export class SettingsService {
       })
       .lean();
   }
-
-  public async deleteOne(companyId): Promise<SettingsDto> {
-    return this.settingsModel.findOneAndDelete(companyId).lean();
-  }
 }
