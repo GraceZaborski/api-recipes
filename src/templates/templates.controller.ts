@@ -35,6 +35,7 @@ import {
 import { ErrorResponseDto } from '../common/dto/errorResponse.dto';
 import { PaginatedTemplates } from './dto/paginatedTemplates.dto';
 import { Logger } from '../logger';
+import { UpdateTemplateDto } from './dto/updateTemplate.dto';
 
 @ApiTags('templates')
 @ApiSecurity('api_key')
@@ -141,7 +142,7 @@ export class TemplatesController {
   @ApiBadRequestResponse({ type: ErrorResponseDto })
   public async updateTemplate(
     @Param('id') id: string,
-    @Body() templateDto: CreateTemplateDto,
+    @Body() templateDto: UpdateTemplateDto,
     @AuthContext() { userId: updatedBy, companyId },
   ): Promise<TemplateDto | Error> {
     const template = await this.templatesService.findOne(id, companyId);
@@ -155,10 +156,8 @@ export class TemplatesController {
       ...template,
       ...templateDto,
       unlayer: {
-        ...templateDto.unlayer,
-        previewUrl: templateDto.unlayer.previewUrl
-          ? templateDto.unlayer.previewUrl
-          : null,
+        ...template?.unlayer,
+        ...templateDto?.unlayer,
       },
       companyId,
       updatedBy,
