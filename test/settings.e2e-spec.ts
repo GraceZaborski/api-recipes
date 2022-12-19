@@ -333,4 +333,30 @@ describe('SettingsController (e2e)', () => {
 
     expect(createResponse.statusCode).toEqual(200);
   });
+
+  it('should return an updated updatedAt value when settings are updated', async () => {
+    stubAuthUserResponse({ abilities: [SETTINGS_EDIT_ABILITY] });
+
+    const createResponse = await app.inject({
+      method: 'PUT',
+      payload: settingsDefaultData,
+      url: '/settings',
+      headers: headersWithToken,
+    });
+
+    expect(createResponse.statusCode).toEqual(200);
+    const createUpdatedAtValue = createResponse.json().updatedAt;
+
+    const updateResponse = await app.inject({
+      method: 'PUT',
+      payload: settingsDefaultData,
+      url: '/settings',
+      headers: headersWithToken,
+    });
+
+    expect(updateResponse.statusCode).toEqual(200);
+    const updateUpdatedAtValue = updateResponse.json().updatedAt;
+
+    expect(createUpdatedAtValue).not.toEqual(updateUpdatedAtValue);
+  });
 });
