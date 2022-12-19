@@ -63,7 +63,7 @@ export class Settings {
   defaultFont: DefaultFont;
 
   @Prop()
-  companyId?: string;
+  companyId: string;
 
   @Prop()
   updatedBy?: string;

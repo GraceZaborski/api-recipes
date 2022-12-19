@@ -16,8 +16,6 @@ import {
 } from '@nestjs/swagger';
 import { Exclude, Type } from 'class-transformer';
 
-// TODO: consider using the swagger plug-in: https://docs.nestjs.com/openapi/cli-plugin#using-the-cli-plugin
-
 class SystemFont {
   @ApiProperty()
   @IsString()
@@ -109,9 +107,8 @@ export class SettingsDto {
   readonly defaultFont: DefaultFont;
 
   @IsString()
-  @IsOptional()
-  @ApiPropertyOptional()
-  readonly companyId?: string;
+  @ApiProperty()
+  readonly companyId: string;
 
   @IsString()
   @IsOptional()
