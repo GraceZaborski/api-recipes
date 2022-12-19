@@ -22,7 +22,6 @@ import { userSandbox, userStub } from './utils/userUtils';
 import { setupGlobals } from '../src/globals';
 import { settingsDefaultData } from '../src/settings/default-data/settings-default-data';
 import { SettingsModule } from '../src/settings/settings.module';
-import { mockUpdatePayload } from '../src/settings/mock-update-payload';
 
 const companyId = 'test-company-id';
 const userId = 'test-user-id';
@@ -123,7 +122,7 @@ describe('SettingsController (e2e)', () => {
     stubAuthUserResponse({ abilities: [SETTINGS_EDIT_ABILITY] });
     const createResponse = await app.inject({
       method: 'PUT',
-      payload: mockUpdatePayload,
+      payload: settingsDefaultData,
       url: '/settings',
       headers: headersWithToken,
     });
@@ -158,7 +157,7 @@ describe('SettingsController (e2e)', () => {
 
     const createResponse = await app.inject({
       method: 'PUT',
-      payload: mockUpdatePayload,
+      payload: settingsDefaultData,
       url: '/settings',
       headers: headersWithToken,
     });
@@ -201,7 +200,7 @@ describe('SettingsController (e2e)', () => {
     stubAuthUserResponse({ abilities: [SETTINGS_EDIT_ABILITY] });
 
     const updateSettingsDto = {
-      ...mockUpdatePayload,
+      ...settingsDefaultData,
       colours: [
         { colour: '#ffffff' },
         { colour: '#ffffff' },
@@ -244,7 +243,7 @@ describe('SettingsController (e2e)', () => {
     );
 
     const updateSettingsDto2 = {
-      ...mockUpdatePayload,
+      ...settingsDefaultData,
       colours: [{ colour: '#123456' }],
       backgroundColour: '#123',
     };
@@ -285,7 +284,7 @@ describe('SettingsController (e2e)', () => {
     stubAuthUserResponse({ abilities: [SETTINGS_EDIT_ABILITY] });
 
     const updateSettingsDtoMissingProperties = {
-      ...mockUpdatePayload.colours,
+      ...settingsDefaultData.colours,
     };
 
     let createResponse = await app.inject({
@@ -298,7 +297,7 @@ describe('SettingsController (e2e)', () => {
     expect(createResponse.statusCode).toEqual(400);
 
     const updateSettingsDtoIncorrectProperties = {
-      ...mockUpdatePayload,
+      ...settingsDefaultData,
       colours: ['#ffffff'],
     };
 
@@ -313,7 +312,7 @@ describe('SettingsController (e2e)', () => {
 
     createResponse = await app.inject({
       method: 'PUT',
-      payload: mockUpdatePayload,
+      payload: settingsDefaultData,
       url: '/settings',
       headers: headersWithToken,
     });

@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Chance } from 'chance';
 import { Logger } from '../logger';
 import { settingsDefaultData } from './default-data/settings-default-data';
-import { mockUpdatePayload } from './mock-update-payload';
 import { SettingsController } from './settings.controller';
 import { SettingsService } from './settings.service';
 
@@ -60,7 +59,7 @@ describe('SettingsController', () => {
     const companyId = chance.guid();
     const userId = chance.guid();
     const updateSettingsDto = {
-      ...mockUpdatePayload,
+      ...settingsDefaultData,
       backgroundColour: '#ffffff',
       defaultFont: settingsDefaultData.defaultFont,
     };
@@ -89,7 +88,7 @@ describe('SettingsController', () => {
     const companyId = chance.guid();
     const userId = chance.guid();
     const updateSettingsDto = {
-      ...mockUpdatePayload,
+      ...settingsDefaultData,
       colours: [
         { colour: '#ffffff' },
         { colour: '#ffffff' },

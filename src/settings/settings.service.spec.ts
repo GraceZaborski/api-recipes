@@ -4,7 +4,6 @@ import { Chance } from 'chance';
 import { Model } from 'mongoose';
 import { SettingsDto } from '../templates/dto/settings.dto';
 import { settingsDefaultData } from './default-data/settings-default-data';
-import { mockUpdatePayload } from './mock-update-payload';
 import { SettingsDocument } from './schemas/settings.schema';
 import { SettingsService } from './settings.service';
 
@@ -42,7 +41,7 @@ describe('SettingsService', () => {
   const companyId = chance.guid();
 
   const settingsDto: SettingsDto = {
-    ...mockUpdatePayload,
+    ...settingsDefaultData,
     companyId,
     updatedBy: chance.guid(),
     updatedAt: new Date(),
