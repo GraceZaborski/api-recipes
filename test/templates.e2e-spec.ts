@@ -857,6 +857,67 @@ describe('TemplatesController (e2e)', () => {
     expect(getTemplate.json()).toEqual(expect.objectContaining(updatedPayload));
   });
 
+  it('should be able to update a template with a partial', async () => {
+    stubAuthUserResponse({
+      abilities: [
+        ABILITIES.TEMPLATE_CREATE,
+        ABILITIES.TEMPLATE_VIEW,
+        ABILITIES.TEMPLATE_EDIT,
+      ],
+    });
+
+    const template = {
+      ...newTemplate,
+      title: chance.word(),
+    };
+
+    const response = await app.inject({
+      method: 'POST',
+      url: '/templates',
+      headers: headersWithToken,
+      payload: template,
+    });
+
+    const createdTemplate = response.json();
+
+    const updatedPayload = {
+      title: chance.word(),
+    };
+
+    const updateResponse = await app.inject({
+      method: 'PUT',
+      url: `/templates/${createdTemplate.id}`,
+      headers: headersWithToken,
+      payload: updatedPayload,
+    });
+
+    expect(updateResponse.statusCode).toEqual(200);
+    expect(updateResponse.json().title).toEqual(updatedPayload.title);
+
+    const firstName = chance.first();
+    const lastName = chance.last();
+
+    stubUserResponse({
+      id: 'test',
+      firstName,
+      lastName,
+    });
+
+    const getTemplate = await app.inject({
+      method: 'GET',
+      url: `/templates/${createdTemplate.id}`,
+      headers: headersWithToken,
+    });
+
+    expect(getTemplate.statusCode).toEqual(200);
+    expect(getTemplate.json()).toEqual(
+      expect.objectContaining({
+        ...template,
+        ...updatedPayload,
+      }),
+    );
+  });
+
   it('should return 409 if updated with a duplicate title', async () => {
     stubAuthUserResponse({
       abilities: [
