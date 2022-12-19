@@ -104,7 +104,7 @@ export class SettingsDto {
 
   @IsObject()
   @ApiProperty()
-  @ValidateNested({ each: true })
+  @ValidateNested()
   @Type(() => DefaultFont)
   readonly defaultFont: DefaultFont;
 
