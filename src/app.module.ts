@@ -12,6 +12,7 @@ import { CompaniesModule } from './companies/companies.module';
 import { CampaignsModule } from './campaigns/campaigns.module';
 import configuration from './config/configuration';
 import { OpenTelemetryModule } from 'nestjs-otel';
+import { SettingsModule } from './settings/settings.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { OpenTelemetryModule } from 'nestjs-otel';
     UploadModule,
     CompaniesModule,
     CampaignsModule,
+    SettingsModule,
   ],
   controllers: [HeartbeatController],
   providers: [],

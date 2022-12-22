@@ -16,14 +16,11 @@ import {
   authSandbox,
 } from './utils/authUtils';
 import { userStub, userSandbox, stubUserResponse } from './utils/userUtils';
-
 import { proto } from '@beamery/chimera-auth-client';
 import { proto as userProto } from '@beamery/chimera-user-client';
 import { setupGlobals } from '../src/globals';
-
 import { ConfigModule } from '@nestjs/config';
 import configuration from '../src/config/configuration';
-
 import { LoggerModule } from '../src/logger';
 
 const chance = new Chance();

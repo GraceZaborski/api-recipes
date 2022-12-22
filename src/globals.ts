@@ -29,6 +29,7 @@ export async function setupGlobals(app, opts = { useLogger: true }) {
       .setVersion('1.0')
       .addTag('templates')
       .addTag('heartbeat')
+      .addTag('settings')
       .addServer('/api-campaigns')
       .addApiKey({ type: 'apiKey', name: 'Authorization', in: 'header' })
       .build();
