@@ -24,7 +24,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
       httpStatus >= 500 ? 'error' : httpStatus >= 400 ? 'warn' : 'info';
 
     this.logger[logLevel]({
-      message: exception.stack,
+      message: exception.message,
+      exception,
     });
 
     const responseBody = isHttpException

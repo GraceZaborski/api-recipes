@@ -68,6 +68,13 @@ describe('UnlayerService', () => {
       id: 'campaignId',
       companyId: company.id,
       createdBy: user.id,
+      title: 'campaignId',
+      status: 'complete',
+      touchpoints: [],
+      createdAt: new Date(),
+      version: 2,
+      type: 'single',
+      from: 'from',
     };
 
     jest
