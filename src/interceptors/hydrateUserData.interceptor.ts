@@ -37,7 +37,6 @@ export function HydrateUserDataInterceptorFactory({
 
     async getHydratedUserData(item: any, id: string, companyId: string) {
       const userData = await this.userService.getUser({ id, companyId });
-
       return {
         ...item,
         user: {

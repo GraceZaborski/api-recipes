@@ -27,6 +27,7 @@ export async function setupGlobals(app, opts = { useLogger: true }) {
       .setTitle('Campaigns API')
       .setDescription('API serving campaigns and templates')
       .setVersion('1.0')
+      .addTag('campaigns')
       .addTag('templates')
       .addTag('heartbeat')
       .addTag('settings')
