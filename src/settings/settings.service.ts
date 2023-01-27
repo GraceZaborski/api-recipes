@@ -20,7 +20,7 @@ export class SettingsService {
 
   public async updateOne(companyId, settingsDto): Promise<SettingsDto> {
     return this.settingsModel
-      .findOneAndUpdate(companyId, settingsDto, {
+      .findOneAndUpdate({ companyId }, settingsDto, {
         returnDocument: 'after',
         upsert: true,
       })
