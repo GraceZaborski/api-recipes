@@ -22,7 +22,9 @@ import { userSandbox, userStub } from './utils/userUtils';
 import { setupGlobals } from '../src/globals';
 import { settingsDefaultData } from '../src/settings/default-data/settings-default-data';
 import { SettingsModule } from '../src/settings/settings.module';
+import { Chance } from 'chance';
 
+const chance = new Chance();
 const companyId = 'test-company-id';
 const userId = 'test-user-id';
 const roles = ['super_admin'];
@@ -358,5 +360,58 @@ describe('SettingsController (e2e)', () => {
     const updateUpdatedAtValue = updateResponse.json().updatedAt;
 
     expect(createUpdatedAtValue).not.toEqual(updateUpdatedAtValue);
+  });
+
+  it('should be able to maintain different settings for different companyIds', async () => {
+    stubAuthUserResponse({ abilities: [SETTINGS_EDIT_ABILITY] });
+
+    const companyId1 = chance.guid();
+
+    const company1Headers = {
+      'x-token-payload': buildXTokenPayload({
+        companyId: companyId1,
+        userId,
+        roles,
+      }),
+    };
+
+    const companyId2 = chance.guid();
+
+    const company2Headers = {
+      'x-token-payload': buildXTokenPayload({
+        companyId: companyId2,
+        userId,
+        roles,
+      }),
+    };
+
+    const company1Response = await app.inject({
+      method: 'PUT',
+      payload: { ...settingsDefaultData, backgroundColour: '#ffffff' },
+      url: '/settings',
+      headers: company1Headers,
+    });
+
+    expect(company1Response.statusCode).toEqual(200);
+    expect(company1Response.json().backgroundColour).toEqual('#ffffff');
+
+    const company2Response = await app.inject({
+      method: 'PUT',
+      payload: { ...settingsDefaultData, backgroundColour: '#000000' },
+      url: '/settings',
+      headers: company2Headers,
+    });
+
+    expect(company2Response.statusCode).toEqual(200);
+    expect(company2Response.json().backgroundColour).toEqual('#000000');
+
+    const company1GetResponse = await app.inject({
+      method: 'GET',
+      url: '/settings',
+      headers: company1Headers,
+    });
+
+    expect(company1GetResponse.statusCode).toEqual(200);
+    expect(company1GetResponse.json().backgroundColour).toEqual('#ffffff');
   });
 });
