@@ -31,7 +31,7 @@ export async function setupGlobals(app, opts = { useLogger: true }) {
       .addTag('heartbeat')
       .addTag('settings')
       .addServer('/api-campaigns')
-      .addApiKey({ type: 'apiKey', name: 'Authorization', in: 'header' })
+      .addApiKey({ type: 'apiKey', name: 'x-token-payload', in: 'header' })
       .build();
 
     const openApiDocument = SwaggerModule.createDocument(app, openApiConfig);
