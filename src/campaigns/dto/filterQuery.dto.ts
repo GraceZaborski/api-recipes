@@ -23,7 +23,6 @@ export enum SortOrder {
 export enum CampaignType {
   single = 'single',
   dynamic = 'dynamic',
-  drip = 'drip',
   multitouch = 'multitouch',
   triggered = 'triggered',
   bulkEmail = 'bulk_email',
