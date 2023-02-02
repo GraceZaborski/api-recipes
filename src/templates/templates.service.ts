@@ -21,7 +21,9 @@ export class TemplatesService {
   ) {}
 
   public async findOne(id: string, companyId: string): Promise<TemplateDto> {
-    return this.templateModel.findOne({ id, companyId }).lean();
+    return this.templateModel
+      .findOne({ id, companyId, deletedAt: { $exists: false } })
+      .lean();
   }
 
   public async findAll(
@@ -90,14 +92,21 @@ export class TemplatesService {
     companyId,
     templateDto: Omit<TemplateDto, 'id'>,
   ): Promise<Template> {
-    return this.templateModel.findOneAndUpdate({ id, companyId }, templateDto, {
-      returnDocument: 'after',
-    });
+    return this.templateModel.findOneAndUpdate(
+      { id, companyId, deletedAt: { $exists: false } },
+      templateDto,
+      {
+        returnDocument: 'after',
+      },
+    );
   }
 
   public async uniqueCreatedByList(companyId: string): Promise<object> {
-    return (await this.templateModel.distinct('createdBy', { companyId })).map(
-      (id) => ({ id, companyId }),
-    );
+    return (
+      await this.templateModel.distinct('createdBy', {
+        companyId,
+        deletedAt: { $exists: false },
+      })
+    ).map((id) => ({ id, companyId }));
   }
 }
