@@ -134,16 +134,18 @@ describe('TemplatesController', () => {
   it('should use the correct ids when deleting a template', async () => {
     const templateId = chance.guid();
     const companyId = chance.guid();
-    await templatesController.deleteTemplate(templateId, { companyId });
-    expect(templatesService.delete).toHaveBeenCalledWith(templateId, companyId);
+    const userId = chance.guid();
+    await templatesController.deleteTemplate(templateId, { companyId, userId });
+    expect(templatesService.delete).toHaveBeenCalledWith(templateId, companyId, userId);
   });
 
   it('should throw if deleting a non-existent template', async () => {
     const templateId = chance.guid();
     const companyId = chance.guid();
+    const userId = chance.guid();
     jest.spyOn(templatesService, 'delete').mockReturnValueOnce(null);
     await expect(
-      templatesController.deleteTemplate(templateId, { companyId }),
+      templatesController.deleteTemplate(templateId, { companyId, userId }),
     ).rejects.toThrow('Not Found');
   });
 

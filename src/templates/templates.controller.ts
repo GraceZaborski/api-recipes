@@ -125,10 +125,9 @@ export class TemplatesController {
   @ApiForbiddenResponse({ type: ErrorResponseDto })
   public async deleteTemplate(
     @Param('id') id: string,
-    @AuthContext() { companyId },
+    @AuthContext() { companyId, userId: deletedBy },
   ) {
-    const template = await this.templatesService.delete(id, companyId);
-
+    const template = await this.templatesService.delete(id, companyId, deletedBy);
     if (!template) throw new NotFoundException();
   }
 

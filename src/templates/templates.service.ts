@@ -8,8 +8,9 @@ import { Template } from './schemas/template.schema';
 import * as _ from 'lodash';
 
 type FilterWithCompany = FilterQueryDto & { companyId?: string };
-type TemplatesMongoFilter = Omit<FilterWithCompany, 'title'> & {
+type TemplatesMongoFilter = Omit<FilterWithCompany, 'title'|'deletedAt'> & {
   title?: { $regex: RegExp };
+  deletedAt: any;
 };
 
 @Injectable()
@@ -36,7 +37,7 @@ export class TemplatesService {
       sortBy = 'createdAt',
       sortOrder = 'desc',
     } = filterQuery;
-    const findQuery: Partial<TemplatesMongoFilter> = { companyId };
+    const findQuery: Partial<TemplatesMongoFilter> = { companyId, deletedAt: { $exists: false } };
 
     if (search) {
       findQuery['$text'] = { $search: search };
@@ -68,8 +69,8 @@ export class TemplatesService {
     return this.templateModel.create(templateDto);
   }
 
-  public async delete(id: string, companyId: string): Promise<TemplateDto> {
-    return this.templateModel.findOneAndDelete({ id, companyId }).exec();
+  public async delete(id: string, companyId: string, deletedBy: string): Promise<TemplateDto> {
+    return this.templateModel.findOneAndUpdate({ id, companyId, deletedAt: { $exists: false } }, { deletedAt: new Date(), deletedBy }).exec();
   }
 
   public async updateOne(

@@ -38,6 +38,12 @@ export class Template {
 
   @Prop()
   updatedAt: Date;
+
+  @Prop()
+  deletedAt: Date;
+
+  @Prop()
+  deletedBy: string;
 }
 
 export type TemplateDocument = Template & Document;
