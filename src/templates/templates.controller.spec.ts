@@ -136,7 +136,11 @@ describe('TemplatesController', () => {
     const companyId = chance.guid();
     const userId = chance.guid();
     await templatesController.deleteTemplate(templateId, { companyId, userId });
-    expect(templatesService.delete).toHaveBeenCalledWith(templateId, companyId, userId);
+    expect(templatesService.delete).toHaveBeenCalledWith(
+      templateId,
+      companyId,
+      userId,
+    );
   });
 
   it('should throw if deleting a non-existent template', async () => {

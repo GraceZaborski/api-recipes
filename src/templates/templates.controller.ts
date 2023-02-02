@@ -127,7 +127,11 @@ export class TemplatesController {
     @Param('id') id: string,
     @AuthContext() { companyId, userId: deletedBy },
   ) {
-    const template = await this.templatesService.delete(id, companyId, deletedBy);
+    const template = await this.templatesService.delete(
+      id,
+      companyId,
+      deletedBy,
+    );
     if (!template) throw new NotFoundException();
   }
 

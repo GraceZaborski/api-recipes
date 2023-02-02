@@ -257,7 +257,11 @@ describe('TemplatesService', () => {
         exec: jest.fn().mockResolvedValueOnce(mockTemplate),
       } as any);
 
-      const template = await service.delete(chance.guid(), chance.guid(), chance.guid());
+      const template = await service.delete(
+        chance.guid(),
+        chance.guid(),
+        chance.guid(),
+      );
       expect(template).toEqual(template);
     });
   });
