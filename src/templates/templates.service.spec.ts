@@ -274,7 +274,7 @@ describe('TemplatesService', () => {
 
       await service.updateOne(id, companyId, updatedTemplate);
       expect(model.findOneAndUpdate).toHaveBeenCalledWith(
-        { id, companyId },
+        { id, companyId, deletedAt: { $exists: false } },
         updatedTemplate,
         { returnDocument: 'after' },
       );
