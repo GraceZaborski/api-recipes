@@ -746,6 +746,39 @@ describe('TemplatesController (e2e)', () => {
     });
   });
 
+  it('should be able to fetch a template when the created user is deleted', async () => {
+    stubAuthUserResponse({
+      abilities: [ABILITIES.TEMPLATE_CREATE, ABILITIES.TEMPLATE_VIEW],
+    });
+
+    const template = {
+      ...newTemplate,
+      title: chance.word(),
+    };
+
+    const response = await app.inject({
+      method: 'POST',
+      url: '/templates',
+      headers: headersWithToken,
+      payload: template,
+    });
+
+    expect(response.statusCode).toEqual(201);
+
+    stubUserResponse({});
+
+    const createdTemplate = response.json();
+
+    const getTemplate = await app.inject({
+      method: 'GET',
+      url: `/templates/${createdTemplate.id}`,
+      headers: headersWithToken,
+    });
+
+    expect(getTemplate.statusCode).toEqual(200);
+    expect(getTemplate.json()).toEqual(createdTemplate);
+  });
+
   it('should be able to delete a template', async () => {
     stubAuthUserResponse({
       abilities: [ABILITIES.TEMPLATE_CREATE, ABILITIES.TEMPLATE_DELETE],
